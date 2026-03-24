@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>โครงสร้างกลุ่มงานทรัพยากรบุคคล</title>
+    <link rel="icon" href="image/logo-โรงพยาบาลปัตตานี.png">
+    <link rel="stylesheet" href="css/menu.css">
+    <link rel="stylesheet" href="css/footer.css">
+    <link rel="stylesheet" href="css/benner.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Noto+Serif+Thai:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --navy: #071525;
+            --navy-2: #0d2040;
+            --gold: #c8a84b;
+            --gold-light: #e8c97a;
+            --gold-pale: #f7edcf;
+            --cream: #f8f5ef;
+            --white: #ffffff;
+            --g100: #f2f2f5;
+            --g200: #e4e4ea;
+            --g400: #9494a6;
+            --g600: #505065;
+            --text: #0f1020;
+            --shadow-card: 0 10px 40px rgba(7, 21, 37, .22), 0 3px 12px rgba(7, 21, 37, .14);
+            --shadow-hover: 0 28px 64px rgba(7, 21, 37, .38), 0 8px 28px rgba(21, 101, 192, .22);
+        }
+
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background: var(--cream);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* ── Main wrap ── */
+        .main-wrap {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 44px 32px 60px;
+        }
+
+        /* ── Filter bar ── */
+        .filter-bar {
+            background: var(--white);
+            border: 1px solid var(--g200);
+            border-radius: 6px;
+            padding: 16px 22px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-bottom: 52px;
+            box-shadow: 0 2px 16px rgba(7, 21, 37, .06);
+        }
+
+        .filter-label {
+            font-size: .78rem;
+            font-weight: 700;
+            color: var(--navy);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .filter-btns {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            flex: 1;
+        }
+
+        .filter-btn {
+            background: var(--g100);
+            border: 1px solid var(--g200);
+            color: var(--g600);
+            font-family: 'Sarabun', sans-serif;
+            font-size: .76rem;
+            font-weight: 500;
+            padding: 6px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all .18s;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--navy);
+            color: var(--gold-light);
+            border-color: var(--navy);
+        }
+
+        .search-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        .search-input {
+            background: var(--g100) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239494a6' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 12px center;
+            border: 1px solid var(--g200);
+            font-family: 'Sarabun', sans-serif;
+            font-size: .78rem;
+            padding: 7px 14px 7px 36px;
+            border-radius: 20px;
+            outline: none;
+            transition: all .2s;
+            width: 220px;
+        }
+
+        .search-input:focus {
+            border-color: var(--gold);
+            background-color: var(--white);
+            box-shadow: 0 0 0 3px rgba(200, 168, 75, .12);
+        }
+
+        /* ── Org tree ── */
+        .tier {
+            margin-bottom: 0;
+        }
+
+        .tier-connector {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 8px 0;
+        }
+
+        .connector-line {
+            width: 2px;
+            height: 28px;
+            background: linear-gradient(to bottom, rgba(200, 168, 75, .5), rgba(200, 168, 75, .15));
+        }
+
+        .tier-row {
+            display: flex;
+            justify-content: center;
+            gap: 28px;
+            flex-wrap: nowrap;
+            padding: 4px 0;
+        }
+
+        .tier-label {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .tier-label-line {
+            flex: 1;
+            height: 1px;
+            background: var(--g200);
+        }
+
+        .tier-label-text {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--g400);
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        /* ── Card wrapper ── */
+        .card-wrapper {
+            cursor: pointer;
+            transition: transform .3s cubic-bezier(.34, 1.56, .64, 1);
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .card-wrapper:hover {
+            transform: translateY(-10px) scale(1.02);
+        }
+
+        .card-wrapper::after {
+            content: '👆 คลิกเพื่อดูข้อมูล';
+            position: absolute;
+            bottom: -34px;
+            left: 50%;
+            transform: translateX(-50%) scale(.88);
+            background: var(--navy);
+            color: var(--gold-light);
+            font-family: 'Sarabun', sans-serif;
+            font-size: .68rem;
+            font-weight: 600;
+            padding: 5px 14px;
+            border-radius: 20px;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity .2s, transform .2s;
+            box-shadow: 0 4px 14px rgba(7, 21, 37, .25);
+            z-index: 10;
+        }
+
+        .card-wrapper:hover::after {
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+        }
+
+        /* ── Modal ── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 12, 28, .82);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .28s;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-box {
+            background: var(--white);
+            border-radius: 22px;
+            max-width: 640px;
+            width: 100%;
+            box-shadow: 0 40px 100px rgba(5, 12, 28, .6);
+            transform: translateY(44px) scale(.93);
+            transition: transform .34s cubic-bezier(.34, 1.56, .64, 1), opacity .28s;
+            opacity: 0;
+            overflow: hidden;
+            position: relative;
+            max-height: 92vh;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.open .modal-box {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+
+        .modal-banner {
+            background: linear-gradient(140deg, #2080c8 0%, #0f5aa0 50%, #082d5e 100%);
+            padding: 32px 28px 0;
+            position: relative;
+            overflow: hidden;
+            min-height: 170px;
+        }
+
+        .modal-banner::before {
+            content: '';
+            position: absolute;
+            top: -65px;
+            right: -65px;
+            width: 210px;
+            height: 210px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, .07);
+        }
+
+        .modal-banner-row {
+            display: flex;
+            align-items: flex-end;
+            gap: 26px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .modal-photo {
+            width: 120px;
+            height: 148px;
+            flex-shrink: 0;
+            border-radius: 12px 12px 0 0;
+            overflow: hidden;
+            background: linear-gradient(160deg, #3a9ae8, #1c72c8);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            border: 2px solid rgba(255, 255, 255, .18);
+            border-bottom: none;
+            box-shadow: 0 -6px 28px rgba(0, 0, 0, .3);
+        }
+
+        .modal-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top;
+            display: block;
+        }
+
+        .modal-avatar-lg {
+            font-size: 5rem;
+            line-height: 1;
+            padding-bottom: 6px;
+        }
+
+        .modal-text {
+            padding-bottom: 22px;
+            flex: 1;
+        }
+
+        .modal-name {
+            font-family: 'Noto Serif Thai', serif;
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+
+        .modal-pos {
+            font-size: .84rem;
+            color: rgba(255, 255, 255, .65);
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .modal-badge {
+            display: inline-block;
+            background: rgba(200, 168, 75, .2);
+            border: 1px solid rgba(200, 168, 75, .45);
+            color: var(--gold-light);
+            font-size: .66rem;
+            font-weight: 700;
+            padding: 3px 12px;
+            border-radius: 10px;
+            letter-spacing: .06em;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 14px;
+            right: 16px;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .12);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .9rem;
+            color: rgba(255, 255, 255, .75);
+            transition: all .18s;
+            z-index: 10;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, .25);
+            color: #fff;
+        }
+
+        .modal-body {
+            padding: 28px;
+        }
+
+        .sec-label {
+            font-size: .68rem;
+            font-weight: 700;
+            color: var(--g400);
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sec-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--g200);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .info-card {
+            background: var(--g100);
+            border-radius: 10px;
+            padding: 12px 14px;
+            border: 1px solid var(--g200);
+        }
+
+        .info-card-label {
+            font-size: .62rem;
+            font-weight: 700;
+            color: var(--g400);
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            margin-bottom: 3px;
+        }
+
+        .info-card-val {
+            font-size: .86rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .job-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 11px;
+            margin-bottom: 24px;
+        }
+
+        .job-item {
+            background: linear-gradient(135deg, rgba(21, 100, 168, .05), rgba(7, 21, 37, .02));
+            border: 1px solid rgba(21, 100, 168, .13);
+            border-left: 4px solid #1e78c8;
+            border-radius: 10px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .job-icon {
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .job-text strong {
+            display: block;
+            font-size: .84rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        /* ── Animations ── */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp .6s ease forwards;
+        }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .d1 {
+            animation-delay: .05s;
+        }
+
+        .d2 {
+            animation-delay: .12s;
+        }
+
+        .d3 {
+            animation-delay: .20s;
+        }
+
+        .d4 {
+            animation-delay: .28s;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 960px) {
+            .header-status {
+                display: none;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 680px) {
+            .tier-row {
+                flex-wrap: wrap;
+                gap: 16px;
+            }
+
+            .filter-bar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .search-wrap {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .search-input {
+                width: 100%;
+            }
+
+            .card-wrapper::after {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="homepage.html" style="text-decoration:none;color:inherit;display:contents;">
+                <div class="logo-block">
+                    <img src="image/logo-โรงพยาบาลปัตตานี.png" width="50" height="50">
+                    <div class="logo-text">
+                        <h1>กลุ่มงานทรัพยากรบุคคล</h1>
+                        <p>โรงพยาบาลปัตตานี</p>
+                    </div>
+                </div>
+            </a>
+            <nav class="main-nav">
+                <a href="homepage.html">หน้าแรก</a>
+                <a href="hrm.html" class="active">โครงสร้างกลุ่มงานทรัพยากรบุคคล</a>
+                <a href="personnel.html">ข้อมูลบุคลากร</a>
+                <a href="program.html">โปรแกรมวันลา/ใบรับรอง</a> 
+                <a href="form.html">เอกสารต่าง ๆ</a>
+                <a href="news.html">ข่าวประกาศ</a>
+            </nav>
+            <div class="header-status">
+                <div class="status-top">เวลาทำการ</div>
+                <div class="status-row">
+                    <div class="status-dot"></div>
+                    <span class="status-label">จันทร์ – ศุกร์ &nbsp; 08:30 – 16:30 น.</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-bg"><img src="image/IMG_5405.JPG" alt=""></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="logos">
+                <div class="logo-circle"><img src="image/logo-กระทรวงสาธารณสุข.png" alt="กระทรวงสาธารณสุข"></div>
+                <div class="logo-sep"></div>
+                <div class="logo-circle"><img src="image/logo-โรงพยาบาลปัตตานี.png" alt="โรงพยาบาลปัตตานี"></div>
+            </div>
+            <div class="eyebrow">
+                <span class="ew-line"></span>
+                <span class="ew-dot"></span>
+                <span class="ew-dot" style="opacity:.35;width:3px;height:3px"></span>
+                <span class="ew-dot" style="opacity:.35;width:3px;height:3px"></span>
+                <span class="ew-line r"></span>
+            </div>
+            <div class="hero-text">
+                <div class="hero-title-th">โครงสร้างกลุ่มงานทรัพยากรบุคคล</div>
+                <div class="hero-title-en">HUMAN RESOURCES DEPARTEMENT ORGANIZATIONAL STRUCTURE</div>
+            </div>
+            <div class="foot-orn">
+                <span class="fdash" style="width:36px"></span>
+                <span class="fdiamond"></span>
+                <span class="fdash" style="width:10px"></span>
+                <span class="fdiamond" style="opacity:.25;width:3px;height:3px"></span>
+                <span class="fdash" style="width:10px"></span>
+                <span class="fdiamond"></span>
+                <span class="fdash" style="width:36px"></span>
+            </div>
+        </div>
+    </section>
+
+    <div class="main-wrap">
+
+        <!-- Filter bar -->
+        <div class="filter-bar fade-up d1">
+            <span class="filter-label">หมวดหมู่ :</span>
+            <div class="filter-btns">
+                <button class="filter-btn active" onclick="filterGroup(this,'all')">ทั้งหมด</button>
+                <button class="filter-btn" onclick="filterGroup(this,'tier1')">หัวหน้ากลุ่มงาน</button>
+                <button class="filter-btn" onclick="filterGroup(this,'tier2')">พนักงานราขการ</button>
+                <button class="filter-btn" onclick="filterGroup(this,'tier3')">พนักงานกระทรวงสาธารณสุข</button>
+            </div>
+            <div class="search-wrap">
+                <input class="search-input" type="text" placeholder="ค้นหาชื่อบุคลากร..."
+                    oninput="searchStaff(this.value)">
+            </div>
+        </div>
+
+        <!-- Tier 1: หัวหน้ากลุ่มงาน -->
+        <div id="sec-tier1" class="tier fade-up d2">
+            <div class="tier-label">
+                <div class="tier-label-line"></div>
+                <span class="tier-label-text">หัวหน้ากลุ่มงาน</span>
+                <div class="tier-label-line"></div>
+            </div>
+            <div class="tier-row">
+                <div class="card-wrapper" onclick="openModal('chief1')">
+                    <img src="image/k da.jpg" alt="นางสาวยูวีดา ครู" style="width:290px;height:450px;object-fit:cover;">
+                    <div class="id-card small-card" data-group="tier1" data-name="นางสาวยูวีดา ครู"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tier-connector">
+            <div class="connector-line"></div>
+        </div>
+
+        <!-- Tier 2: พนักงานราชการ -->
+        <div id="sec-tier2" class="tier fade-up d3">
+            <div class="tier-label">
+                <div class="tier-label-line"></div>
+                <span class="tier-label-text">พนักงานราชการ</span>
+                <div class="tier-label-line"></div>
+            </div>
+            <div class="tier-row">
+                <div class="card-wrapper" onclick="openModal('staff1')">
+                    <img src="image/p noy.jpg" alt="นางสาวฐิติพรรณ ศรีตระพันธ์"
+                        style="width:290px;height:450px;object-fit:cover;">
+                    <div class="id-card small-card" data-group="tier2" data-name="นางสาวฐิติพรรณ ศรีตระพันธ์"></div>
+                </div>
+                <div class="card-wrapper" onclick="openModal('staff2')">
+                    <img src="image/p to.jpg" alt="นายจักรี ทองช่วย" style="width:290px;height:450px;object-fit:cover;">
+                    <div class="id-card small-card" data-group="tier2" data-name="นายจักรี ทองช่วย"></div>
+                </div>
+                <div class="card-wrapper" onclick="openModal('staff3')">
+                    <img src="image/k hamee.jpg" alt="นางสาวฮามีละห์ เจ๊ะเละ"
+                        style="width:290px;height:450px;object-fit:cover;">
+                    <div class="id-card small-card" data-group="tier2" data-name="นางสาวฮามีละห์ เจ๊ะเละ"></div>
+                </div>
+                <div class="card-wrapper" onclick="openModal('staff5')">
+                    <img src="image/p chiap.jpg" alt="นางวัชรีพร หนูคูขุด"
+                        style="width:290px;height:450px;object-fit:cover;">
+                    <div class="id-card small-card" data-group="tier2" data-name="นางวัชรีพร หนูคูขุด"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tier-connector">
+            <div class="connector-line"></div>
+        </div>
+
+        <!-- Tier 3: พนักงานกระทรวงสาธารณสุข -->
+        <div id="sec-tier3" class="tier fade-up d4">
+            <div class="tier-label">
+                <div class="tier-label-line"></div>
+                <span class="tier-label-text">พนักงานกระทรวงสาธารณสุข</span>
+                <div class="tier-label-line"></div>
+            </div>
+            <div class="tier-row">
+                <div class="card-wrapper" onclick="openModal('staff4')">
+                    <img src="image/p bu.jpg" alt="นางสาวพัชรักรณ์ ไชยศรีจันทร์"
+                        style="width:290px;height:450px;object-fit:cover;">
+                    <div class="id-card small-card" data-group="tier3" data-name="นางสาวพัชรักรณ์ ไชยศรีจันทร์"></div>
+                </div>
+                <div class="card-wrapper" onclick="openModal('staff6')">
+                    <img src="image/feen.jpg" alt="นายนิติธร บือสาแม"
+                        style="width:290px;height:450px;object-fit:cover;">
+                    <div class="id-card small-card" data-group="tier3" data-name="นายนิติธร บือสาแม"></div>
+                </div>
+                <div class="card-wrapper" onclick="openModal('staff7')">
+                    <img src="image/nuree.jpg" alt="นางสาวนูรนูรี การี"
+                        style="width:290px;height:450px;object-fit:cover;">
+                    <div class="id-card small-card" data-group="tier3" data-name="นางสาวนูรนูรี การี"></div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /main-wrap -->
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+        <div class="modal-box" id="modalBox">
+            <button class="modal-close" onclick="closeModal()">✕</button>
+            <div class="modal-banner">
+                <div class="modal-banner-row">
+                    <div class="modal-photo" id="mPhotoWrap">
+                        <div class="modal-avatar-lg" id="mAvatar"></div>
+                    </div>
+                    <div class="modal-text">
+                        <div class="modal-name" id="mName"></div>
+                        <div class="modal-pos" id="mPos"></div>
+                        <span class="modal-badge" id="mBadge"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="sec-label">ข้อมูลทั่วไป</div>
+                <div class="info-grid" id="mInfoGrid"></div>
+                <div class="sec-label">งานที่รับผิดชอบ</div>
+                <ul class="job-list" id="mJobList"></ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer"></div>
+
+    <script>
+        fetch("css/footer.html").then(r => r.text()).then(d => { document.getElementById("footer").innerHTML = d; });
+
+        const staffData = {
+            chief1: {
+                photo: "image/k da.jpg", avatar: '👩‍⚕️',
+                name: 'นางสาวยูวีดา ครู', pos: 'นักทรัพยากรบุคคลชำนาญการ', badge: 'ข้าราชการ',
+                info: [
+                    { l: 'ตำแหน่ง', v: 'นักทรัพยากรบุคคล' },
+                    { l: 'ระดับ', v: 'ชำนาญการ' },
+                    { l: 'หน่วยงาน', v: 'กลุ่มงานทรัพยากรบุคคล' },
+                    { l: 'โทรภายใน', v: 'ต่อ 8754' }
+                ],
+                jobs: [
+                    { i: '🏗️', t: 'ระดับความสำเร็จของหน่วยงานมีแผนกำลังคน การบริหารตำแหน่งว่างตามเป้าหมายที่ได้รับการบริหารจัดการภายใต้กรอบโครงสร้างและกรอบอัตรากำลัง' },
+                    { i: '🗃️', t: 'ระดับความสำเร็จของหน่วยงานมีการปรับปรุงฐานข้อมูลบุคลากรในทะเบียนประวัติ กพ.7 และ ในระบ HROPS ให้เป็นข้อมูลที่ครบถ้วน ถูกต้อง และปัจจุบัน' },
+                    { i: '📈', t: 'ระดับความสำเร็จของสายงานที่มีแผนความก้าวหน้าในสายอาชีพ (Career Path)' },
+                    { i: '🪪', t: 'ระดับความสำเร็จของประสิทธิภาพในการจัดทำบัตรประจำตัวเจ้าหน้าที่ของรัฐ' },
+                    { i: '🎖️', t: 'ระดับความสำเร็จของการเสนอขอพระราชทานเครื่องราชอิสริยาภรณ์ฯ เหรียญจักรพรรดิมาลา และเหรียญราชการชายแดนให้เจ้าที่ของรัฐ' },
+                    { i: '🔬', t: 'ระดับความสำเร็จของการประเมินผลงานวิชาการอย่างมีประสิทธิผล งานวิชาการอย่างมีประสิทธิภาพ' },
+                    { i: '🔍', t: 'ระดับความสำเร็จของการสรรหาคัดเลือก และบรรจุแต่งตั้งบุคลากร' },
+                    { i: '💰', t: 'ระดับความสำเร็จการประเมินผลการปฏิบัติราชการ การบริหารวงเงิน การเลื่อนเงินเดือนของข้าราชการ การเลื่อนขั้นค่าจ้างของลูกจ้างประจำ การเลื่อนขั้นค่าตอบแทนของพนักงานราชการ และเพิ่มค่าจ้างประจำปีของพนักงานกระทรวงฯ' },
+                ]
+            },
+            staff1: {
+                photo: "image/p noy.jpg", avatar: '👩',
+                name: 'นางสาวฐิติพรรณ ศรีตระพันธ์', pos: 'นักทรัพยากรบุคคล', badge: 'พนักงานราชการ',
+                info: [{ l: 'ตำแหน่ง', v: 'นักทรัพยากรบุคคล' }, { l: 'ประเภท', v: 'พนักงานราชการ' }, { l: 'หน่วยงาน', v: 'กลุ่มงานทรัพยากรบุคคล' }, { l: 'โทรภายใน', v: 'ต่อ 8755' }],
+                jobs: [
+                    { i: '🔍', t: 'งานคัดเลือกประเมินบุคคลเพื่อการย้ายและการเลื่อนขึ้นแต่งตั้งให้ดำรงตำแหน่งสูงขึ้นระดับชำนาญการพิเศษ' },
+                    { i: '📌', t: 'งานแต่งตั้งให้ดำรงตำแหน่งในระดับที่สูงขึ้นระดับควบและมีคนครองประเภทวิชาการ และประเภททั่วไป' },
+                    { i: '📤', t: 'งานการขอกำหนดตำแหน่งสูงขึ้น และการส่งเอกสารการขอประเมินผลงานฯระดับเชี่ยวชาญ' },
+                    { i: '🏥', t: 'นายทะเบียนค่ารักษาพยาบาล (D-pension)' },
+                    { i: '👥', t: 'งานพนักงานราชการ' },
+                    { i: '✏️', t: 'แก้ไข คำสั่งโควตา ศอ.บต พนักงานราชการและลูกจ้างประจำ' },
+                ]
+            },
+            staff2: {
+                photo: "image/p to.jpg", avatar: '👨',
+                name: 'นายจักรี ทองช่วย', pos: 'นักวิเคราะห์นโยบายและแผน', badge: 'พนักงานราชการ',
+                info: [{ l: 'ตำแหน่ง', v: 'นักวิเคราะห์นโยบายและแผน' }, { l: 'ประเภท', v: 'พนักงานราชการ' }, { l: 'หน่วยงาน', v: 'กลุ่มงานทรัพยากรบุคคล' }, { l: 'โทรภายใน', v: 'ต่อ 8751' }],
+                jobs: [
+                    { i: '🎖️', t: 'เสนอขอพระราชทานเครื่องราชอิสริยาภรณ์' },
+                    { i: '🏗️', t: 'โครงสร้างและอัตรากำลัง (หมวดบริหารตำแหน่ง,FTE,กำหนดตำแหน่งที่สูงขึ้น)' },
+                    { i: '📌', t: 'งานบรรจุแต่ตั้ง (หมวดย้าย,โอน,ถ่ายโอน,ยืมตัว,เรียกบัญชี,บรรจุกลับ)' },
+                    { i: '👷', t: 'งานลูกจ้างประจำ' },
+                    { i: '⚙️', t: 'งานบริหาร HRM' },
+                    { i: '📋', t: 'Service plan' },
+                    { i: '🕊️', t: 'ฌาปนกิจสงเคราะห์สำนักงานปลัดกระทรวงสาธารณสุข' },
+                ]
+            },
+            staff3: {
+                photo: "image/k hamee.jpg", avatar: '🧕',
+                name: 'นางสาวฮามีละห์ เจ๊ะเละ', pos: 'นักทรัพยากรบุคคล', badge: 'พนักงานราชการ',
+                info: [{ l: 'ตำแหน่ง', v: 'นักทรัพยากรบุคคล' }, { l: 'ประเภท', v: 'พนักงานราชการ' }, { l: 'หน่วยงาน', v: 'กลุ่มงานทรัพยากรบุคคล' }, { l: 'โทรภายใน', v: 'ต่อ 8753' }],
+                jobs: [
+                    { i: '🔍', t: 'คัดเลือกบุคคลเข้ารับราชการ' },
+                    { i: '📌', t: 'บรรจุและแต่งตั้งบุคคลเข้ารับราชการ' },
+                    { i: '💵', t: 'งานเงินเดือนข้าราชการ' },
+                    { i: '📝', t: 'แบบประเมินผลการปฏิบัติราชการ ระดับเชี่ยวชาญ' },
+                    { i: '🧪', t: 'ทดลองงาน' },
+                    { i: '🛡️', t: 'แบบขึ้นทะเบียนผู้ประกันตน และสวัสดีการกองทุนเงินทดแทน' },
+                ]
+            },
+            staff4: {
+                photo: "image/p bu.jpg", avatar: '👩',
+                name: 'นางสาวพัชรักรณ์ ไชยศรีจันทร์', pos: 'นักทรัพยากรบุคคล', badge: 'พนักงานกระทรวงสาธารณสุข',
+                info: [{ l: 'ตำแหน่ง', v: 'นักทรัพยากรบุคคล' }, { l: 'ประเภท', v: 'พนักงานกระทรวงสาธารณสุข' }, { l: 'หน่วยงาน', v: 'กลุ่มงานทรัพยากรบุคคล' }, { l: 'โทรภายใน', v: 'ต่อ 8753' }],
+                jobs: [
+                    { i: '💻', t: 'บันทึกเงินเดือนและเงินเลื่อน ในระบบ E-Payroll' },
+                    { i: '🚪', t: 'การลาออกข้าราชการ/ลูกจ้างประจำ' },
+                    { i: '🏁', t: 'การเกษียณ' },
+                    { i: '🏦', t: 'บำเหน็จ บำนาญ ในระบบ D-Pension' },
+                    { i: '✏️', t: 'แก้ไขคำสั่ง ศอ.บต' },
+                    { i: '📜', t: 'ใบประกอบวิชาชีพ และวุฒิบัตร เบิก พตส.' },
+                    { i: '🗃️', t: 'ระบบทะเบียนประวัติอิเล็กทรอนิกส์ (Seis)' },
+                ]
+            },
+            staff5: {
+                photo: "image/p chiap.jpg", avatar: '👩',
+                name: 'นางวัชรีพร หนูคูขุด', pos: 'เจ้าพนักงานธุรการ', badge: 'พนักงานราชการ',
+                info: [{ l: 'ตำแหน่ง', v: 'เจ้าพนักงานธุรการ' }, { l: 'ประเภท', v: 'พนักงานราชการ' }, { l: 'หน่วยงาน', v: 'กลุ่มงานทรัพยากรบุคคล' }, { l: 'โทรภายใน', v: 'ต่อ 8755' }],
+                jobs: [
+                    { i: '📄', t: 'หนังสือรับรอง' },
+                    { i: '📬', t: 'ทะเบียนรับ - ส่งหนังสือราชการ' },
+                    { i: '🏖️', t: 'การลาทุกประเภทการจ้าง และบันทึกลงในระบบ HROPH' },
+                    { i: '👷', t: 'ลูกจ้างรายคาบ' },
+                    { i: '🎖️', t: 'เหรียญราชการชายแดน' },
+                    { i: '🖐️', t: 'พิมพ์ลายนิ้วมือ' },
+                    { i: '📁', t: 'งานโครงการฯ' },
+                    { i: '⏰', t: 'ทะเบียน OT – ฉ 10 , ฉ 11 ของกลุ่มงาน' },
+                    { i: '💰', t: 'เงิน พสร.' },
+                    { i: '🪖', t: 'รายงานตัวข้าราชการ' },
+                    { i: '🛂', t: 'ขอผ่อนผันการเข้ารับราชการทหารให้แก่แพทย์ชดใช้ทุนรัฐบาล' },
+                ]
+            },
+            staff6: {
+                photo: "image/feen.jpg", avatar: '👨',
+                name: 'นายนิติธร บือสาแม', pos: 'เจ้าพนักงานธุรการ', badge: 'พนักงานกระทรวงสาธารณสุข',
+                info: [{ l: 'ตำแหน่ง', v: 'เจ้าพนักงานธุรการ' }, { l: 'ประเภท', v: 'พนักงานกระทรวงสาธารณสุข' }, { l: 'หน่วยงาน', v: 'กลุ่มงานทรัพยากรบุคคล' }, { l: 'โทรภายใน', v: 'ต่อ 8751' }],
+                jobs: [
+                    { i: '⏳', t: 'เวลาราชการทวีคูณ กอ.รมน.' },
+                    { i: '👥', t: 'งานพนักงานกระทรวงสาธารณสุขทั่วไป' },
+                    { i: '💻', t: 'งานสารสนเทศ (ระบบIT)' },
+                    { i: '🗃️', t: 'ระบบทะเบียนประวัติอิเล็กทรอนิกส์ (Seis)' },
+                    { i: '⏰', t: 'งาน ฉ 10 , ฉ 11 ของเจ้าหน้าที่' },
+                    { i: '🔑', t: 'Provider ID' },
+                ]
+            },
+            staff7: {
+                photo: "image/nuree.jpg", avatar: '🧕',
+                name: 'นางสาวนูรนูรี การี', pos: 'เจ้าพนักงานธุรการ', badge: 'พนักงานกระทรวงสาธารณสุข',
+                info: [{ l: 'ตำแหน่ง', v: 'เจ้าพนักงานธุรการ' }, { l: 'ประเภท', v: 'พนักงานกระทรวงสาธารณสุข' }, { l: 'หน่วยงาน', v: 'กลุ่มงานทรัพยากรบุคคล' }, { l: 'โทรภายใน', v: 'ต่อ 8753' }],
+                jobs: [
+                    { i: '👷', t: 'งานลูกจ้างชั่วคราว' },
+                    { i: '🪪', t: 'ทำบัตรทุกประเภท' },
+                    { i: '🖊️', t: 'วัสดุ ครุภัณฑ์ สำนักงาน' },
+                    { i: '🖨️', t: 'สแกนหนังสือเข้าในระบบ' },
+                ]
+            }
+        };
+
+        function openModal(id) {
+            const d = staffData[id]; if (!d) return;
+            const wrap = document.getElementById('mPhotoWrap');
+            wrap.innerHTML = d.photo
+                ? '<img src="' + d.photo + '" alt="' + d.name + '" style="width:100%;height:100%;object-fit:cover;object-position:top;display:block;">'
+                : '<div class="modal-avatar-lg">' + d.avatar + '</div>';
+            document.getElementById('mName').textContent = d.name;
+            document.getElementById('mPos').textContent = d.pos;
+            document.getElementById('mBadge').textContent = d.badge;
+            document.getElementById('mInfoGrid').innerHTML = d.info.map(i =>
+                '<div class="info-card"><div class="info-card-label">' + i.l + '</div><div class="info-card-val">' + i.v + '</div></div>'
+            ).join('');
+            document.getElementById('mJobList').innerHTML = d.jobs.map(j =>
+                '<li class="job-item"><span class="job-icon">' + j.i + '</span><div class="job-text"><strong>' + j.t + '</strong></div></li>'
+            ).join('');
+            document.getElementById('modalBox').scrollTop = 0;
+            document.getElementById('modalOverlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        function closeModalOutside(e) {
+            if (e.target === document.getElementById('modalOverlay')) closeModal();
+        }
+
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+        function filterGroup(btn, group) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            ['tier1', 'tier2', 'tier3'].forEach(t => {
+                const el = document.getElementById('sec-' + t);
+                if (el) el.style.display = (group === 'all' || group === t) ? '' : 'none';
+            });
+            document.querySelectorAll('.tier-connector').forEach(el => {
+                el.style.display = (group === 'all') ? '' : 'none';
+            });
+        }
+
+        function searchStaff(val) {
+            const q = val.trim().toLowerCase();
+            document.querySelectorAll('.tier').forEach(section => {
+                let found = false;
+                section.querySelectorAll('[data-name]').forEach(card => {
+                    const wrap = card.closest('.card-wrapper') || card;
+                    const match = !q || card.dataset.name.toLowerCase().includes(q);
+                    wrap.style.display = match ? '' : 'none';
+                    if (match) found = true;
+                });
+                section.style.display = (q && !found) ? 'none' : '';
+            });
+            document.querySelectorAll('.tier-connector').forEach(el => {
+                el.style.display = q ? 'none' : '';
+            });
+        }
+    </script>
+</body>
+
+</html>

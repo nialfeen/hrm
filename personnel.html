@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ข้อมูลบุคลากร</title>
+    <link rel="icon" href="image/logo-โรงพยาบาลปัตตานี.png">
+    <link rel="stylesheet" href="css/menu.css">
+    <link rel="stylesheet" href="css/footer.css">
+    <link rel="stylesheet" href="css/benner.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Noto+Serif+Thai:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <style>
+        :root {
+            --navy: #0a1628;
+            --navy-mid: #102240;
+            --navy-light: #1a3460;
+            --gold: #c9a84c;
+            --gold-light: #e8c97a;
+            --gold-pale: #f5e9c8;
+            --cream: #faf8f3;
+            --white: #ffffff;
+            --gray-50: #f8f8fb;
+            --gray-100: #f1f1f5;
+            --gray-200: #e4e4ec;
+            --gray-400: #9898a8;
+            --gray-600: #585868;
+            --text-dark: #0d0d1a;
+            --blue: #185FA5;
+            --green: #1D9E75;
+            --amber: #BA7517;
+            --purple: #534AB7;
+            --shadow-sm: 0 1px 4px rgba(10, 22, 40, .06);
+            --shadow-md: 0 4px 16px rgba(10, 22, 40, .10);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background: var(--cream);
+            color: var(--text-dark);
+            min-height: 100vh;
+        }
+
+        /* ─── WRAP ─── */
+        .wrap {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 28px 32px 80px;
+        }
+
+        /* ─── FILTERS ─── */
+        .filters-bar {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .filter-label {
+            font-size: .8rem;
+            font-weight: 600;
+            color: var(--gray-400);
+            white-space: nowrap;
+        }
+
+        .filter-select {
+            flex: 1;
+            min-width: 0;
+            /* ← สำคัญ: ไม่งั้น flex item จะไม่ shrink */
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-sm);
+            padding: 9px 32px 9px 12px;
+            font-family: 'Sarabun', sans-serif;
+            font-size: .85rem;
+            color: var(--text-dark);
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239898a8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            transition: border .2s;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--navy-light);
+        }
+
+        .filter-select:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .filter-reset {
+            background: var(--navy);
+            color: var(--gold-light);
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 8px 18px;
+            font-family: 'Sarabun', sans-serif;
+            font-size: .83rem;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: opacity .2s;
+        }
+
+        .filter-reset:hover {
+            opacity: .8;
+        }
+
+        /* ─── KPI ─── */
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .kpi-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            padding: 18px 20px;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+            transition: box-shadow .2s;
+        }
+
+        .kpi-card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+
+        .kpi-card.k-blue::before {
+            background: var(--blue);
+        }
+
+        .kpi-card.k-green::before {
+            background: var(--green);
+        }
+
+        .kpi-card.k-amber::before {
+            background: var(--amber);
+        }
+
+        .kpi-card.k-purple::before {
+            background: var(--purple);
+        }
+
+        .kpi-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+
+        .kpi-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .k-blue .kpi-icon {
+            background: #E6F1FB;
+        }
+
+        .k-blue .kpi-icon svg {
+            fill: var(--blue);
+        }
+
+        .k-green .kpi-icon {
+            background: #E1F5EE;
+        }
+
+        .k-green .kpi-icon svg {
+            fill: var(--green);
+        }
+
+        .k-amber .kpi-icon {
+            background: #FAEEDA;
+        }
+
+        .k-amber .kpi-icon svg {
+            fill: var(--amber);
+        }
+
+        .k-purple .kpi-icon {
+            background: #EEEDFE;
+        }
+
+        .k-purple .kpi-icon svg {
+            fill: var(--purple);
+        }
+
+        .kpi-num {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .k-blue .kpi-num {
+            color: var(--blue);
+        }
+
+        .k-green .kpi-num {
+            color: var(--green);
+        }
+
+        .k-amber .kpi-num {
+            color: var(--amber);
+        }
+
+        .k-purple .kpi-num {
+            color: var(--purple);
+        }
+
+        .kpi-label {
+            font-size: .8rem;
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+
+        .kpi-sub {
+            font-size: .75rem;
+            color: var(--gray-400);
+            margin-top: 2px;
+        }
+
+        /* ─── CHARTS GRID ─── */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 18px;
+        }
+
+        .chart-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            padding: 20px 22px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .chart-title {
+            font-family: 'Noto Serif Thai', serif;
+            font-size: .9rem;
+            font-weight: 700;
+            color: var(--navy-mid);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chart-title-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .chart-wrap {
+            position: relative;
+        }
+
+        /* ─── DEPT BARS ─── */
+        .bar-section {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            padding: 20px 22px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 18px;
+        }
+
+        .bar-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .bar-tab-row {
+            display: flex;
+            gap: 6px;
+        }
+
+        .bar-tab {
+            font-size: .78rem;
+            font-family: 'Sarabun', sans-serif;
+            padding: 5px 14px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--gray-200);
+            background: transparent;
+            color: var(--gray-600);
+            cursor: pointer;
+            transition: all .15s;
+        }
+
+        .bar-tab.active {
+            background: var(--navy);
+            color: var(--gold-light);
+            border-color: var(--navy);
+        }
+
+        /* ─── HORIZONTAL BARS ─── */
+        .hbar-list {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            max-height: 480px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .hbar-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .hbar-list::-webkit-scrollbar-track {
+            background: var(--gray-100);
+            border-radius: 2px;
+        }
+
+        .hbar-list::-webkit-scrollbar-thumb {
+            background: var(--gray-200);
+            border-radius: 2px;
+        }
+
+        .hbar-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .hbar-label {
+            font-size: .8rem;
+            color: var(--gray-600);
+            min-width: 160px;
+            max-width: 160px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            cursor: default;
+        }
+
+        .hbar-track {
+            flex: 1;
+            background: var(--gray-100);
+            border-radius: 3px;
+            height: 16px;
+            overflow: hidden;
+        }
+
+        .hbar-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width .5s cubic-bezier(.4, 0, .2, 1);
+        }
+
+        .hbar-val {
+            font-size: .78rem;
+            color: var(--gray-600);
+            min-width: 36px;
+            text-align: right;
+            font-weight: 500;
+        }
+
+        .hbar-pct {
+            font-size: .72rem;
+            color: var(--gray-400);
+            min-width: 36px;
+            text-align: right;
+        }
+
+        /* ─── LOADING ─── */
+        .state-msg {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gray-400);
+            font-size: .9rem;
+        }
+
+        .spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid var(--gray-200);
+            border-top-color: var(--navy);
+            border-radius: 50%;
+            animation: spin .7s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 900px) {
+            .wrap {
+                padding: 20px 16px 60px;
+            }
+
+            .kpi-row {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hbar-label {
+                min-width: 110px;
+                max-width: 110px;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .kpi-row {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .filter-select {
+                min-width: 140px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="homepage.html" style="text-decoration:none;color:inherit;display:contents;">
+                <div class="logo-block">
+                    <img src="image/logo-โรงพยาบาลปัตตานี.png" width="50" height="50">
+                    <div class="logo-text">
+                        <h1>กลุ่มงานทรัพยากรบุคคล</h1>
+                        <p>โรงพยาบาลปัตตานี</p>
+                    </div>
+                </div>
+            </a>
+            <nav class="main-nav">
+                <a href="homepage.html">หน้าแรก</a>
+                <a href="hrm.html">โครงสร้างกลุ่มงานทรัพยากรบุคคล</a>
+                <a href="personnel.html" class="active">ข้อมูลบุคลากร</a>
+                <a href="program.html">โปรแกรมวันลา/ใบรับรอง</a>
+                <a href="form.html">เอกสารต่าง ๆ</a>
+                <a href="news.html">ข่าวประกาศ</a>
+            </nav>
+            <div class="header-status">
+                <div class="status-top">เวลาทำการ</div>
+                <div class="status-row">
+                    <div class="status-dot"></div>
+                    <span class="status-label">จันทร์ – ศุกร์ &nbsp; 08:30 – 16:30 น.</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-bg"><img src="image/IMG_5405.JPG" alt=""></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="logos">
+                <div class="logo-circle"><img src="image/logo-กระทรวงสาธารณสุข.png" alt="กระทรวงสาธารณสุข"></div>
+                <div class="logo-sep"></div>
+                <div class="logo-circle"><img src="image/logo-โรงพยาบาลปัตตานี.png" alt="โรงพยาบาลปัตตานี"></div>
+            </div>
+            <div class="eyebrow">
+                <span class="ew-line"></span><span class="ew-dot"></span>
+                <span class="ew-dot" style="opacity:.35;width:3px;height:3px"></span>
+                <span class="ew-dot" style="opacity:.35;width:3px;height:3px"></span>
+                <span class="ew-line r"></span>
+            </div>
+            <div class="hero-text">
+                <div class="hero-title-th">ข้อมูลบุคลากร</div>
+                <div class="hero-title-en">PERSONNEL INFORMATION</div>
+            </div>
+            <div class="foot-orn">
+                <span class="fdash" style="width:36px"></span><span class="fdiamond"></span>
+                <span class="fdash" style="width:10px"></span>
+                <span class="fdiamond" style="opacity:.25;width:3px;height:3px"></span>
+                <span class="fdash" style="width:10px"></span><span class="fdiamond"></span>
+                <span class="fdash" style="width:36px"></span>
+            </div>
+        </div>
+    </section>
+
+    <div class="wrap">
+
+        <!-- FILTERS -->
+        <div class="filters-bar">
+            <span class="filter-label">กรอง :</span>
+            <select class="filter-select" id="filterType" onchange="onTypeChange()">
+                <option value="">ประเภทเจ้าหน้าที่</option>
+            </select>
+            <select class="filter-select" id="filterDept" onchange="onDeptChange()">
+                <option value="">กลุ่มงาน</option>
+            </select>
+            <select class="filter-select" id="filterPos" onchange="applyFilters()">
+                <option value="">ตำแหน่ง</option>
+            </select>
+            <button class="filter-reset" onclick="resetFilters()">รีเซ็ต</button>
+        </div>
+
+        <!-- KPI -->
+        <div class="kpi-row" id="kpiRow">
+            <div class="state-msg" style="grid-column:1/-1">
+                <div class="spinner"></div>กำลังโหลดข้อมูล...
+            </div>
+        </div>
+
+        <!-- DONUT + TOP POSITIONS -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-title">
+                    <span class="chart-title-dot" style="background:var(--blue)"></span>
+                    สัดส่วนประเภทเจ้าหน้าที่
+                </div>
+                <div class="chart-wrap" style="height:240px"><canvas id="donutChart"></canvas></div>
+                <div id="donutLegend"
+                    style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;font-size:.75rem;color:var(--gray-600)">
+                </div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">
+                    <span class="chart-title-dot" style="background:var(--green)"></span>
+                    ตำแหน่ง 15 อันดับแรก
+                </div>
+                <div id="positionBars" class="hbar-list" style="max-height:260px"></div>
+            </div>
+        </div>
+
+        <!-- DEPT BARS -->
+        <div class="bar-section">
+            <div class="bar-section-header">
+                <div class="chart-title" style="margin:0">
+                    <span class="chart-title-dot" style="background:var(--purple)"></span>
+                    จำนวนบุคลากรแต่ละกลุ่มงาน
+                </div>
+                <div class="bar-tab-row">
+                    <button class="bar-tab active" onclick="setDeptView('top15',this)">15 อันดับแรก</button>
+                    <button class="bar-tab" onclick="setDeptView('all',this)">ทั้งหมด</button>
+                </div>
+            </div>
+            <div id="deptBars" class="hbar-list"></div>
+        </div>
+
+    </div>
+
+    <div id="footer"></div>
+
+    <script>
+        fetch("css/footer.html")
+            .then(r => r.text())
+            .then(d => { document.getElementById("footer").innerHTML = d; });
+
+        const SHEET_ID = '1DUv6xYjilrGHaThpFFrXT-hJgeeoAHy-2JRWNrZGPyk';
+        const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
+
+        let allData = [];
+        let filteredData = [];
+        let deptView = 'top15';
+        let donutChart = null;
+
+        const TYPE_COLORS = {
+            'ข้าราชการ': '#185FA5',
+            'พนักงานกระทรวงสาธารณสุข': '#1D9E75',
+            'ลูกจ้างชั่วคราว': '#BA7517',
+            'รายคาบ': '#D4537E',
+            'พนักงานราชการ': '#534AB7',
+            'แบ่ง %': '#888780',
+            'ลูกจ้างประจำ': '#5DCAA5',
+            'รายวัน': '#F0997B',
+        };
+
+        /* ── LOAD ── */
+        async function loadData() {
+            try {
+                const res = await fetch(SHEET_URL + '&t=' + Date.now());
+                const text = await res.text();
+                allData = parseCSV(text);
+                populateTypeFilter();
+                applyFilters();
+            } catch (e) {
+                document.getElementById('kpiRow').innerHTML =
+                    `<div class="state-msg" style="grid-column:1/-1">
+                        ⚠️ โหลดข้อมูลไม่ได้ — กรุณาเปิดสิทธิ์ Sheet เป็น "Anyone with the link"
+                     </div>`;
+                console.error(e);
+            }
+        }
+
+        /* ── PARSE CSV ── */
+        function parseCSV(text) {
+            const rows = text.split('\n').map(r => {
+                const cells = [];
+                let cur = '', inQ = false;
+                for (const ch of r) {
+                    if (ch === '"') { inQ = !inQ; }
+                    else if (ch === ',' && !inQ) { cells.push(cur.trim()); cur = ''; }
+                    else { cur += ch; }
+                }
+                cells.push(cur.trim());
+                return cells;
+            });
+
+            const result = [];
+            for (let i = 2; i < rows.length; i++) {
+                const row = rows[i];
+                if (!row[0] || !/^\d+$/.test(row[0].replace(/"/g, ''))) continue;
+                result.push({
+                    id: row[0]?.replace(/"/g, ''),
+                    pos: row[4]?.replace(/"/g, '') || 'ไม่ระบุ',
+                    dept: row[5]?.replace(/"/g, '') || 'ไม่ระบุ',
+                    type: row[6]?.replace(/"/g, '') || 'ไม่ระบุ',
+                });
+            }
+            return result;
+        }
+
+        /* ── CASCADE FILTER HELPERS ── */
+
+        // Step 1: populate ประเภทเจ้าหน้าที่ (always from allData)
+        function populateTypeFilter() {
+            const types = [...new Set(allData.map(d => d.type))].sort();
+            fillSelect('filterType', types, 'ประเภทเจ้าหน้าที่');
+        }
+
+        // Step 2: when type changes → rebuild dept options from matching rows
+        function onTypeChange() {
+            const fType = document.getElementById('filterType').value;
+            const pool = fType ? allData.filter(d => d.type === fType) : allData;
+
+            const depts = [...new Set(pool.map(d => d.dept))].sort();
+            fillSelect('filterDept', depts, 'กลุ่มงาน');
+
+            // also rebuild pos from same pool
+            const poses = [...new Set(pool.map(d => d.pos))].sort();
+            fillSelect('filterPos', poses, 'ตำแหน่ง');
+
+            applyFilters();
+        }
+
+        // Step 3: when dept changes → narrow pos options further
+        function onDeptChange() {
+            const fType = document.getElementById('filterType').value;
+            const fDept = document.getElementById('filterDept').value;
+
+            let pool = allData;
+            if (fType) pool = pool.filter(d => d.type === fType);
+            if (fDept) pool = pool.filter(d => d.dept === fDept);
+
+            const poses = [...new Set(pool.map(d => d.pos))].sort();
+            fillSelect('filterPos', poses, 'ตำแหน่ง');
+
+            applyFilters();
+        }
+
+        // Generic: fill a <select> keeping the first placeholder option
+        function fillSelect(id, opts, placeholder) {
+            const sel = document.getElementById(id);
+            const prevVal = sel.value;
+            sel.innerHTML = `<option value="">${placeholder}</option>`;
+            opts.forEach(o => {
+                const opt = document.createElement('option');
+                opt.value = o;
+                opt.textContent = o;
+                sel.appendChild(opt);
+            });
+            // restore previous selection only if it still exists in new list
+            if (opts.includes(prevVal)) sel.value = prevVal;
+        }
+
+        /* ── APPLY FILTERS ── */
+        function applyFilters() {
+            const fType = document.getElementById('filterType').value;
+            const fDept = document.getElementById('filterDept').value;
+            const fPos = document.getElementById('filterPos').value;
+
+            filteredData = allData.filter(d =>
+                (!fType || d.type === fType) &&
+                (!fDept || d.dept === fDept) &&
+                (!fPos || d.pos === fPos)
+            );
+
+            renderKPI();
+            renderDonut();
+            renderPositionBars();
+            renderDeptBars();
+        }
+
+        function resetFilters() {
+            document.getElementById('filterType').value = '';
+            document.getElementById('filterDept').value = '';
+            document.getElementById('filterPos').value = '';
+            populateTypeFilter();
+            onTypeChange();
+        }
+
+        /* ── HELPERS ── */
+        function countBy(arr, key) {
+            const m = {};
+            arr.forEach(d => { const k = d[key] || 'ไม่ระบุ'; m[k] = (m[k] || 0) + 1; });
+            return Object.entries(m).sort((a, b) => b[1] - a[1]);
+        }
+
+        function pct(a, b) { return b ? Math.round(a / b * 100) : 0; }
+
+        /* ── KPI ── */
+        function renderKPI() {
+            const total = filteredData.length;
+            const govt = filteredData.filter(d => d.type === 'ข้าราชการ').length;
+            const pho = filteredData.filter(d => d.type === 'พนักงานกระทรวงสาธารณสุข').length;
+            const depts = new Set(filteredData.map(d => d.dept)).size;
+
+            document.getElementById('kpiRow').innerHTML = [
+                kpiCard('k-blue', 'บุคลากรทั้งหมด', total, 'จากข้อมูลที่กรอง',
+                    '<path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>'),
+                kpiCard('k-green', 'จำนวนตำแหน่งทั้งหมด', new Set(filteredData.map(d => d.pos)).size, 'จากข้อมูลที่กรอง',
+                    '<path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13zm-2 9H7v-2h4v2zm4-4H7v-2h8v2zm0-4H7V8h8v2z"/>'),
+                kpiCard('k-purple', 'กลุ่มงานทั้งหมด', depts, 'จากข้อมูลที่กรอง',
+                    '<path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>'),
+                kpiCard('k-amber', 'จำนวนตำแหน่งสูงสุด', (() => { const e = countBy(filteredData, 'pos'); return e[0]?.[1] || 0; })(), (() => { const e = countBy(filteredData, 'pos'); return e[0]?.[0] || '-'; })(),
+                    '<path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/>'),
+            ].join('');
+        }
+
+        function kpiCard(cls, label, val, sub, iconPath) {
+            return `<div class="kpi-card ${cls}">
+                <div class="kpi-icon"><svg viewBox="0 0 24 24">${iconPath}</svg></div>
+                <div class="kpi-num">${Number(val).toLocaleString('th-TH')}</div>
+                <div class="kpi-label">${label}</div>
+                <div class="kpi-sub">${sub}</div>
+            </div>`;
+        }
+
+        /* ── DONUT ── */
+        function renderDonut() {
+            const entries = countBy(filteredData, 'type');
+            const labels = entries.map(e => e[0]);
+            const values = entries.map(e => e[1]);
+            const colors = labels.map(l => TYPE_COLORS[l] || '#888');
+
+            if (donutChart) donutChart.destroy();
+            donutChart = new Chart(document.getElementById('donutChart'), {
+                type: 'doughnut',
+                data: {
+                    labels,
+                    datasets: [{ data: values, backgroundColor: colors, borderWidth: 2, borderColor: '#faf8f3' }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '62%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => ` ${ctx.label}: ${ctx.raw.toLocaleString('th-TH')} คน (${pct(ctx.raw, filteredData.length)}%)`,
+                            },
+                        },
+                    },
+                },
+            });
+
+            document.getElementById('donutLegend').innerHTML = entries.map(([l, v]) =>
+                `<span style="display:flex;align-items:center;gap:4px;white-space:nowrap">
+                    <span style="width:10px;height:10px;border-radius:2px;background:${TYPE_COLORS[l] || '#888'};flex-shrink:0"></span>
+                    ${l} <b>${v.toLocaleString('th-TH')}</b>
+                </span>`
+            ).join('');
+        }
+
+        /* ── POSITION BARS ── */
+        function renderPositionBars() {
+            const entries = countBy(filteredData, 'pos').slice(0, 15);
+            const max = entries[0]?.[1] || 1;
+            document.getElementById('positionBars').innerHTML = entries
+                .map(([l, v]) => hbarHTML(l, v, max, pct(v, filteredData.length), '#1D9E75'))
+                .join('');
+        }
+
+        /* ── DEPT BARS ── */
+        function setDeptView(view, btn) {
+            deptView = view;
+            document.querySelectorAll('.bar-tab').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderDeptBars();
+        }
+
+        function renderDeptBars() {
+            let entries = countBy(filteredData, 'dept');
+            if (deptView === 'top15') entries = entries.slice(0, 15);
+            const max = entries[0]?.[1] || 1;
+            document.getElementById('deptBars').innerHTML = entries
+                .map(([l, v]) => hbarHTML(l, v, max, pct(v, filteredData.length), '#534AB7'))
+                .join('');
+        }
+
+        function hbarHTML(label, val, max, pctVal, color) {
+            const w = Math.round(val / max * 100);
+            return `<div class="hbar-row">
+                <span class="hbar-label" title="${label}">${label}</span>
+                <div class="hbar-track">
+                    <div class="hbar-fill" style="width:${w}%;background:${color}"></div>
+                </div>
+                <span class="hbar-val">${val.toLocaleString('th-TH')}</span>
+                <span class="hbar-pct">${pctVal}%</span>
+            </div>`;
+        }
+
+        /* ── INIT ── */
+        loadData();
+    </script>
+</body>
+
+</html>

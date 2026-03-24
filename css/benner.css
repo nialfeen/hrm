@@ -1,0 +1,252 @@
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap');
+
+        .hero {
+            position: relative;
+            width: 100%;
+            min-height: 240px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        /* Background image */
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background: #0d1e30;
+        }
+
+        .hero-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+
+        /* Dark overlay */
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to right,
+                    rgba(8, 16, 30, .84) 0%,
+                    rgba(10, 20, 40, .68) 35%,
+                    rgba(10, 20, 40, .68) 65%,
+                    rgba(8, 16, 30, .84) 100%);
+        }
+
+        /* Grid pattern — small */
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(201, 168, 76, .11) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(201, 168, 76, .11) 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+
+        /* Grid pattern — large (every 3 cells) */
+        .hero-grid-bold {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(201, 168, 76, .06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(201, 168, 76, .06) 1px, transparent 1px);
+            background-size: 96px 96px;
+        }
+
+        /* Dots at grid intersections */
+        .hero-dots {
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(201, 168, 76, .22) 1px, transparent 1px);
+            background-size: 32px 32px;
+            background-position: 16px 16px;
+        }
+
+        /* Horizontal rules top & bottom */
+        .rule {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 2%, rgba(201, 168, 76, .4) 18%, rgba(201, 168, 76, .4) 82%, transparent 98%);
+        }
+
+        .rule2 {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 5%, rgba(201, 168, 76, .15) 18%, rgba(201, 168, 76, .15) 82%, transparent 95%);
+        }
+
+        .rule-top {
+            top: 14px;
+        }
+
+        .rule-bot {
+            bottom: 14px;
+        }
+
+        .rule2-top {
+            top: 19px;
+        }
+
+        .rule2-bot {
+            bottom: 19px;
+        }
+
+        /* Corner ornaments */
+        .orn {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            opacity: .5;
+        }
+
+        .orn-tl {
+            top: 10px;
+            left: 14px;
+        }
+
+        .orn-tr {
+            top: 10px;
+            right: 14px;
+            transform: scaleX(-1);
+        }
+
+        .orn-bl {
+            bottom: 10px;
+            left: 14px;
+            transform: scaleY(-1);
+        }
+
+        .orn-br {
+            bottom: 10px;
+            right: 14px;
+            transform: scale(-1, -1);
+        }
+
+        /* Content */
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            padding: 38px 24px;
+            text-align: center;
+        }
+
+        /* Logos */
+        .logos {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 32px;
+        }
+
+        .logo-circle {
+            width: 104px;
+            height: 104px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .93);
+            border: 2px solid rgba(201, 168, 76, .55);
+            box-shadow: 0 0 0 5px rgba(201, 168, 76, .1), 0 0 0 1px rgba(201, 168, 76, .2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .logo-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .logo-sep {
+            width: 1px;
+            height: 80px;
+            background: linear-gradient(180deg, transparent, rgba(201, 168, 76, .45) 30%, rgba(201, 168, 76, .45) 70%, transparent);
+        }
+
+        /* Eyebrow decoration */
+        .eyebrow {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .ew-line {
+            width: 40px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #c9a84c);
+        }
+
+        .ew-line.r {
+            background: linear-gradient(90deg, #c9a84c, transparent);
+        }
+
+        .ew-dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #c9a84c;
+            opacity: .7;
+        }
+
+        /* Text */
+        .hero-text {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .hero-title-th {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 1px 8px rgba(0, 0, 0, .6);
+            letter-spacing: .03em;
+        }
+
+        .hero-title-en {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: rgba(226, 201, 126, .9);
+            letter-spacing: .2em;
+            text-shadow: 0 1px 6px rgba(0, 0, 0, .5);
+        }
+
+        .fdiamond {
+            width: 5px;
+            height: 5px;
+            transform: rotate(45deg);
+            background: #c9a84c;
+            opacity: .45;
+        }
+
+        .foot-orn {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin-top: 2px;
+        }
+
+        .fdash {
+            height: 1px;
+            background: rgba(201, 168, 76, .3);
+        }
+
+        .main-nav {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            /* align-items: center; */
+        }
