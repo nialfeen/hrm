@@ -12,6 +12,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Noto+Serif+Thai:wght@400;600;700&display=swap"
         rel="stylesheet">
+
     <style>
         :root {
             --navy: #0a1628;
@@ -27,12 +28,12 @@
             --gray-400: #9898a8;
             --gray-600: #585868;
             --text-dark: #12121e;
-            --blue-soft: #e8f0fb;
-            --blue-mid: #2563b0;
             --green-soft: #e6f4ee;
             --green-mid: #1a7a4a;
-            --amber-soft: #fef3e2;
-            --amber-mid: #b45309;
+            --g-dark: #1a5c3a;
+            --g-mid: #2d8a5e;
+            --g-light: #e6f4ee;
+            --g-badge: #c8ead8;
         }
 
         html {
@@ -53,12 +54,150 @@
             color: var(--text-dark);
             overflow-x: hidden;
         }
+
+        /* ── ORG SECTION ── */
+        .org-section {
+            padding: 60px 20px 80px;
+            background: var(--cream);
+        }
+
+        /* ── TREE WRAPPER — relative เพื่อให้ SVG overlay ทับได้ ── */
+        .tree-wrap {
+            position: relative;
+            width: 100%;
+        }
+
+        /* SVG overlay วาดเส้น — ไม่รับ pointer events */
+        #line-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: visible;
+            z-index: 0;
+        }
+
+        /* ── แถว ── */
+        .row {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 100px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .row+.row {
+            margin-top: 52px;
+        }
+
+        #row2 {
+            padding-right: 600px;
+        }
+
+        #row4 {
+            padding-left: 600px;
+            margin-top: -280px;
+            /* position: relative;
+            z-index: 1; */
+        }
+
+        /* ── CARD — ขนาดเท่ากันทุกระดับ ── */
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.09);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1.5px solid var(--g-badge);
+            transition: transform 0.18s, box-shadow 0.18s;
+            width: 180px;
+            flex-shrink: 0;
+
+            position: relative;
+            z-index: 2;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(29, 100, 70, 0.18);
+        }
+
+        /* รูปภาพ */
+        .card-photo {
+            width: 100%;
+            height: 210px;
+            overflow: hidden;
+            background: var(--g-light);
+            flex-shrink: 0;
+        }
+
+        .card-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top center;
+            display: block;
+            transition: transform .35s ease;
+        }
+
+        .card:hover .card-photo img {
+            transform: scale(1.05);
+        }
+
+        /* placeholder ซิลูเอต */
+        .card-photo-ph {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            background: linear-gradient(180deg, var(--g-light) 0%, #b8ddc8 100%);
+        }
+
+        .card-photo-ph svg {
+            width: 65%;
+            height: 80%;
+            opacity: 0.35;
+            fill: var(--g-dark);
+        }
+
+        /* ข้อความ */
+        .card-info {
+            padding: 10px 12px 12px;
+            text-align: center;
+            width: 100%;
+            border-top: 1px solid var(--g-badge);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 70px;
+        }
+
+        .card-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-dark);
+            line-height: 1.4;
+            margin-bottom: 4px;
+        }
+
+        .card-pos {
+            font-size: 11px;
+            font-weight: 400;
+            color: var(--g-dark);
+            line-height: 1.4;
+        }
     </style>
 </head>
 
 <body>
 
-    <!-- HEADER -->
+    <!-- ═══════════════ HEADER ═══════════════ -->
     <header class="site-header">
         <div class="header-inner">
             <a href="homepage.html" style="text-decoration:none;color:inherit;display:contents;">
@@ -72,19 +211,17 @@
             </a>
             <nav class="main-nav">
                 <a href="homepage.html">หน้าแรก</a>
-
                 <div class="nav-dropdown">
-                    <a href="#"  class="active">
+                    <a href="#" class="active">
                         โครงสร้าง
                         <span class="chevron"></span>
                     </a>
                     <div class="dropdown-menu">
-                        <a href="hospital.html"class="active">โครงสร้างโรงพยาบาลปัตตานี</a>
+                        <a href="hospital.html" class="active">โครงสร้างโรงพยาบาลปัตตานี</a>
                         <a href="administrator.html">โครงสร้างภารกิจอำนวยการ</a>
                         <a href="hrm.html">โครงสร้างกลุ่มงานทรัพยากรบุคคล</a>
                     </div>
                 </div>
-
                 <a href="personnel.html">ข้อมูลบุคลากร</a>
                 <a href="form.html">เอกสารต่าง ๆ</a>
                 <a href="news.html">ข่าวประกาศ</a>
@@ -98,6 +235,8 @@
             </div>
         </div>
     </header>
+
+    <!-- ═══════════════ HERO / BANNER ═══════════════ -->
     <section class="hero">
         <div class="hero-bg"><img src="image/IMG_5405.JPG" alt=""></div>
         <div class="hero-overlay"></div>
@@ -128,12 +267,206 @@
         </div>
     </section>
 
+    <!-- ═══════════════ ORG CHART ═══════════════ -->
+    <section class="org-section">
+        <div class="tree-wrap" id="treeWrap">
+
+            <!-- SVG overlay — เส้นโยงวาดโดย JS -->
+            <svg id="line-canvas" xmlns="http://www.w3.org/2000/svg"></svg>
+
+            <!-- ── แถว 1: ผู้อำนวยการ ── -->
+            <div class="row" id="row1">
+                <div class="card" id="c-dir">
+                    <div class="card-photo">
+                        <img src="image/department/directer1.jpg" alt="นายรุซตา สาและ" onerror="phErr(this)">
+                    </div>
+                    <div class="card-info">
+                        <div class="card-name">นายรุซตา สาและ</div>
+                        <div class="card-pos">ผู้อำนวยการโรงพยาบาลปัตตานี</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── แถว 2: รองผู้อำนวยการ ชิดซ้าย ── -->
+            <div class="row" id="row2">
+                <div class="card" id="c-d1">
+                    <div class="card-photo">
+                        <img src="image/พรสวัสดิ์.jpg" alt="นพ.พรสวัสดิ์ สุวรรณวงค์" onerror="phErr(this)">
+                    </div>
+                    <div class="card-info">
+                        <div class="card-name">นพ.พรสวัสดิ์ สุวรรณวงค์</div>
+                        <div class="card-pos">รองผู้อำนวยการฝ่ายการแพทย์</div>
+                    </div>
+                </div>
+                <div class="card" id="c-d2">
+                    <div class="card-photo">
+                        <img src="image/จินดารัตน์.jpg" alt="นางจินดารัตน์ แดงเพ็ง" onerror="phErr(this)">
+                    </div>
+                    <div class="card-info">
+                        <div class="card-name">นางจินดารัตน์ แดงเพ็ง</div>
+                        <div class="card-pos">รองผู้อำนวยการฝ่ายบริหาร</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── แถว 2 ขวา: หัวหน้าพยาบาล ── -->
+            <div class="row" id="row4">
+                <div class="card" id="c-d3">
+                    <div class="card-photo">
+                        <img src="image/ศุภาศิริ.jpg" alt="นางศุภาศิริ ภาริกาญจน์" onerror="phErr(this)">
+                    </div>
+                    <div class="card-info">
+                        <div class="card-name">นางศุภาศิริ ภาริกาญจน์</div>
+                        <div class="card-pos">หัวหน้าพยาบาล</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── แถว 3: รองผู้อำนวยการ 5 คน ── -->
+            <div class="row" id="row3">
+                <div class="card" id="c-e1">
+                    <div class="card-photo">
+                        <img src="image/พัชระ.jpg" alt="นพ.พัชระ บรรจงสะเอียด" onerror="phErr(this)">
+                    </div>
+                    <div class="card-info">
+                        <div class="card-name">นพ.พัชระ บรรจงสะเอียด</div>
+                        <div class="card-pos">รองผู้อำนวยการภารกิจดิจิทัลทางการแพทย์และสุขภาพ</div>
+                    </div>
+                </div>
+                <div class="card" id="c-e2">
+                    <div class="card-photo">
+                        <img src="image/อับดุลรอยะ.jpg" alt="นพ.อับดุลรอยะ หะยีสนแลม" onerror="phErr(this)">
+                    </div>
+                    <div class="card-info">
+                        <div class="card-name">นพ.อับดุลรอยะ หะยีสนแลม</div>
+                        <div class="card-pos">รองผู้อำนวยการภารกิจด้านพัฒนาระบบบริการและสนับสนุนบริการสุขภาพ</div>
+                    </div>
+                </div>
+                <div class="card" id="c-e3">
+                    <div class="card-photo">
+                        <img src="image/พงศ์พันธ์.jpg" alt="นพ.พงศ์พันธ์ พันทวีกดี" onerror="phErr(this)">
+                    </div>
+                    <div class="card-info">
+                        <div class="card-name">นพ.พงศ์พันธ์ พันทวีกดี</div>
+                        <div class="card-pos">รองผู้อำนวยการภารกิจด้านปฐมภูมิ</div>
+                    </div>
+                </div>
+                <div class="card" id="c-e4">
+                    <div class="card-photo">
+                        <img src="image/เสาวลักษณ์.jpg" alt="พญ.เสาวลักษณ์ ศิลาลาย" onerror="phErr(this)">
+                    </div>
+                    <div class="card-info">
+                        <div class="card-name">พญ.เสาวลักษณ์ ศิลาลาย</div>
+                        <div class="card-pos">รองผู้อำนวยการด้านผลิตบุคลากรทางการแพทย์</div>
+                    </div>
+                </div>
+                <div class="card" id="c-e5">
+                    <div class="card-photo">
+                        <img src="image/ชุติพร.jpg" alt="กพญ.ชุติพร เกิดทิพย์" onerror="phErr(this)">
+                    </div>
+                    <div class="card-info">
+                        <div class="card-name">กพญ.ชุติพร เกิดทิพย์</div>
+                        <div class="card-pos">รองผู้อำนวยการภารกิจด้านทันตกรรม</div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /tree-wrap -->
+    </section>
+
+    <!-- ═══════════════ FOOTER ═══════════════ -->
     <div id="footer"></div>
+
     <script>
+        /* โหลด footer */
         fetch("css/footer.html")
             .then(r => r.text())
             .then(d => { document.getElementById("footer").innerHTML = d; });
+
+        /* placeholder เมื่อโหลดรูปไม่ได้ */
+        function phErr(img) {
+            img.outerHTML = `<div class="card-photo-ph">
+            <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="50" cy="38" rx="22" ry="24"/>
+                <path d="M10 110 Q10 75 50 75 Q90 75 90 110Z"/>
+            </svg>
+        </div>`;
+        }
+
+        /* ── ดึง position ของการ์ด relative กับ wrap ── */
+        function pos(id, wrapRect) {
+            const r = document.getElementById(id).getBoundingClientRect();
+            return {
+                cx: r.left - wrapRect.left + r.width / 2,
+                topY: r.top - wrapRect.top,
+                botY: r.bottom - wrapRect.top
+            };
+        }
+
+        /* ── วาดเส้น ── */
+        function line(svg, x1, y1, x2, y2) {
+            const el = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            el.setAttribute("x1", x1); el.setAttribute("y1", y1);
+            el.setAttribute("x2", x2); el.setAttribute("y2", y2);
+            el.setAttribute("stroke", "#2d8a5e");
+            el.setAttribute("stroke-width", "1.8");
+            el.setAttribute("stroke-linecap", "round");
+            svg.appendChild(el);
+        }
+
+        function drawLines() {
+            const wrap = document.getElementById("treeWrap");
+            const svg = document.getElementById("line-canvas");
+            svg.innerHTML = "";
+            svg.setAttribute("width", wrap.offsetWidth);
+            svg.setAttribute("height", wrap.offsetHeight);
+
+            const wr = wrap.getBoundingClientRect();
+
+            const dir = pos("c-dir", wr);
+            const d1 = pos("c-d1", wr);
+            const d2 = pos("c-d2", wr);
+            const d3 = pos("c-d3", wr);
+            const e1 = pos("c-e1", wr);
+            const e2 = pos("c-e2", wr);
+            const e3 = pos("c-e3", wr);
+            const e4 = pos("c-e4", wr);
+            const e5 = pos("c-e5", wr);
+
+            /* ── กำหนดจุดแนวนอน (spine) แต่ละระดับ ──
+               mid12 = จุดกึ่งกลางระหว่าง bottom ของ dir กับ top ของ row2
+               mid23 = จุดกึ่งกลางระหว่าง bottom ของ row2 กับ top ของ row3        */
+            /* จุด spine แต่ละระดับ */
+            const mid12 = (dir.botY + d1.topY) / 2;   /* ระหว่าง ผอ. กับ row2 */
+            const mid23 = (d1.botY + e1.topY) / 2;   /* ระหว่าง row2 กับ row3 */
+
+            /* ══ ผอ. → row3 (เส้นแกนกลางตรงลงมา) ══ */
+            line(svg, dir.cx, dir.botY, dir.cx, mid23);        /* ↓ ผอ. ลงตรงถึง spine23 */
+
+            /* ══ spine23 → แตกไปหาทุกคน row3 ══ */
+            line(svg, e1.cx, mid23, e5.cx, mid23);        /* ─ spine L3 */
+            line(svg, e1.cx, mid23, e1.cx, e1.topY);      /* ↑ e1 */
+            line(svg, e2.cx, mid23, e2.cx, e2.topY);      /* ↑ e2 */
+            line(svg, e3.cx, mid23, e3.cx, e3.topY);      /* ↑ e3 */
+            line(svg, e4.cx, mid23, e4.cx, e4.topY);      /* ↑ e4 */
+            line(svg, e5.cx, mid23, e5.cx, e5.topY);      /* ↑ e5 */
+
+            /* ══ ผอ. → row2 ซ้าย (d1, d2) ══ */
+            line(svg, dir.cx, mid12, d1.cx, mid12);        /* ─ spine ซ้าย */
+            line(svg, d1.cx, mid12, d1.cx, d1.topY);      /* ↑ d1 */
+            line(svg, d2.cx, mid12, d2.cx, d2.topY);      /* ↑ d2 */
+
+            /* ══ ผอ. → row2 ขวา (d3) ══ */
+            line(svg, dir.cx, mid12, d3.cx, mid12);        /* ─ spine ขวา */
+            line(svg, d3.cx, mid12, d3.cx, d3.topY);      /* ↑ d3 */
+        }
+
+        /* วาดครั้งแรก + วาดซ้ำเมื่อ resize / ฟอนต์โหลดเสร็จ */
+        window.addEventListener("load", drawLines);
+        window.addEventListener("resize", drawLines);
+        document.fonts.ready.then(drawLines);
     </script>
+
 </body>
 
 </html>
