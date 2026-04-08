@@ -28,12 +28,9 @@
             --gray-400: #9898a8;
             --gray-600: #585868;
             --text-dark: #12121e;
-            --green-soft: #e6f4ee;
-            --green-mid: #1a7a4a;
-            --g-dark: #1a5c3a;
-            --g-mid: #2d8a5e;
-            --g-light: #e6f4ee;
-            --g-badge: #c8ead8;
+            --ph-blue: #1a2fa0;
+            --ph-blue-dark: #111f7a;
+            --ph-blue-glow: rgba(26, 47, 160, 0.35);
         }
 
         html {
@@ -55,19 +52,62 @@
             overflow-x: hidden;
         }
 
-        /* ── ORG SECTION ── */
-        .org-section {
-            padding: 60px 20px 80px;
-            background: var(--cream);
+        /* ─── FORMAL BACKGROUND PATTERN ─── */
+
+        /* Layer 1: subtle diagonal lines — ความเป็นทางการ */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                repeating-linear-gradient(
+                    -55deg,
+                    transparent,
+                    transparent 30px,
+                    rgba(26, 47, 160, 0.03) 30px,
+                    rgba(26, 47, 160, 0.03) 32px
+                );
+            pointer-events: none;
+            z-index: 0;
         }
 
-        /* ── TREE WRAPPER — relative เพื่อให้ SVG overlay ทับได้ ── */
+        /* Layer 2: dot grid เข้มขึ้น + เคลื่อนที่ช้า */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                radial-gradient(circle, rgba(26, 47, 160, 0.13) 1.5px, transparent 1.5px),
+                radial-gradient(circle, rgba(201, 168, 76, 0.10) 1px, transparent 1px);
+            background-size: 28px 28px, 56px 56px;
+            background-position: 0 0, 14px 14px;
+            animation: bgDrift 16s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes bgDrift {
+            from {
+                background-position: 0 0, 14px 14px;
+            }
+            to {
+                background-position: 28px 28px, 42px 42px;
+            }
+        }
+
+        /* ─── ORG SECTION ─── */
+        .org-section {
+            padding: 60px 20px 100px;
+            background: transparent;
+            position: relative;
+            z-index: 1;
+        }
+
         .tree-wrap {
             position: relative;
             width: 100%;
         }
 
-        /* SVG overlay วาดเส้น — ไม่รับ pointer events */
         #line-canvas {
             position: absolute;
             top: 0;
@@ -79,61 +119,92 @@
             z-index: 0;
         }
 
-        /* ── แถว ── */
-        .row {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 100px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .row+.row {
-            margin-top: 52px;
-        }
-
-        #row2 {
-            padding-right: 600px;
-        }
-
-        #row4 {
-            padding-left: 600px;
-            margin-top: -280px;
-            /* position: relative;
-            z-index: 1; */
-        }
-
-        /* ── CARD — ขนาดเท่ากันทุกระดับ ── */
+        /* ─── CARD ─── */
         .card {
-            background: var(--white);
+            position: absolute;
+            background: #ffffff;
             border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.09);
+            box-shadow: 0 4px 24px rgba(26, 47, 160, 0.13);
             overflow: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
-            border: 1.5px solid var(--g-badge);
-            transition: transform 0.18s, box-shadow 0.18s;
-            width: 180px;
-            flex-shrink: 0;
-
-            position: relative;
+            border: 2px solid #c5cbee;
+            width: 200px;
             z-index: 2;
+            cursor: pointer;
+
+            /* entrance animation */
+            opacity: 0;
+            transform: translateY(30px) scale(0.96);
+            transition:
+                opacity 0.5s ease,
+                transform 0.5s ease,
+                box-shadow 0.3s ease,
+                border-color 0.3s ease;
         }
 
+        .card.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        /* hover lift + glow */
         .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(29, 100, 70, 0.18);
+            transform: translateY(-8px) scale(1.03);
+            box-shadow:
+                0 16px 40px var(--ph-blue-glow),
+                0 0 0 3px var(--gold-light);
+            border-color: var(--gold);
+            z-index: 10;
         }
 
-        /* รูปภาพ */
+        /* ─── SHIMMER OVERLAY on hover ─── */
+        .card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg,
+                    transparent 0%,
+                    rgba(255, 255, 255, 0.18) 40%,
+                    rgba(255, 255, 255, 0.45) 50%,
+                    rgba(255, 255, 255, 0.18) 60%,
+                    transparent 100%);
+            background-size: 250% 100%;
+            background-position: -100% 0;
+            z-index: 5;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+            animation: shimmer 0.75s ease forwards;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -100% 0;
+            }
+
+            100% {
+                background-position: 200% 0;
+            }
+        }
+
+        /* ─── PHOTO WRAP ─── */
+        .card-photo-wrap {
+            position: relative;
+            width: 100%;
+            flex-shrink: 0;
+        }
+
         .card-photo {
             width: 100%;
             height: 210px;
             overflow: hidden;
-            background: var(--g-light);
-            flex-shrink: 0;
+            background: #e8ecf8;
         }
 
         .card-photo img {
@@ -142,55 +213,228 @@
             object-fit: cover;
             object-position: top center;
             display: block;
-            transition: transform .35s ease;
+            transition: transform 0.5s ease;
+            filter: saturate(0.9);
         }
 
         .card:hover .card-photo img {
-            transform: scale(1.05);
+            transform: scale(1.08);
+            filter: saturate(1.15) brightness(1.04);
         }
 
-        /* placeholder ซิลูเอต */
-        .card-photo-ph {
+        /* ─── LOGO BADGE ─── */
+        .card-logo {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover .card-logo {
+            transform: scale(1.15) rotate(-5deg);
+            box-shadow: 0 4px 14px rgba(201, 168, 76, 0.5);
+        }
+
+        .card-logo img {
             width: 100%;
             height: 100%;
+            object-fit: cover;
+        }
+
+        /* ─── ROLE RIBBON (top-right corner) ─── */
+        .card-ribbon {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--gold);
+            color: #fff;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            padding: 3px 8px 3px 14px;
+            clip-path: polygon(10px 0%, 100% 0%, 100% 100%, 0% 100%);
+            z-index: 4;
+            opacity: 0;
+            transform: translateX(8px);
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .card:hover .card-ribbon {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* placeholder */
+        .card-photo-ph {
+            width: 100%;
+            height: 210px;
             display: flex;
             align-items: flex-end;
             justify-content: center;
-            background: linear-gradient(180deg, var(--g-light) 0%, #b8ddc8 100%);
+            background: linear-gradient(180deg, #dce2f7 0%, #b0bcee 100%);
         }
 
         .card-photo-ph svg {
             width: 65%;
             height: 80%;
-            opacity: 0.35;
-            fill: var(--g-dark);
+            opacity: 0.30;
+            fill: var(--ph-blue);
         }
 
-        /* ข้อความ */
+        /* ─── INFO BAR ─── */
         .card-info {
             padding: 10px 12px 12px;
             text-align: center;
             width: 100%;
-            border-top: 1px solid var(--g-badge);
+            background: var(--ph-blue);
             display: flex;
             flex-direction: column;
             justify-content: center;
-            min-height: 70px;
+            min-height: 72px;
+            transition: background 0.3s ease;
+        }
+
+        .card:hover .card-info {
+            background: var(--ph-blue-dark);
         }
 
         .card-name {
-            font-size: 13px;
+            font-size: 15px;
             font-weight: 700;
-            color: var(--text-dark);
+            color: #ffffff;
             line-height: 1.4;
             margin-bottom: 4px;
+            transition: color 0.3s;
+        }
+
+        .card:hover .card-name {
+            color: var(--gold-light);
         }
 
         .card-pos {
-            font-size: 11px;
-            font-weight: 400;
-            color: var(--g-dark);
+            font-size: 13px;
+            font-weight: 500;
+            color: #c5d0f5;
             line-height: 1.4;
+        }
+
+        /* ─── PULSE RING for director card ─── */
+        #c-dir {
+            border-color: var(--gold);
+        }
+
+        #c-dir::after {
+            content: '';
+            position: absolute;
+            inset: -6px;
+            border-radius: 16px;
+            border: 2px solid var(--gold-light);
+            opacity: 0;
+            animation: pulse-ring 3s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                opacity: 0;
+                transform: scale(1);
+            }
+
+            40% {
+                opacity: 0.55;
+            }
+
+            100% {
+                opacity: 0;
+                transform: scale(1.06);
+            }
+        }
+
+        /* ─── TOOLTIP on hover ─── */
+        .card-tooltip {
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%) translateY(6px);
+            background: var(--navy);
+            color: #fff;
+            font-size: 12px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.25s, transform 0.25s;
+            z-index: 20;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: var(--navy);
+        }
+
+        .card:hover .card-tooltip {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ─── STAGGER delays ─── */
+        #c-dir {
+            transition-delay: 0.05s;
+        }
+
+        #c-d1 {
+            transition-delay: 0.15s;
+        }
+
+        #c-d2 {
+            transition-delay: 0.22s;
+        }
+
+        #c-d3 {
+            transition-delay: 0.29s;
+        }
+
+        #c-e1 {
+            transition-delay: 0.38s;
+        }
+
+        #c-e2 {
+            transition-delay: 0.45s;
+        }
+
+        #c-e3 {
+            transition-delay: 0.52s;
+        }
+
+        #c-e4 {
+            transition-delay: 0.59s;
+        }
+
+        #c-e5 {
+            transition-delay: 0.66s;
+        }
+
+        /* ─── SVG connectors always visible ─── */
+        #line-canvas line {
+            opacity: 1;
         }
     </style>
 </head>
@@ -212,10 +456,7 @@
             <nav class="main-nav">
                 <a href="homepage.html">หน้าแรก</a>
                 <div class="nav-dropdown">
-                    <a href="#" class="active">
-                        โครงสร้าง
-                        <span class="chevron"></span>
-                    </a>
+                    <a href="#" class="active">โครงสร้าง<span class="chevron"></span></a>
                     <div class="dropdown-menu">
                         <a href="hospital.html" class="active">โครงสร้างโรงพยาบาลปัตตานี</a>
                         <a href="administrator.html">โครงสร้างภารกิจอำนวยการ</a>
@@ -238,7 +479,7 @@
 
     <!-- ═══════════════ HERO / BANNER ═══════════════ -->
     <section class="hero">
-        <div class="hero-bg"><img src="image/IMG_5405.JPG" alt=""></div>
+        <div class="hero-bg"><img src="image/benner.JPG" alt=""></div>
         <div class="hero-overlay"></div>
         <div class="hero-content">
             <div class="logos">
@@ -247,8 +488,7 @@
                 <div class="logo-circle"><img src="image/logo-โรงพยาบาลปัตตานี.png" alt="โรงพยาบาลปัตตานี"></div>
             </div>
             <div class="eyebrow">
-                <span class="ew-line"></span>
-                <span class="ew-dot"></span>
+                <span class="ew-line"></span><span class="ew-dot"></span>
                 <span class="ew-dot" style="opacity:.35;width:3px;height:3px"></span>
                 <span class="ew-dot" style="opacity:.35;width:3px;height:3px"></span>
                 <span class="ew-line r"></span>
@@ -271,199 +511,257 @@
     <section class="org-section">
         <div class="tree-wrap" id="treeWrap">
 
-            <!-- SVG overlay — เส้นโยงวาดโดย JS -->
             <svg id="line-canvas" xmlns="http://www.w3.org/2000/svg"></svg>
 
-            <!-- ── แถว 1: ผู้อำนวยการ ── -->
-            <div class="row" id="row1">
-                <div class="card" id="c-dir">
-                    <div class="card-photo">
-                        <img src="image/department/directer1.jpg" alt="นายรุซตา สาและ" onerror="phErr(this)">
-                    </div>
-                    <div class="card-info">
-                        <div class="card-name">นายรุซตา สาและ</div>
-                        <div class="card-pos">ผู้อำนวยการโรงพยาบาลปัตตานี</div>
-                    </div>
+            <!-- row1 -->
+            <div class="card" id="c-dir">
+                <div class="card-ribbon">ผู้บริหารสูงสุด</div>
+                <div class="card-photo-wrap">
+                    <div class="card-logo"><img src="image/logo-โรงพยาบาลปัตตานี.png" alt="logo"></div>
+                    <div class="card-photo"><img src="image/department/rusta.png" onerror="phErr(this)"></div>
                 </div>
+                <div class="card-info">
+                    <div class="card-name">นายรุซตา สาและ</div>
+                    <div class="card-pos">ผู้อำนวยการโรงพยาบาลปัตตานี</div>
+                </div>
+                <div class="card-tooltip">Director</div>
             </div>
 
-            <!-- ── แถว 2: รองผู้อำนวยการ ชิดซ้าย ── -->
-            <div class="row" id="row2">
-                <div class="card" id="c-d1">
-                    <div class="card-photo">
-                        <img src="image/พรสวัสดิ์.jpg" alt="นพ.พรสวัสดิ์ สุวรรณวงค์" onerror="phErr(this)">
-                    </div>
-                    <div class="card-info">
-                        <div class="card-name">นพ.พรสวัสดิ์ สุวรรณวงค์</div>
-                        <div class="card-pos">รองผู้อำนวยการฝ่ายการแพทย์</div>
-                    </div>
+            <!-- row2 -->
+            <div class="card" id="c-d1">
+                <div class="card-ribbon">รองผู้อำนวยการ</div>
+                <div class="card-photo-wrap">
+                    <div class="card-logo"><img src="image/logo-โรงพยาบาลปัตตานี.png" alt="logo"></div>
+                    <div class="card-photo"><img src="image/department/pornsawat.png" onerror="phErr(this)"></div>
                 </div>
-                <div class="card" id="c-d2">
-                    <div class="card-photo">
-                        <img src="image/จินดารัตน์.jpg" alt="นางจินดารัตน์ แดงเพ็ง" onerror="phErr(this)">
-                    </div>
-                    <div class="card-info">
-                        <div class="card-name">นางจินดารัตน์ แดงเพ็ง</div>
-                        <div class="card-pos">รองผู้อำนวยการฝ่ายบริหาร</div>
-                    </div>
+                <div class="card-info">
+                    <div class="card-name">นพ.พรสวัสดิ์ สุวรรณวงศ์</div>
+                    <div class="card-pos">รองผู้อำนวยการฝ่ายการแพทย์</div>
                 </div>
+                <div class="card-tooltip">ฝ่ายการแพทย์</div>
             </div>
 
-            <!-- ── แถว 2 ขวา: หัวหน้าพยาบาล ── -->
-            <div class="row" id="row4">
-                <div class="card" id="c-d3">
-                    <div class="card-photo">
-                        <img src="image/ศุภาศิริ.jpg" alt="นางศุภาศิริ ภาริกาญจน์" onerror="phErr(this)">
-                    </div>
-                    <div class="card-info">
-                        <div class="card-name">นางศุภาศิริ ภาริกาญจน์</div>
-                        <div class="card-pos">หัวหน้าพยาบาล</div>
-                    </div>
+            <div class="card" id="c-d2">
+                <div class="card-ribbon">รองผู้อำนวยการ</div>
+                <div class="card-photo-wrap">
+                    <div class="card-logo"><img src="image/logo-โรงพยาบาลปัตตานี.png" alt="logo"></div>
+                    <div class="card-photo"><img src="image/department/jindarat.png" onerror="phErr(this)"></div>
                 </div>
+                <div class="card-info">
+                    <div class="card-name">นางจินดารัตน์ แดงเพ็ง</div>
+                    <div class="card-pos">รองผู้อำนวยการฝ่ายบริหาร</div>
+                </div>
+                <div class="card-tooltip">ฝ่ายบริหาร</div>
             </div>
 
-            <!-- ── แถว 3: รองผู้อำนวยการ 5 คน ── -->
-            <div class="row" id="row3">
-                <div class="card" id="c-e1">
-                    <div class="card-photo">
-                        <img src="image/พัชระ.jpg" alt="นพ.พัชระ บรรจงสะเอียด" onerror="phErr(this)">
-                    </div>
-                    <div class="card-info">
-                        <div class="card-name">นพ.พัชระ บรรจงสะเอียด</div>
-                        <div class="card-pos">รองผู้อำนวยการภารกิจดิจิทัลทางการแพทย์และสุขภาพ</div>
-                    </div>
+            <div class="card" id="c-d3">
+                <div class="card-ribbon">หัวหน้าพยาบาล</div>
+                <div class="card-photo-wrap">
+                    <div class="card-logo"><img src="image/logo-โรงพยาบาลปัตตานี.png" alt="logo"></div>
+                    <div class="card-photo"><img src="image/department/sureerat.png" onerror="phErr(this)"></div>
                 </div>
-                <div class="card" id="c-e2">
-                    <div class="card-photo">
-                        <img src="image/อับดุลรอยะ.jpg" alt="นพ.อับดุลรอยะ หะยีสนแลม" onerror="phErr(this)">
-                    </div>
-                    <div class="card-info">
-                        <div class="card-name">นพ.อับดุลรอยะ หะยีสนแลม</div>
-                        <div class="card-pos">รองผู้อำนวยการภารกิจด้านพัฒนาระบบบริการและสนับสนุนบริการสุขภาพ</div>
-                    </div>
+                <div class="card-info">
+                    <div class="card-name">นางศุภาศิริ การิกาญจน์</div>
+                    <div class="card-pos">หัวหน้าพยาบาล</div>
                 </div>
-                <div class="card" id="c-e3">
-                    <div class="card-photo">
-                        <img src="image/พงศ์พันธ์.jpg" alt="นพ.พงศ์พันธ์ พันทวีกดี" onerror="phErr(this)">
-                    </div>
-                    <div class="card-info">
-                        <div class="card-name">นพ.พงศ์พันธ์ พันทวีกดี</div>
-                        <div class="card-pos">รองผู้อำนวยการภารกิจด้านปฐมภูมิ</div>
-                    </div>
-                </div>
-                <div class="card" id="c-e4">
-                    <div class="card-photo">
-                        <img src="image/เสาวลักษณ์.jpg" alt="พญ.เสาวลักษณ์ ศิลาลาย" onerror="phErr(this)">
-                    </div>
-                    <div class="card-info">
-                        <div class="card-name">พญ.เสาวลักษณ์ ศิลาลาย</div>
-                        <div class="card-pos">รองผู้อำนวยการด้านผลิตบุคลากรทางการแพทย์</div>
-                    </div>
-                </div>
-                <div class="card" id="c-e5">
-                    <div class="card-photo">
-                        <img src="image/ชุติพร.jpg" alt="กพญ.ชุติพร เกิดทิพย์" onerror="phErr(this)">
-                    </div>
-                    <div class="card-info">
-                        <div class="card-name">กพญ.ชุติพร เกิดทิพย์</div>
-                        <div class="card-pos">รองผู้อำนวยการภารกิจด้านทันตกรรม</div>
-                    </div>
-                </div>
+                <div class="card-tooltip">Nursing Director</div>
             </div>
 
-        </div><!-- /tree-wrap -->
+            <!-- row3 -->
+            <div class="card" id="c-e1">
+                <div class="card-ribbon">ภารกิจดิจิทัล</div>
+                <div class="card-photo-wrap">
+                    <div class="card-logo"><img src="image/logo-โรงพยาบาลปัตตานี.png" alt="logo"></div>
+                    <div class="card-photo"><img src="image/department/pachara.png" onerror="phErr(this)"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-name">นพ.พัชระ บรรจงละเอียด</div>
+                    <div class="card-pos">รองผู้อำนวยการภารกิจดิจิทัลทางการแพทย์และสุขภาพ</div>
+                </div>
+                <div class="card-tooltip">ดิจิทัลทางการแพทย์</div>
+            </div>
+
+            <div class="card" id="c-e2">
+                <div class="card-ribbon">ภารกิจบริการ</div>
+                <div class="card-photo-wrap">
+                    <div class="card-logo"><img src="image/logo-โรงพยาบาลปัตตานี.png" alt="logo"></div>
+                    <div class="card-photo"><img src="image/department/abdulraya.png" onerror="phErr(this)"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-name">นพ.อับดุลรอยะ หะยีสแลแม</div>
+                    <div class="card-pos">รองผู้อำนวยการภารกิจด้านพัฒนาระบบบริการและสนับสนุนบริการสุขภาพ</div>
+                </div>
+                <div class="card-tooltip">พัฒนาระบบบริการ</div>
+            </div>
+
+            <div class="card" id="c-e3">
+                <div class="card-ribbon">ภารกิจปฐมภูมิ</div>
+                <div class="card-photo-wrap">
+                    <div class="card-logo"><img src="image/logo-โรงพยาบาลปัตตานี.png" alt="logo"></div>
+                    <div class="card-photo"><img src="image/department/pongpang.png" onerror="phErr(this)"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-name">นพ.พงศ์พันธ์ พันทวีศักดิ์</div>
+                    <div class="card-pos">รองผู้อำนวยการภารกิจด้านปฐมภูมิ</div>
+                </div>
+                <div class="card-tooltip">ด้านปฐมภูมิ</div>
+            </div>
+
+            <div class="card" id="c-e4">
+                <div class="card-ribbon">ภารกิจผลิตบุคลากร</div>
+                <div class="card-photo-wrap">
+                    <div class="card-logo"><img src="image/logo-โรงพยาบาลปัตตานี.png" alt="logo"></div>
+                    <div class="card-photo"><img src="image/department/saowalak.png" onerror="phErr(this)"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-name">พญ.เสาวลักษณ์ ศิลาลาย</div>
+                    <div class="card-pos">รองผู้อำนวยการภารกิจด้านผลิตบุคลากรทางการแพทย์</div>
+                </div>
+                <div class="card-tooltip">ผลิตบุคลากรแพทย์</div>
+            </div>
+
+            <div class="card" id="c-e5">
+                <div class="card-ribbon">ภารกิจทันตกรรม</div>
+                <div class="card-photo-wrap">
+                    <div class="card-logo"><img src="image/logo-โรงพยาบาลปัตตานี.png" alt="logo"></div>
+                    <div class="card-photo"><img src="image/department/chutiporn.png" onerror="phErr(this)"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-name">ทพญ.ชุติพร เกิดทิพย์</div>
+                    <div class="card-pos">รองผู้อำนวยการภารกิจด้านทันตกรรม</div>
+                </div>
+                <div class="card-tooltip">ด้านทันตกรรม</div>
+            </div>
+
+        </div>
     </section>
 
     <!-- ═══════════════ FOOTER ═══════════════ -->
     <div id="footer"></div>
 
     <script>
-        /* โหลด footer */
         fetch("css/footer.html")
             .then(r => r.text())
             .then(d => { document.getElementById("footer").innerHTML = d; });
 
-        /* placeholder เมื่อโหลดรูปไม่ได้ */
         function phErr(img) {
-            img.outerHTML = `<div class="card-photo-ph">
-            <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+            const ph = document.createElement('div');
+            ph.className = 'card-photo-ph';
+            ph.innerHTML = `<svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
                 <ellipse cx="50" cy="38" rx="22" ry="24"/>
                 <path d="M10 110 Q10 75 50 75 Q90 75 90 110Z"/>
-            </svg>
-        </div>`;
+            </svg>`;
+            img.closest('.card-photo').replaceWith(ph);
         }
 
-        /* ── ดึง position ของการ์ด relative กับ wrap ── */
-        function pos(id, wrapRect) {
-            const r = document.getElementById(id).getBoundingClientRect();
-            return {
-                cx: r.left - wrapRect.left + r.width / 2,
-                topY: r.top - wrapRect.top,
-                botY: r.bottom - wrapRect.top
-            };
-        }
-
-        /* ── วาดเส้น ── */
+        /* ─── Draw connector lines ─── */
         function line(svg, x1, y1, x2, y2) {
             const el = document.createElementNS("http://www.w3.org/2000/svg", "line");
             el.setAttribute("x1", x1); el.setAttribute("y1", y1);
             el.setAttribute("x2", x2); el.setAttribute("y2", y2);
-            el.setAttribute("stroke", "#2d8a5e");
-            el.setAttribute("stroke-width", "1.8");
+            el.setAttribute("stroke", "#1a2fa0");
+            el.setAttribute("stroke-width", "2.5");
             el.setAttribute("stroke-linecap", "round");
             svg.appendChild(el);
         }
 
+        const CARD_W = 200;
+        const GAP = 120;
+        const ROW_GAP = 100;
+
+        function layout() {
+            const wrap = document.getElementById("treeWrap");
+            const W = wrap.offsetWidth;
+            const cx = W / 2;
+
+            const row3W = 5 * CARD_W + 4 * GAP;
+            const row3Left = cx - row3W / 2;
+
+            const cardH = document.getElementById("c-dir").offsetHeight;
+
+            const row1Top = 0;
+            const row2Top = row1Top + cardH + ROW_GAP;
+            const row3Top = row2Top + cardH + ROW_GAP;
+
+            wrap.style.height = (row3Top + cardH + 40) + "px";
+
+            setPos("c-dir", cx - CARD_W / 2, row1Top);
+
+            setPos("c-d1", row3Left + 160, row2Top);
+            setPos("c-d2", row3Left + 160 + (CARD_W + GAP), row2Top);
+            setPos("c-d3", row3Left + 2 * (CARD_W + GAP) + 230, row2Top);
+
+            ["c-e1", "c-e2", "c-e3", "c-e4", "c-e5"].forEach((id, i) =>
+                setPos(id, row3Left + i * (CARD_W + GAP), row3Top));
+        }
+
+        function setPos(id, left, top) {
+            const el = document.getElementById(id);
+            el.style.left = left + "px";
+            el.style.top = top + "px";
+        }
+
+        function pos(id) {
+            const el = document.getElementById(id);
+            const l = parseFloat(el.style.left);
+            const t = parseFloat(el.style.top);
+            return { cx: l + CARD_W / 2, topY: t, botY: t + el.offsetHeight };
+        }
+
         function drawLines() {
+            layout();
+
             const wrap = document.getElementById("treeWrap");
             const svg = document.getElementById("line-canvas");
             svg.innerHTML = "";
             svg.setAttribute("width", wrap.offsetWidth);
             svg.setAttribute("height", wrap.offsetHeight);
 
-            const wr = wrap.getBoundingClientRect();
+            const dir = pos("c-dir");
+            const d1 = pos("c-d1");
+            const d2 = pos("c-d2");
+            const d3 = pos("c-d3");
+            const eAll = ["c-e1", "c-e2", "c-e3", "c-e4", "c-e5"].map(pos);
+            const e1 = eAll[0];
+            const e5 = eAll[4];
 
-            const dir = pos("c-dir", wr);
-            const d1 = pos("c-d1", wr);
-            const d2 = pos("c-d2", wr);
-            const d3 = pos("c-d3", wr);
-            const e1 = pos("c-e1", wr);
-            const e2 = pos("c-e2", wr);
-            const e3 = pos("c-e3", wr);
-            const e4 = pos("c-e4", wr);
-            const e5 = pos("c-e5", wr);
+            const mid12 = (dir.botY + d1.topY) / 2;
+            const mid23 = (d1.botY + e1.topY) / 2;
 
-            /* ── กำหนดจุดแนวนอน (spine) แต่ละระดับ ──
-               mid12 = จุดกึ่งกลางระหว่าง bottom ของ dir กับ top ของ row2
-               mid23 = จุดกึ่งกลางระหว่าง bottom ของ row2 กับ top ของ row3        */
-            /* จุด spine แต่ละระดับ */
-            const mid12 = (dir.botY + d1.topY) / 2;   /* ระหว่าง ผอ. กับ row2 */
-            const mid23 = (d1.botY + e1.topY) / 2;   /* ระหว่าง row2 กับ row3 */
-
-            /* ══ ผอ. → row3 (เส้นแกนกลางตรงลงมา) ══ */
-            line(svg, dir.cx, dir.botY, dir.cx, mid23);        /* ↓ ผอ. ลงตรงถึง spine23 */
-
-            /* ══ spine23 → แตกไปหาทุกคน row3 ══ */
-            line(svg, e1.cx, mid23, e5.cx, mid23);        /* ─ spine L3 */
-            line(svg, e1.cx, mid23, e1.cx, e1.topY);      /* ↑ e1 */
-            line(svg, e2.cx, mid23, e2.cx, e2.topY);      /* ↑ e2 */
-            line(svg, e3.cx, mid23, e3.cx, e3.topY);      /* ↑ e3 */
-            line(svg, e4.cx, mid23, e4.cx, e4.topY);      /* ↑ e4 */
-            line(svg, e5.cx, mid23, e5.cx, e5.topY);      /* ↑ e5 */
-
-            /* ══ ผอ. → row2 ซ้าย (d1, d2) ══ */
-            line(svg, dir.cx, mid12, d1.cx, mid12);        /* ─ spine ซ้าย */
-            line(svg, d1.cx, mid12, d1.cx, d1.topY);      /* ↑ d1 */
-            line(svg, d2.cx, mid12, d2.cx, d2.topY);      /* ↑ d2 */
-
-            /* ══ ผอ. → row2 ขวา (d3) ══ */
-            line(svg, dir.cx, mid12, d3.cx, mid12);        /* ─ spine ขวา */
-            line(svg, d3.cx, mid12, d3.cx, d3.topY);      /* ↑ d3 */
+            /* horizontal bus row1→row2 */
+            line(svg, d1.cx, mid12, d3.cx, mid12);
+            /* drops to row2 cards */
+            line(svg, d1.cx, mid12, d1.cx, d1.topY);
+            line(svg, d2.cx, mid12, d2.cx, d2.topY);
+            line(svg, d3.cx, mid12, d3.cx, d3.topY);
+            /* vertical from director down */
+            line(svg, dir.cx, dir.botY, dir.cx, mid23);
+            /* horizontal bus row2→row3 */
+            line(svg, e1.cx, mid23, e5.cx, mid23);
+            /* drops to row3 cards */
+            eAll.forEach(e => line(svg, e.cx, mid23, e.cx, e.topY));
         }
 
-        /* วาดครั้งแรก + วาดซ้ำเมื่อ resize / ฟอนต์โหลดเสร็จ */
-        window.addEventListener("load", drawLines);
-        window.addEventListener("resize", drawLines);
+        /* ─── Intersection Observer: stagger entrance ─── */
+        function revealCards() {
+            const cards = document.querySelectorAll('.card');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.05 });
+            cards.forEach(c => observer.observe(c));
+        }
+
+        const ro = new ResizeObserver(() => drawLines());
+        ro.observe(document.getElementById("treeWrap"));
+
+        window.addEventListener("load", () => {
+            drawLines();
+            revealCards();
+        });
         document.fonts.ready.then(drawLines);
     </script>
 
