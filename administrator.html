@@ -4,61 +4,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ข่าวประกาศ</title>
+    <title>โครงสร้างภารกิจอำนวยการ</title>
     <link rel="icon" href="image/logo-โรงพยาบาลปัตตานี.png">
     <link rel="stylesheet" href="css/menu.css">
     <link rel="stylesheet" href="css/footer.css">
     <link rel="stylesheet" href="css/benner.css">
+    <link rel="stylesheet" href="css/administrator.css">
     <link
         href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Noto+Serif+Thai:wght@400;600;700&display=swap"
         rel="stylesheet">
-    <style>
-        :root {
-            --navy: #0a1628;
-            --navy-mid: #102240;
-            --navy-light: #1a3460;
-            --gold: #c9a84c;
-            --gold-light: #e8c97a;
-            --gold-pale: #f5e9c8;
-            --cream: #faf8f3;
-            --white: #ffffff;
-            --gray-100: #f4f4f7;
-            --gray-200: #e8e8ed;
-            --gray-400: #9898a8;
-            --gray-600: #585868;
-            --text-dark: #12121e;
-            --blue-soft: #e8f0fb;
-            --blue-mid: #2563b0;
-            --green-soft: #e6f4ee;
-            --green-mid: #1a7a4a;
-            --amber-soft: #fef3e2;
-            --amber-mid: #b45309;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Sarabun', sans-serif;
-            background: var(--cream);
-            color: var(--text-dark);
-            overflow-x: hidden;
-        }
-    </style>
+  
 </head>
 
 <body>
 
-    <!-- HEADER -->
+    <!-- ═══════════════ HEADER ═══════════════ -->
     <header class="site-header">
         <div class="header-inner">
             <a href="homepage.html" style="text-decoration:none;color:inherit;display:contents;">
@@ -72,19 +32,14 @@
             </a>
             <nav class="main-nav">
                 <a href="homepage.html">หน้าแรก</a>
-
                 <div class="nav-dropdown">
-                    <a href="#"  class="active">
-                        โครงสร้าง
-                        <span class="chevron"></span>
-                    </a>
+                    <a href="#" class="active">โครงสร้าง<span class="chevron"></span></a>
                     <div class="dropdown-menu">
                         <a href="hospital.html">โครงสร้างโรงพยาบาลปัตตานี</a>
                         <a href="administrator.html" class="active">โครงสร้างภารกิจอำนวยการ</a>
                         <a href="hrm.html">โครงสร้างกลุ่มงานทรัพยากรบุคคล</a>
                     </div>
                 </div>
-
                 <a href="personnel.html">ข้อมูลบุคลากร</a>
                 <a href="form.html">เอกสารต่าง ๆ</a>
                 <a href="news.html">ข่าวประกาศ</a>
@@ -98,6 +53,8 @@
             </div>
         </div>
     </header>
+
+    <!-- ═══════════════ HERO / BANNER ═══════════════ -->
     <section class="hero">
         <div class="hero-bg"><img src="image/benner.JPG" alt=""></div>
         <div class="hero-overlay"></div>
@@ -108,15 +65,14 @@
                 <div class="logo-circle"><img src="image/logo-โรงพยาบาลปัตตานี.png" alt="โรงพยาบาลปัตตานี"></div>
             </div>
             <div class="eyebrow">
-                <span class="ew-line"></span>
-                <span class="ew-dot"></span>
+                <span class="ew-line"></span><span class="ew-dot"></span>
                 <span class="ew-dot" style="opacity:.35;width:3px;height:3px"></span>
                 <span class="ew-dot" style="opacity:.35;width:3px;height:3px"></span>
                 <span class="ew-line r"></span>
             </div>
             <div class="hero-text">
                 <div class="hero-title-th">โครงสร้างภารกิจอำนวยการ</div>
-                <div class="hero-title-en">ANNOUNCEMENT NEWS</div>
+                <div class="hero-title-en">Administrator Structure</div>
             </div>
             <div class="foot-orn">
                 <span class="fdash" style="width:36px"></span><span class="fdiamond"></span>
@@ -128,12 +84,194 @@
         </div>
     </section>
 
+    <!-- ═══════════════ ORG CHART ═══════════════ -->
+    <section class="org-section">
+        <div class="tree-wrap" id="treeWrap">
+
+            <svg id="line-canvas" xmlns="http://www.w3.org/2000/svg"></svg>
+
+            <!-- row 1: รองผอ.ฝ่ายบริหาร -->
+            <div class="card" id="c-dir">
+                <div class="card-photo-wrap">
+                    <div class="card-logo"><img src="image/logo-โรงพยาบาลปัตตานี.png" alt="logo"></div>
+                    <div class="card-photo"><img src="image/department/jindarat.png" onerror="phErr(this)"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-name">นางจินดารัตน์ แดงเพ็ง</div>
+                    <div class="card-pos">รองผู้อำนวยการฝ่ายบริหาร</div>
+                </div>
+            </div>
+
+            <!-- row 2: หัวหน้ากลุ่มงาน 6 คน -->
+            <div class="card" id="c-r1">
+                <div class="card-photo-wrap">
+                    <div class="card-logo"><img src="image/logo-โรงพยาบาลปัตตานี.png" alt="logo"></div>
+                    <div class="card-photo"><img src="image/head/k da.png" onerror="phErr(this)"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-name">นางสาวยูวีดา ครู</div>
+                    <div class="card-pos">หัวหน้ากลุ่มงานทรัพยากรบุคคล</div>
+                </div>
+            </div>
+
+            <div class="card" id="c-r2">
+                <div class="card-photo-wrap">
+                    <div class="card-logo"><img src="image/logo-โรงพยาบาลปัตตานี.png" alt="logo"></div>
+                    <div class="card-photo"><img src="image/head/p kran.png" onerror="phErr(this)"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-name">นางสาวประภาพร คำสา</div>
+                    <div class="card-pos">หัวหน้ากลุ่มงานพัสดุ</div>
+                </div>
+            </div>
+
+            <div class="card" id="c-r3">
+                <div class="card-photo-wrap">
+                    <div class="card-logo"><img src="image/logo-โรงพยาบาลปัตตานี.png" alt="logo"></div>
+                    <div class="card-photo"><img src="image/head/k yah.png" onerror="phErr(this)"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-name">นางสาวรอกีเย๊าะ เจ๊ะแว</div>
+                    <div class="card-pos">รักษาการหัวหน้ากลุ่มงานการเงิน</div>
+                </div>
+            </div>
+
+            <div class="card" id="c-r4">
+                <div class="card-photo-wrap">
+                    <div class="card-logo"><img src="image/logo-โรงพยาบาลปัตตานี.png" alt="logo"></div>
+                    <div class="card-photo"><img src="image/head/p chet.png" onerror="phErr(this)"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-name">นายอภิเชษฐ์ โกตัน</div>
+                    <div class="card-pos">หัวหน้ากลุ่มงานบัญชี</div>
+                </div>
+            </div>
+
+            <div class="card" id="c-r5">
+                <div class="card-photo-wrap">
+                    <div class="card-logo"><img src="image/logo-โรงพยาบาลปัตตานี.png" alt="logo"></div>
+                    <div class="card-photo"><img src="image/head/b waeji.png" onerror="phErr(this)"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-name">นายแวจิ เจ๊ะเย๊าะ</div>
+                    <div class="card-pos">หัวหน้ากลุ่มงานบริหารทั่วไป</div>
+                </div>
+            </div>
+
+            <div class="card" id="c-r6">
+                <div class="card-photo-wrap">
+                    <div class="card-logo"><img src="image/logo-โรงพยาบาลปัตตานี.png" alt="logo"></div>
+                    <div class="card-photo"><img src="image/head/p kuat.png" onerror="phErr(this)"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-name">นายวาษิก แดงวิไล</div>
+                    <div class="card-pos">หัวหน้ากลุ่มงานโครงสร้างพื้นฐาน</div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ═══════════════ FOOTER ═══════════════ -->
     <div id="footer"></div>
+
     <script>
-        fetch("css/footer.html")
+        fetch("footer.html")
             .then(r => r.text())
             .then(d => { document.getElementById("footer").innerHTML = d; });
+
+        function phErr(img) {
+            const ph = document.createElement('div');
+            ph.className = 'card-photo-ph';
+            ph.innerHTML = `<svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="50" cy="38" rx="22" ry="24"/>
+                <path d="M10 110 Q10 75 50 75 Q90 75 90 110Z"/>
+            </svg>`;
+            img.closest('.card-photo').replaceWith(ph);
+        }
+
+        /* ─── Draw connector lines ─── */
+        function line(svg, x1, y1, x2, y2) {
+            const el = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            el.setAttribute("x1", x1); el.setAttribute("y1", y1);
+            el.setAttribute("x2", x2); el.setAttribute("y2", y2);
+            el.setAttribute("stroke", "#1a2fa0");
+            el.setAttribute("stroke-width", "2.5");
+            el.setAttribute("stroke-linecap", "round");
+            svg.appendChild(el);
+        }
+
+        const CARD_W = 200;
+        const GAP = 40;
+        const ROW_GAP = 100;
+
+        function layout() {
+            const wrap = document.getElementById("treeWrap");
+            const W = wrap.offsetWidth;
+            const cx = W / 2;
+
+            const row23W = 3 * CARD_W + 2 * GAP;
+            const rowLeft = cx - row23W / 2;
+
+            const cardH = document.getElementById("c-dir").offsetHeight;
+            const row1Top = 0;
+            const row2Top = row1Top + cardH + ROW_GAP;
+            const row3Top = row2Top + cardH + ROW_GAP;
+
+            wrap.style.height = (row3Top + cardH + 40) + "px";
+
+            /* row 1 */
+            setPos("c-dir", cx - CARD_W / 2, row1Top);
+
+            /* row 2 */
+            ["c-r1", "c-r2", "c-r3"].forEach((id, i) =>
+                setPos(id, rowLeft + i * (CARD_W + GAP), row2Top));
+
+            /* row 3 */
+            ["c-r4", "c-r5", "c-r6"].forEach((id, i) =>
+                setPos(id, rowLeft + i * (CARD_W + GAP), row3Top));
+        }
+
+        function setPos(id, left, top) {
+            const el = document.getElementById(id);
+            el.style.left = left + "px";
+            el.style.top = top + "px";
+        }
+
+        function pos(id) {
+            const el = document.getElementById(id);
+            const l = parseFloat(el.style.left);
+            const t = parseFloat(el.style.top);
+            return { cx: l + CARD_W / 2, topY: t, botY: t + el.offsetHeight };
+        }
+
+        function drawLines() {
+            layout();
+        }
+
+        /* ─── Intersection Observer: stagger entrance ─── */
+        function revealCards() {
+            const cards = document.querySelectorAll('.card');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.05 });
+            cards.forEach(c => observer.observe(c));
+        }
+
+        const ro = new ResizeObserver(() => drawLines());
+        ro.observe(document.getElementById("treeWrap"));
+
+        window.addEventListener("load", () => {
+            drawLines();
+            revealCards();
+        });
+        document.fonts.ready.then(drawLines);
     </script>
+
 </body>
 
 </html>

@@ -26,21 +26,18 @@
             --g400: #9494a6;
             --g600: #505065;
             --text: #0f1020;
-            --shadow-card: 0 10px 40px rgba(7, 21, 37, .22), 0 3px 12px rgba(7, 21, 37, .14);
-            --shadow-hover: 0 28px 64px rgba(7, 21, 37, .38), 0 8px 28px rgba(21, 101, 192, .22);
+            --ph-blue: #1a2fa0;
+            --ph-blue-dark: #111f7a;
+            --ph-blue-glow: rgba(26, 47, 160, 0.35);
         }
 
-        *,
-        *::before,
-        *::after {
+        *, *::before, *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        html {
-            scroll-behavior: smooth;
-        }
+        html { scroll-behavior: smooth; }
 
         body {
             font-family: 'Sarabun', sans-serif;
@@ -53,7 +50,7 @@
         .main-wrap {
             max-width: 1320px;
             margin: 0 auto;
-            padding: 44px 32px 60px;
+            padding: 44px 32px 80px;
         }
 
         /* ── Filter bar ── */
@@ -131,9 +128,7 @@
         }
 
         /* ── Org tree ── */
-        .tier {
-            margin-bottom: 0;
-        }
+        .tier { margin-bottom: 0; }
 
         .tier-connector {
             display: flex;
@@ -148,12 +143,14 @@
             background: linear-gradient(to bottom, rgba(200, 168, 75, .5), rgba(200, 168, 75, .15));
         }
 
+        /* ── tier-row: ให้การ์ดทุกใบในแถวเดียวกันสูงเท่ากัน ── */
         .tier-row {
             display: flex;
             justify-content: center;
-            gap: 28px;
-            flex-wrap: nowrap;
+            gap: 24px;
+            flex-wrap: wrap;
             padding: 4px 0;
+            align-items: stretch; /* <-- สำคัญ: ให้ทุกการ์ดสูงเท่ากัน */
         }
 
         .tier-label {
@@ -181,40 +178,212 @@
         /* ── Card wrapper ── */
         .card-wrapper {
             cursor: pointer;
-            transition: transform .3s cubic-bezier(.34, 1.56, .64, 1);
             flex-shrink: 0;
             position: relative;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(26, 47, 160, 0.13);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch; /* ← ให้ card-info ยืดเต็มความกว้าง */
+            border: 2px solid #c5cbee;
+            width: 180px;         /* กว้างเท่ากันทุกใบ */
+            z-index: 2;
+
+            opacity: 0;
+            transform: translateY(30px) scale(0.96);
+            transition:
+                opacity 0.5s ease,
+                transform 0.5s ease,
+                box-shadow 0.3s ease,
+                border-color 0.3s ease;
+        }
+
+        .card-wrapper.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
         }
 
         .card-wrapper:hover {
-            transform: translateY(-10px) scale(1.02);
-        }
-
-        .card-wrapper::after {
-            content: '👆 คลิกเพื่อดูข้อมูล';
-            position: absolute;
-            bottom: -34px;
-            left: 50%;
-            transform: translateX(-50%) scale(.88);
-            background: var(--navy);
-            color: var(--gold-light);
-            font-family: 'Sarabun', sans-serif;
-            font-size: .68rem;
-            font-weight: 600;
-            padding: 5px 14px;
-            border-radius: 20px;
-            white-space: nowrap;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity .2s, transform .2s;
-            box-shadow: 0 4px 14px rgba(7, 21, 37, .25);
+            transform: translateY(-8px) scale(1.03);
+            box-shadow:
+                0 16px 40px var(--ph-blue-glow),
+                0 0 0 1px var(--ph-blue);
+            border-color: var(--ph-blue);
             z-index: 10;
         }
 
-        .card-wrapper:hover::after {
-            opacity: 1;
-            transform: translateX(-50%) scale(1);
+        /* shimmer overlay on hover */
+        .card-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.18) 40%,
+                rgba(255, 255, 255, 0.45) 50%,
+                rgba(255, 255, 255, 0.18) 60%,
+                transparent 100%);
+            background-size: 250% 100%;
+            background-position: -100% 0;
+            z-index: 5;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
         }
+
+        .card-wrapper:hover::before {
+            opacity: 1;
+            animation: shimmer 0.75s ease forwards;
+        }
+
+        @keyframes shimmer {
+            0%   { background-position: -100% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        /* ── Photo wrap ── */
+        .card-photo-wrap {
+            position: relative;
+            width: 100%;
+            flex-shrink: 0;
+        }
+
+        .card-photo {
+            width: 100%;
+            height: 220px;
+            overflow: hidden;
+            background: #e8ecf8;
+        }
+
+        .card-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top center;
+            display: block;
+            transition: transform 0.5s ease;
+            filter: saturate(0.9);
+        }
+
+        .card-wrapper:hover .card-photo img {
+            transform: scale(1.08);
+            filter: saturate(1.15) brightness(1.04);
+        }
+
+        /* ── Logo badge ── */
+        .card-logo {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card-wrapper:hover .card-logo {
+            transform: scale(1.15) rotate(-5deg);
+            box-shadow: 0 4px 14px rgba(201, 168, 76, 0.5);
+        }
+
+        .card-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* placeholder เมื่อรูปโหลดไม่ได้ */
+        .card-photo-ph {
+            width: 100%;
+            height: 220px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            background: linear-gradient(180deg, #dce2f7 0%, #b0bcee 100%);
+        }
+
+        .card-photo-ph svg {
+            width: 65%;
+            height: 80%;
+            opacity: 0.30;
+            fill: var(--ph-blue);
+        }
+
+        /* ── Info bar ──
+           flex: 1 ทำให้ card-info ยืดเต็มพื้นที่ที่เหลือ
+           ทำให้ทุกการ์ดในแถวเดียวกันมีสีฟ้าสูงเท่ากันเมื่อใช้ align-items: stretch บน tier-row
+        ── */
+        .card-info {
+            padding: 10px 10px 12px;
+            text-align: center;
+            width: 100%;
+            background: var(--ph-blue);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            flex: 1;             /* ← ยืดเต็มพื้นที่ที่เหลือ */
+            transition: background 0.3s ease;
+        }
+
+        .card-wrapper:hover .card-info {
+            background: var(--ph-blue-dark);
+        }
+
+        .card-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.4;
+            margin-bottom: 3px;
+            transition: color 0.3s;
+        }
+
+        .card-wrapper:hover .card-name {
+            color: var(--gold-light);
+        }
+
+        .card-pos {
+            font-size: 11px;
+            font-weight: 500;
+            color: #c5d0f5;
+            line-height: 1.4;
+        }
+
+        /* ── Stagger delays ── */
+        #sec-tier1 .card-wrapper:nth-child(1) { transition-delay: 0.05s; }
+        #sec-tier2 .card-wrapper:nth-child(1) { transition-delay: 0.12s; }
+        #sec-tier2 .card-wrapper:nth-child(2) { transition-delay: 0.19s; }
+        #sec-tier2 .card-wrapper:nth-child(3) { transition-delay: 0.26s; }
+        #sec-tier2 .card-wrapper:nth-child(4) { transition-delay: 0.33s; }
+        #sec-tier3 .card-wrapper:nth-child(1) { transition-delay: 0.40s; }
+        #sec-tier3 .card-wrapper:nth-child(2) { transition-delay: 0.47s; }
+        #sec-tier3 .card-wrapper:nth-child(3) { transition-delay: 0.54s; }
+
+        /* ── Animations ── */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp .6s ease forwards;
+        }
+
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .d1 { animation-delay: .05s; }
+        .d2 { animation-delay: .12s; }
+        .d3 { animation-delay: .20s; }
+        .d4 { animation-delay: .28s; }
 
         /* ── Modal ── */
         .modal-overlay {
@@ -369,9 +538,7 @@
             color: #fff;
         }
 
-        .modal-body {
-            padding: 28px;
-        }
+        .modal-body { padding: 28px; }
 
         .sec-label {
             font-size: .68rem;
@@ -453,70 +620,17 @@
             color: var(--navy);
         }
 
-        /* ── Animations ── */
-        .fade-up {
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeUp .6s ease forwards;
-        }
-
-        @keyframes fadeUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .d1 {
-            animation-delay: .05s;
-        }
-
-        .d2 {
-            animation-delay: .12s;
-        }
-
-        .d3 {
-            animation-delay: .20s;
-        }
-
-        .d4 {
-            animation-delay: .28s;
-        }
-
         /* ── Responsive ── */
         @media (max-width: 960px) {
-            .header-status {
-                display: none;
-            }
-
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
+            .header-status { display: none; }
+            .info-grid { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 680px) {
-            .tier-row {
-                flex-wrap: wrap;
-                gap: 16px;
-            }
-
-            .filter-bar {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .search-wrap {
-                margin-left: 0;
-                width: 100%;
-            }
-
-            .search-input {
-                width: 100%;
-            }
-
-            .card-wrapper::after {
-                display: none;
-            }
+            .tier-row { gap: 16px; }
+            .filter-bar { flex-direction: column; align-items: flex-start; }
+            .search-wrap { margin-left: 0; width: 100%; }
+            .search-input { width: 100%; }
         }
     </style>
 </head>
@@ -536,7 +650,6 @@
             </a>
             <nav class="main-nav">
                 <a href="homepage.html">หน้าแรก</a>
-
                 <div class="nav-dropdown">
                     <a href="#" class="active">
                         โครงสร้าง
@@ -548,7 +661,6 @@
                         <a href="hrm.html" class="active">โครงสร้างกลุ่มงานทรัพยากรบุคคล</a>
                     </div>
                 </div>
-
                 <a href="personnel.html">ข้อมูลบุคลากร</a>
                 <a href="form.html">เอกสารต่าง ๆ</a>
                 <a href="news.html">ข่าวประกาศ</a>
@@ -596,22 +708,6 @@
     </section>
 
     <div class="main-wrap">
-
-        <!-- Filter bar -->
-        <div class="filter-bar fade-up d1">
-            <span class="filter-label">หมวดหมู่ :</span>
-            <div class="filter-btns">
-                <button class="filter-btn active" onclick="filterGroup(this,'all')">ทั้งหมด</button>
-                <button class="filter-btn" onclick="filterGroup(this,'tier1')">หัวหน้ากลุ่มงาน</button>
-                <button class="filter-btn" onclick="filterGroup(this,'tier2')">พนักงานราขการ</button>
-                <button class="filter-btn" onclick="filterGroup(this,'tier3')">พนักงานกระทรวงสาธารณสุข</button>
-            </div>
-            <div class="search-wrap">
-                <input class="search-input" type="text" placeholder="ค้นหาชื่อบุคลากร..."
-                    oninput="searchStaff(this.value)">
-            </div>
-        </div>
-
         <!-- Tier 1: หัวหน้ากลุ่มงาน -->
         <div id="sec-tier1" class="tier fade-up d2">
             <div class="tier-label">
@@ -621,8 +717,16 @@
             </div>
             <div class="tier-row">
                 <div class="card-wrapper" onclick="openModal('chief1')">
-                    <img src="image/k da.jpg" alt="นางสาวยูวีดา ครู" style="width:290px;height:450px;object-fit:cover;">
-                    <div class="id-card small-card" data-group="tier1" data-name="นางสาวยูวีดา ครู"></div>
+                    <div class="card-photo-wrap">
+                        <div class="card-logo"><img src="image/logo-โรงพยาบาลปัตตานี.png" alt="logo"></div>
+                        <div class="card-photo">
+                            <img src="image/hrm/k da.jpg" alt="นางสาวยูวีดา ครู" onerror="phErr(this)">
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <div class="card-name" data-group="tier1" data-name="นางสาวยูวีดา ครู">นางสาวยูวีดา ครู</div>
+                        <div class="card-pos">นักทรัพยากรบุคคลชำนาญการ</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -640,23 +744,55 @@
             </div>
             <div class="tier-row">
                 <div class="card-wrapper" onclick="openModal('staff1')">
-                    <img src="image/p noy.jpg" alt="นางสาวฐิติพรรณ ศรีตระพันธ์"
-                        style="width:290px;height:450px;object-fit:cover;">
-                    <div class="id-card small-card" data-group="tier2" data-name="นางสาวฐิติพรรณ ศรีตระพันธ์"></div>
+                    <div class="card-photo-wrap">
+                        <div class="card-logo"><img src="image/logo-โรงพยาบาลปัตตานี.png" alt="logo"></div>
+                        <div class="card-photo">
+                            <img src="image/hrm/p noy.jpg" alt="นางสาวฐิติพรรณ ศรีตระพันธ์" onerror="phErr(this)">
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <div class="card-name" data-group="tier2" data-name="นางสาวฐิติพรรณ ศรีตระพันธ์">นางสาวฐิติพรรณ ศรีตระพันธ์</div>
+                        <div class="card-pos">นักทรัพยากรบุคคล</div>
+                    </div>
                 </div>
+
                 <div class="card-wrapper" onclick="openModal('staff2')">
-                    <img src="image/p to.jpg" alt="นายจักรี ทองช่วย" style="width:290px;height:450px;object-fit:cover;">
-                    <div class="id-card small-card" data-group="tier2" data-name="นายจักรี ทองช่วย"></div>
+                    <div class="card-photo-wrap">
+                        <div class="card-logo"><img src="image/logo-โรงพยาบาลปัตตานี.png" alt="logo"></div>
+                        <div class="card-photo">
+                            <img src="image/hrm/p to.jpg" alt="นายจักรี ทองช่วย" onerror="phErr(this)">
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <div class="card-name" data-group="tier2" data-name="นายจักรี ทองช่วย">นายจักรี ทองช่วย</div>
+                        <div class="card-pos">นักวิเคราะห์นโยบายและแผน</div>
+                    </div>
                 </div>
+
                 <div class="card-wrapper" onclick="openModal('staff3')">
-                    <img src="image/k hamee.jpg" alt="นางสาวฮามีละห์ เจ๊ะเละ"
-                        style="width:290px;height:450px;object-fit:cover;">
-                    <div class="id-card small-card" data-group="tier2" data-name="นางสาวฮามีละห์ เจ๊ะเละ"></div>
+                    <div class="card-photo-wrap">
+                        <div class="card-logo"><img src="image/logo-โรงพยาบาลปัตตานี.png" alt="logo"></div>
+                        <div class="card-photo">
+                            <img src="image/hrm/k hamee.jpg" alt="นางสาวฮามีละห์ เจ๊ะเละ" onerror="phErr(this)">
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <div class="card-name" data-group="tier2" data-name="นางสาวฮามีละห์ เจ๊ะเละ">นางสาวฮามีละห์ เจ๊ะเละ</div>
+                        <div class="card-pos">นักทรัพยากรบุคคล</div>
+                    </div>
                 </div>
+
                 <div class="card-wrapper" onclick="openModal('staff5')">
-                    <img src="image/p chiap.jpg" alt="นางวัชรีพร หนูคูขุด"
-                        style="width:290px;height:450px;object-fit:cover;">
-                    <div class="id-card small-card" data-group="tier2" data-name="นางวัชรีพร หนูคูขุด"></div>
+                    <div class="card-photo-wrap">
+                        <div class="card-logo"><img src="image/logo-โรงพยาบาลปัตตานี.png" alt="logo"></div>
+                        <div class="card-photo">
+                            <img src="image/hrm/p chiap.jpg" alt="นางวัชรีพร หนูคูขุด" onerror="phErr(this)">
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <div class="card-name" data-group="tier2" data-name="นางวัชรีพร หนูคูขุด">นางวัชรีพร หนูคูขุด</div>
+                        <div class="card-pos">เจ้าพนักงานธุรการ</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -674,19 +810,42 @@
             </div>
             <div class="tier-row">
                 <div class="card-wrapper" onclick="openModal('staff4')">
-                    <img src="image/p bu.jpg" alt="นางสาวพัชรักรณ์ ไชยศรีจันทร์"
-                        style="width:290px;height:450px;object-fit:cover;">
-                    <div class="id-card small-card" data-group="tier3" data-name="นางสาวพัชรักรณ์ ไชยศรีจันทร์"></div>
+                    <div class="card-photo-wrap">
+                        <div class="card-logo"><img src="image/logo-โรงพยาบาลปัตตานี.png" alt="logo"></div>
+                        <div class="card-photo">
+                            <img src="image/hrm/p bu.jpg" alt="นางสาวพัชรีภรณ์ ไชยศรีจันทร์" onerror="phErr(this)">
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <div class="card-name" data-group="tier3" data-name="นางสาวพัชรีภรณ์ ไชยศรีจันทร์">นางสาวพัชรีภรณ์ ไชยศรีจันทร์</div>
+                        <div class="card-pos">นักทรัพยากรบุคคล</div>
+                    </div>
                 </div>
+
                 <div class="card-wrapper" onclick="openModal('staff6')">
-                    <img src="image/feen.jpg" alt="นายนิติธร บือสาแม"
-                        style="width:290px;height:450px;object-fit:cover;">
-                    <div class="id-card small-card" data-group="tier3" data-name="นายนิติธร บือสาแม"></div>
+                    <div class="card-photo-wrap">
+                        <div class="card-logo"><img src="image/logo-โรงพยาบาลปัตตานี.png" alt="logo"></div>
+                        <div class="card-photo">
+                            <img src="image/hrm/feen.jpg" alt="นายนิอัลฟีน บือสาแม" onerror="phErr(this)">
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <div class="card-name" data-group="tier3" data-name="นายนิอัลฟีน บือสาแม">นายนิอัลฟีน บือสาแม</div>
+                        <div class="card-pos">เจ้าพนักงานธุรการ</div>
+                    </div>
                 </div>
+
                 <div class="card-wrapper" onclick="openModal('staff7')">
-                    <img src="image/nuree.jpg" alt="นางสาวนูรนูรี การี"
-                        style="width:290px;height:450px;object-fit:cover;">
-                    <div class="id-card small-card" data-group="tier3" data-name="นางสาวนูรนูรี การี"></div>
+                    <div class="card-photo-wrap">
+                        <div class="card-logo"><img src="image/logo-โรงพยาบาลปัตตานี.png" alt="logo"></div>
+                        <div class="card-photo">
+                            <img src="image/hrm/nuree.jpg" alt="นางสาวนูรนูรี การี" onerror="phErr(this)">
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <div class="card-name" data-group="tier3" data-name="นางสาวนูรนูรี การี">นางสาวนูรนูรี การี</div>
+                        <div class="card-pos">เจ้าพนักงานธุรการ</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -721,11 +880,21 @@
     <div id="footer"></div>
 
     <script>
-        fetch("css/footer.html").then(r => r.text()).then(d => { document.getElementById("footer").innerHTML = d; });
+        fetch("footer.html").then(r => r.text()).then(d => { document.getElementById("footer").innerHTML = d; });
+
+        function phErr(img) {
+            const ph = document.createElement('div');
+            ph.className = 'card-photo-ph';
+            ph.innerHTML = `<svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="50" cy="38" rx="22" ry="24"/>
+                <path d="M10 110 Q10 75 50 75 Q90 75 90 110Z"/>
+            </svg>`;
+            img.closest('.card-photo').replaceWith(ph);
+        }
 
         const staffData = {
             chief1: {
-                photo: "image/k da.jpg", avatar: '👩‍⚕️',
+                photo: "image/hrm/k da.jpg", avatar: '👩‍⚕️',
                 name: 'นางสาวยูวีดา ครู', pos: 'นักทรัพยากรบุคคลชำนาญการ', badge: 'ข้าราชการ',
                 info: [
                     { l: 'ตำแหน่ง', v: 'นักทรัพยากรบุคคล' },
@@ -745,7 +914,7 @@
                 ]
             },
             staff1: {
-                photo: "image/p noy.jpg", avatar: '👩',
+                photo: "image/hrm/p noy.jpg", avatar: '👩',
                 name: 'นางสาวฐิติพรรณ ศรีตระพันธ์', pos: 'นักทรัพยากรบุคคล', badge: 'พนักงานราชการ',
                 info: [{ l: 'ตำแหน่ง', v: 'นักทรัพยากรบุคคล' }, { l: 'ประเภท', v: 'พนักงานราชการ' }, { l: 'หน่วยงาน', v: 'กลุ่มงานทรัพยากรบุคคล' }, { l: 'โทรภายใน', v: 'ต่อ 8755' }],
                 jobs: [
@@ -758,7 +927,7 @@
                 ]
             },
             staff2: {
-                photo: "image/p to.jpg", avatar: '👨',
+                photo: "image/hrm/p to.jpg", avatar: '👨',
                 name: 'นายจักรี ทองช่วย', pos: 'นักวิเคราะห์นโยบายและแผน', badge: 'พนักงานราชการ',
                 info: [{ l: 'ตำแหน่ง', v: 'นักวิเคราะห์นโยบายและแผน' }, { l: 'ประเภท', v: 'พนักงานราชการ' }, { l: 'หน่วยงาน', v: 'กลุ่มงานทรัพยากรบุคคล' }, { l: 'โทรภายใน', v: 'ต่อ 8751' }],
                 jobs: [
@@ -772,7 +941,7 @@
                 ]
             },
             staff3: {
-                photo: "image/k hamee.jpg", avatar: '🧕',
+                photo: "image/hrm/k hamee.jpg", avatar: '🧕',
                 name: 'นางสาวฮามีละห์ เจ๊ะเละ', pos: 'นักทรัพยากรบุคคล', badge: 'พนักงานราชการ',
                 info: [{ l: 'ตำแหน่ง', v: 'นักทรัพยากรบุคคล' }, { l: 'ประเภท', v: 'พนักงานราชการ' }, { l: 'หน่วยงาน', v: 'กลุ่มงานทรัพยากรบุคคล' }, { l: 'โทรภายใน', v: 'ต่อ 8753' }],
                 jobs: [
@@ -785,8 +954,8 @@
                 ]
             },
             staff4: {
-                photo: "image/p bu.jpg", avatar: '👩',
-                name: 'นางสาวพัชรักรณ์ ไชยศรีจันทร์', pos: 'นักทรัพยากรบุคคล', badge: 'พนักงานกระทรวงสาธารณสุข',
+                photo: "image/hrm/p bu.jpg", avatar: '👩',
+                name: 'นางสาวพัชรีภรณ์ ไชยศรีจันทร์', pos: 'นักทรัพยากรบุคคล', badge: 'พนักงานกระทรวงสาธารณสุข',
                 info: [{ l: 'ตำแหน่ง', v: 'นักทรัพยากรบุคคล' }, { l: 'ประเภท', v: 'พนักงานกระทรวงสาธารณสุข' }, { l: 'หน่วยงาน', v: 'กลุ่มงานทรัพยากรบุคคล' }, { l: 'โทรภายใน', v: 'ต่อ 8753' }],
                 jobs: [
                     { i: '💻', t: 'บันทึกเงินเดือนและเงินเลื่อน ในระบบ E-Payroll' },
@@ -799,7 +968,7 @@
                 ]
             },
             staff5: {
-                photo: "image/p chiap.jpg", avatar: '👩',
+                photo: "image/hrm/p chiap.jpg", avatar: '👩',
                 name: 'นางวัชรีพร หนูคูขุด', pos: 'เจ้าพนักงานธุรการ', badge: 'พนักงานราชการ',
                 info: [{ l: 'ตำแหน่ง', v: 'เจ้าพนักงานธุรการ' }, { l: 'ประเภท', v: 'พนักงานราชการ' }, { l: 'หน่วยงาน', v: 'กลุ่มงานทรัพยากรบุคคล' }, { l: 'โทรภายใน', v: 'ต่อ 8755' }],
                 jobs: [
@@ -817,9 +986,9 @@
                 ]
             },
             staff6: {
-                photo: "image/feen.jpg", avatar: '👨',
-                name: 'นายนิติธร บือสาแม', pos: 'เจ้าพนักงานธุรการ', badge: 'พนักงานกระทรวงสาธารณสุข',
-                info: [{ l: 'ตำแหน่ง', v: 'เจ้าพนักงานธุรการ' }, { l: 'ประเภท', v: 'พนักงานกระทรวงสาธารณสุข' }, { l: 'หน่วยงาน', v: 'กลุ่มงานทรัพยากรบุคคล' }, { l: 'โทรภายใน', v: 'ต่อ 8751' }],
+                photo: "image/hrm/feen.jpg", avatar: '👨',
+                name: 'นายนิอัลฟีน บือสาแม', pos: 'เจ้าพนักงานธุรการ', badge: 'พนักงานกระทรวงสาธารณสุข',
+                info: [{ l: 'ตำแหน่ง', v: 'เจ้าพนักงานธุรการ' }, { l: 'ประเภท', v: 'พนักงานกระทรวงสาธารณสุข' }, { l: 'หน่วยงาน', v: 'กลุ่มงานทรัพยากรบุคคล' }, { l: 'โทรภายใน', v: 'ต่อ 8750' }],
                 jobs: [
                     { i: '⏳', t: 'เวลาราชการทวีคูณ กอ.รมน.' },
                     { i: '👥', t: 'งานพนักงานกระทรวงสาธารณสุขทั่วไป' },
@@ -830,7 +999,7 @@
                 ]
             },
             staff7: {
-                photo: "image/nuree.jpg", avatar: '🧕',
+                photo: "image/hrm/nuree.jpg", avatar: '🧕',
                 name: 'นางสาวนูรนูรี การี', pos: 'เจ้าพนักงานธุรการ', badge: 'พนักงานกระทรวงสาธารณสุข',
                 info: [{ l: 'ตำแหน่ง', v: 'เจ้าพนักงานธุรการ' }, { l: 'ประเภท', v: 'พนักงานกระทรวงสาธารณสุข' }, { l: 'หน่วยงาน', v: 'กลุ่มงานทรัพยากรบุคคล' }, { l: 'โทรภายใน', v: 'ต่อ 8753' }],
                 jobs: [
@@ -889,10 +1058,10 @@
             const q = val.trim().toLowerCase();
             document.querySelectorAll('.tier').forEach(section => {
                 let found = false;
-                section.querySelectorAll('[data-name]').forEach(card => {
-                    const wrap = card.closest('.card-wrapper') || card;
-                    const match = !q || card.dataset.name.toLowerCase().includes(q);
-                    wrap.style.display = match ? '' : 'none';
+                section.querySelectorAll('[data-name]').forEach(nameEl => {
+                    const wrap = nameEl.closest('.card-wrapper');
+                    const match = !q || nameEl.dataset.name.toLowerCase().includes(q);
+                    if (wrap) wrap.style.display = match ? '' : 'none';
                     if (match) found = true;
                 });
                 section.style.display = (q && !found) ? 'none' : '';
@@ -901,6 +1070,18 @@
                 el.style.display = q ? 'none' : '';
             });
         }
+
+        function revealCards() {
+            const cards = document.querySelectorAll('.card-wrapper');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) entry.target.classList.add('visible');
+                });
+            }, { threshold: 0.05 });
+            cards.forEach(c => observer.observe(c));
+        }
+
+        window.addEventListener('load', revealCards);
     </script>
 </body>
 

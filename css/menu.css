@@ -7,6 +7,7 @@
     /* ห้าม hidden — dropdown จะถูก clip */
     box-shadow: 0 4px 32px rgba(0, 0, 0, .45);
     border-bottom: 2px solid var(--gold);
+    color: #e2c97e !important;
 }
 
 .header-inner {
