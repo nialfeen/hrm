@@ -105,9 +105,14 @@
             .then(d => document.getElementById("footer").innerHTML = d);
 
         let items = [];
-        const sheetURL =
-            "https://docs.google.com/spreadsheets/d/e/2PACX-1vRYICatXDJisNrjsbMVkK6v-Lga_2dP83ZqQirE2P2jfjYfTCOz5MqpO8Opk2KQN_F7hYSXeaR30qaq/pub?gid=1279964010&single=true&output=csv&t=" + new Date().getTime();
 
+        const CONFIG = {
+            SHEET_ID: '1gFy0aJy_GhIgxb82kcQ85xEoPpSfvtMxq6GAVziXWKY',
+            GID: '1279964010'
+        };
+
+        // ✅ ใช้ gviz/tq แบบเดียวกับ form.html → ไม่มี cache ของ Google
+        const sheetURL = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/gviz/tq?tqx=out:csv&gid=${CONFIG.GID}`;
 
         function splitDate(dateStr) {
             if (!dateStr) return { day: '-', month: '-' };
@@ -119,89 +124,67 @@
         }
 
         function parseCSV(text) {
-            const rows = text
-                .split(/\r?\n/)
-                .filter(r => r.trim() && r.includes(","));
+            const rows = [];
+            let row = [], field = '', inQuotes = false;
 
-            return rows.slice(1).map(row => {
-                const values = [];
-                let curr = "";
-                let inQuotes = false;
-
-                for (let i = 0; i < row.length; i++) {
-                    const c = row[i];
-
-                    if (c === '"') {
-                        inQuotes = !inQuotes;
-                    } else if (c === ',' && !inQuotes) {
-                        values.push(curr.trim());
-                        curr = "";
-                    } else {
-                        curr += c;
-                    }
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                if (inQuotes) {
+                    if (char === '"') {
+                        if (text[i + 1] === '"') { field += '"'; i++; }
+                        else inQuotes = false;
+                    } else field += char;
+                } else {
+                    if (char === '"') inQuotes = true;
+                    else if (char === ',') { row.push(field.trim()); field = ''; }
+                    else if (char === '\n') { row.push(field.trim()); rows.push(row); row = []; field = ''; }
+                    else if (char !== '\r') field += char;
                 }
-                values.push(curr.trim());
-
-                return {
-                    dateStr: values[1] || "",
-                    type: values[2] || "",
-                    title: values[3] || "",
-                    duration: values[4] || "",
-                    fileLink: values[5] || ""
-                };
-            });
+            }
+            if (field || row.length) { row.push(field.trim()); rows.push(row); }
+            return rows;
         }
+
         async function loadSheetData() {
             try {
-                const res = await fetch(sheetURL, {
-                    cache: "no-store"
-                });
-
+                // ✅ cache: 'no-store' กัน browser cache อีกชั้น
+                const res = await fetch(sheetURL, { cache: 'no-store' });
                 const text = await res.text();
-                const data = parseCSV(text);
+                const rows = parseCSV(text);
 
-                items = data
-                    .filter(r => r.title) // กันแถวว่าง
-                    .map(row => {
-                        const d = splitDate(row.dateStr);
+                // row[0] = header → slice(1)
+                items = rows.slice(1)
+                    .filter(r => r[3]) // กันแถวว่าง (คอลัมน์ title)
+                    .map(r => {
+                        const d = splitDate(r[1]);
                         return {
                             day: d.day,
                             month: d.month,
-                            tag: row.type || "ประกาศ",
-                            title: row.title || "",
-                            sub: row.duration || "",
-                            link: row.fileLink || "#"
+                            tag: r[2] || 'ประกาศ',
+                            title: r[3] || '',
+                            sub: r[4] || '',
+                            link: r[5] || '#'
                         };
                     });
-
-                // เรียงใหม่แบบปลอดภัย (ไม่พึ่ง reverse อย่างเดียว)
-                items.sort((a, b) => b.day - a.day);
+                items.reverse();
 
                 renderFilters();
                 renderNews('all');
 
             } catch (e) {
                 console.error(e);
-                document.getElementById('newsList').innerHTML = "โหลดข้อมูลไม่สำเร็จ";
+                document.getElementById('newsList').innerHTML = 'โหลดข้อมูลไม่สำเร็จ';
             }
         }
 
-        /* ✅ filter auto จากค่า tag จริง */
         function renderFilters() {
             const row = document.getElementById('filterRow');
-
             const uniqueTags = [...new Set(items.map(i => i.tag))];
 
             let html = `<button class="filter-btn active" onclick="filterNews('all', this)">ทั้งหมด</button>`;
-
             uniqueTags.forEach(tag => {
-                html += `
-            <button class="filter-btn" onclick="filterNews('${tag}', this)">
-                ${tag}
-            </button>
-        `;
+                html += `<button class="filter-btn" onclick="filterNews('${tag}', this)">${tag}</button>`;
             });
-
             row.innerHTML = html;
         }
 
@@ -215,13 +198,11 @@
                 <div class="news-date-day">${item.day}</div>
                 <div class="news-date-month">${item.month}</div>
             </div>
-
             <div class="news-body">
                 <span class="tag-pill">${item.tag}</span>
                 <p class="news-title">${item.title}</p>
                 <p class="news-sub">${item.sub}</p>
             </div>
-
             <div class="news-arrow">›</div>
         </a>
     `).join('');
