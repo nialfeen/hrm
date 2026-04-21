@@ -220,7 +220,7 @@
             row.innerHTML = html;
         }
 
-       function renderNews(filter) {
+function renderNews(filter) {
     const list = document.getElementById('newsList');
     const filtered = filter === 'all' ? items : items.filter(i => i.tag === filter);
 
@@ -233,7 +233,7 @@
             <div class="news-body">
                 <div class="news-tag-row">
                     <span class="tag-pill">${item.tag}</span>
-                    ${idx === 0 ? '<span class="new-badge">NEW</span>' : ''}
+                    ${item === items[0] ? '<span class="new-badge">NEW</span>' : ''}
                 </div>
                 <p class="news-title">${item.title}</p>
                 <p class="news-sub">${item.sub}</p>
@@ -242,7 +242,6 @@
         </a>
     `).join('');
 }
-
         function filterNews(type, btn) {
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
