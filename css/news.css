@@ -258,3 +258,38 @@
         .news-card:hover .news-sub {
             color: var(--gray-600);
         }
+
+         .news-arrow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+        
+.news-tag-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px; /* ปรับตามที่ tag-pill เคยมี */
+}
+        .new-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #e63946;
+            color: #fff;
+            font-family: 'Sarabun', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            padding: 3px 7px;
+            border-radius: 4px;
+            animation: pulse-badge 1.6s ease-in-out infinite;
+            white-space: nowrap;
+        }
+
+        @keyframes pulse-badge {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%       { opacity: .75; transform: scale(1.08); }
+        }

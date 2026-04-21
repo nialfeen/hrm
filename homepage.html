@@ -532,29 +532,32 @@
             }
         }
 
-        function renderPage(page) {
-            currentPage = page;
-            const list = document.getElementById('newsList');
-            const start = (page - 1) * perPage;
-            const pageItems = items.slice(start, start + perPage);
+    function renderPage(page) {
+    currentPage = page;
+    const list = document.getElementById('newsList');
+    const start = (page - 1) * perPage;
+    const pageItems = items.slice(start, start + perPage);
 
-            list.innerHTML = pageItems.map(item => `
+    list.innerHTML = pageItems.map((item, idx) => `
         <a class="news-card" href="${item.link}" target="_blank">
             <div class="news-date-block">
                 <div class="news-date-day">${item.day}</div>
                 <div class="news-date-month">${item.month}</div>
             </div>
             <div class="news-body">
-                <span class="tag-pill">${item.tag}</span>
+                <div class="news-tag-row">
+                    <span class="tag-pill">${item.tag}</span>
+                    ${start === 0 && idx === 0 ? '<span class="new-badge">NEW</span>' : ''}
+                </div>
                 <p class="news-title">${item.title}</p>
                 <p class="news-sub">${item.sub}</p>
             </div>
-            <div class="news-arrow">›</div>
+            <div class="news-arrow">&#x203A;</div>
         </a>
     `).join('');
 
-            renderPagination();
-        }
+    renderPagination();
+}
 
         function renderPagination() {
             const totalPages = Math.ceil(items.length / perPage);
