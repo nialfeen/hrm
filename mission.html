@@ -223,18 +223,18 @@
                 </div>`;
                     currentGrid.appendChild(currentBlock);
 
-                } else {
+               } else {
 
-                    if (!currentBlock) return;
+    if (!currentBlock) return;
 
-                    const rowEl = document.createElement("div");
-                    rowEl.className = "gs-group-row";d.Error
-                    rowEl.innerHTML = `
-                <span class="gs-row-label">${label}</span>
-                ${num ? `<span class="gs-row-num">${num}</span>` : ""}
-            `;
-                    currentBlock.appendChild(rowEl);
-                }
+    const rowEl = document.createElement("div");
+    rowEl.className = "gs-group-row";
+    rowEl.innerHTML = `
+        <span class="gs-row-label">${label}</span>
+        ${num ? `<span class="gs-row-num">${num}</span>` : ""}
+    `;
+    currentBlock.appendChild(rowEl);
+}
             });
 
             // 👉 render note “นอกกลุ่ม แต่ยังอยู่ในแผ่นเดียวกัน”
