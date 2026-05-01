@@ -19,45 +19,79 @@
 
 <body>
 
-    <header class="site-header">
-        <div class="header-inner">
-            <a href="homepage.html" style="text-decoration:none;color:inherit;display:contents;">
-                <div class="logo-block">
-                    <img src="image/logo-โรงพยาบาลปัตตานี.png" width="50" height="50">
-                    <div class="logo-text">
-                        <h1>กลุ่มงานทรัพยากรบุคคล</h1>
-                        <p>โรงพยาบาลปัตตานี</p>
-                    </div>
-                </div>
-            </a>
-            <nav class="main-nav">
-                <a href="homepage.html" class="active">หน้าแรก</a>
-
-                <div class="nav-dropdown">
-                    <a href="#">
-                        โครงสร้าง
-                        <span class="chevron"></span>
-                    </a>
-                    <div class="dropdown-menu">
-                        <a href="hospital.html">โครงสร้างโรงพยาบาลปัตตานี</a>
-                        <a href="administrator.html">โครงสร้างภารกิจอำนวยการ</a>
-                        <a href="hrm.html">โครงสร้างกลุ่มงานทรัพยากรบุคคล</a>
-                    </div>
-                </div>
-
-                <a href="personnel.html">ข้อมูลบุคลากร</a>
-                <a href="form.html">เอกสารต่าง ๆ</a>
-                <a href="news.html">ข่าวประกาศ</a>
-            </nav>
-            <div class="header-status">
-                <div class="status-top">เวลาทำการ</div>
-                <div class="status-row">
-                    <div class="status-dot"></div>
-                    <span class="status-label">จันทร์ – ศุกร์ &nbsp; 08:30 – 16:30 น.</span>
+<header class="site-header">
+    <div class="header-inner">
+        <a href="homepage.html" style="text-decoration:none;color:inherit;display:contents;">
+            <div class="logo-block">
+                <img src="image/logo-โรงพยาบาลปัตตานี.png" width="50" height="50">
+                <div class="logo-text">
+                    <h1>กลุ่มงานทรัพยากรบุคคล</h1>
+                    <p>โรงพยาบาลปัตตานี</p>
                 </div>
             </div>
+        </a>
+
+        <nav class="main-nav">
+            <a href="homepage.html" class="active">หน้าแรก</a>
+            <div class="nav-dropdown">
+                <a href="#">โครงสร้าง <span class="chevron"></span></a>
+                <div class="dropdown-menu">
+                    <a href="hospital.html">โครงสร้างโรงพยาบาลปัตตานี</a>
+                    <a href="administrator.html">โครงสร้างภารกิจอำนวยการ</a>
+                    <a href="hrm.html">โครงสร้างกลุ่มงานทรัพยากรบุคคล</a>
+                </div>
+            </div>
+            <a href="personnel.html">ข้อมูลบุคลากร</a>
+            <a href="form.html">เอกสารต่าง ๆ</a>
+            <a href="news.html">ข่าวประกาศ</a>
+        </nav>
+
+        <div class="header-status">
+            <div class="status-top">เวลาทำการ</div>
+            <div class="status-row">
+                <div class="status-dot"></div>
+                <span class="status-label">จันทร์ – ศุกร์ &nbsp; 08:30 – 16:30 น.</span>
+            </div>
         </div>
-    </header>
+
+        <!-- Hamburger (มือถือเท่านั้น) -->
+        <button class="hamburger-btn" id="hamburgerBtn" aria-label="เมนู">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</header>
+
+<!-- Mobile Drawer -->
+<div class="mobile-menu" id="mobileMenu">
+    <a href="homepage.html" class="active">🏠 หน้าแรก</a>
+    <div class="mobile-menu-section">โครงสร้าง</div>
+    <a href="hospital.html">&nbsp;&nbsp;· โครงสร้างโรงพยาบาลปัตตานี</a>
+    <a href="administrator.html">&nbsp;&nbsp;· โครงสร้างภารกิจอำนวยการ</a>
+    <a href="hrm.html">&nbsp;&nbsp;· โครงสร้างกลุ่มงานทรัพยากรบุคคล</a>
+    <a href="personnel.html">👤 ข้อมูลบุคลากร</a>
+    <a href="form.html">📄 เอกสารต่าง ๆ</a>
+    <a href="news.html">📢 ข่าวประกาศ</a>
+    <div class="mobile-menu-footer">
+        <div class="status-dot"></div>
+        เวลาทำการ จันทร์ – ศุกร์ &nbsp; 08:30 – 16:30 น.
+    </div>
+</div>
+
+<script>
+const btn = document.getElementById('hamburgerBtn');
+const menu = document.getElementById('mobileMenu');
+btn.addEventListener('click', () => {
+    btn.classList.toggle('open');
+    menu.classList.toggle('open');
+});
+// ปิด menu เมื่อกดนอก
+document.addEventListener('click', (e) => {
+    if (!btn.contains(e.target) && !menu.contains(e.target)) {
+        btn.classList.remove('open');
+        menu.classList.remove('open');
+    }
+});
+</script>
 
     <section class="hero">
         <div class="hero-bg"><img src="image/benner.JPG" alt=""></div>
