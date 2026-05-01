@@ -177,7 +177,7 @@ const CSV_URL   = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?for
 
 const COL_NAMES = {
     pos:      "ตำแหน่งสายงาน",
-    dept:     "กลุ่มงาน จ.18",
+    dept:     4,
     type:     "ประเภทเจ้าหน้าที่",
     religion: "ศาสนา",
     gender:   "เพศ",
@@ -251,10 +251,14 @@ async function loadSheetData(){
 
         // หา index คอลัมน์
         const idx = {};
-        Object.entries(COL_NAMES).forEach(([key,colName])=>{
-            const i = headers.findIndex(h=>clean(h).toLowerCase()===clean(colName).toLowerCase());
-            if(i!==-1) idx[key]=i;
-        });
+       Object.entries(COL_NAMES).forEach(([key,colName])=>{
+    if(typeof colName === 'number'){
+        idx[key] = colName; // ใช้ index โดยตรง
+    } else {
+        const i = headers.findIndex(h=>clean(h).toLowerCase()===clean(colName).toLowerCase());
+        if(i!==-1) idx[key]=i;
+    }
+});
 
         // parse rows — ใช้ typed array / pre-allocate เพื่อลด GC
         const GEN_MAP = {"x":"Gen X","y":"Gen Y","z":"Gen Z","alpha":"Gen Alpha"};
