@@ -284,3 +284,171 @@
     justify-content: center;
     /* เพิ่มบรรทัดนี้ */
 }
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE — แก้ให้พอดีทุกขนาดหน้าจอ
+═══════════════════════════════════════════ */
+
+/* ── Tablet (≤ 1100px) ── */
+@media (max-width: 1100px) {
+    .header-inner {
+        height: auto;
+        min-height: 65px;
+        flex-wrap: wrap;
+        padding: 0 12px;
+    }
+
+    .logo-block {
+        padding-right: 12px;
+        gap: 10px;
+    }
+
+    .logo-text h1 {
+        font-size: .82rem;
+    }
+
+    .main-nav a,
+    .nav-dropdown > a {
+        padding: 0 10px;
+        font-size: .78rem;
+    }
+
+    .header-status {
+        padding: 6px 12px;
+        gap: 4px;
+    }
+
+    .status-top {
+        font-size: .75rem;
+    }
+
+    .status-label {
+        font-size: .62rem;
+    }
+}
+
+/* ── Mobile (≤ 768px) — Hamburger Menu ── */
+@media (max-width: 768px) {
+
+    .header-inner {
+        height: 60px;
+        flex-wrap: nowrap;
+        position: relative;
+        padding: 0 16px;
+    }
+
+    /* ซ่อน nav และ status บน mobile */
+    .main-nav,
+    .header-status {
+        display: none;
+    }
+
+    /* แสดง hamburger button */
+    .hamburger-btn {
+        display: flex !important;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        width: 36px;
+        height: 36px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        margin-left: auto;
+        padding: 4px;
+        flex-shrink: 0;
+    }
+
+    .hamburger-btn span {
+        display: block;
+        width: 22px;
+        height: 2px;
+        background: rgba(255,255,255,.7);
+        border-radius: 2px;
+        transition: all .25s;
+    }
+
+    .hamburger-btn.open span:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+    }
+    .hamburger-btn.open span:nth-child(2) {
+        opacity: 0;
+        transform: scaleX(0);
+    }
+    .hamburger-btn.open span:nth-child(3) {
+        transform: translateY(-7px) rotate(-45deg);
+    }
+
+    /* Mobile Drawer Menu */
+    .mobile-menu {
+        display: block !important;
+        position: fixed;
+        top: 60px;
+        left: 0;
+        right: 0;
+        background: var(--navy);
+        border-top: 2px solid var(--gold);
+        box-shadow: 0 12px 40px rgba(0,0,0,.6);
+        z-index: 9998;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height .35s cubic-bezier(.4,0,.2,1);
+    }
+
+    .mobile-menu.open {
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+
+    .mobile-menu a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 20px;
+        font-size: .88rem;
+        font-weight: 500;
+        color: rgba(255,255,255,.7);
+        text-decoration: none;
+        border-bottom: 1px solid rgba(201,168,76,.1);
+        transition: background .15s, color .15s;
+    }
+
+    .mobile-menu a:hover,
+    .mobile-menu a.active {
+        background: rgba(201,168,76,.1);
+        color: #e2c97e;
+    }
+
+    .mobile-menu-section {
+        padding: 8px 20px 4px;
+        font-size: .68rem;
+        font-weight: 700;
+        color: rgba(201,168,76,.5);
+        letter-spacing: .12em;
+        text-transform: uppercase;
+    }
+
+    /* เวลาทำการใน drawer */
+    .mobile-menu-footer {
+        padding: 14px 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border-top: 1px solid rgba(201,168,76,.2);
+        color: #e2c97e;
+        font-size: .78rem;
+    }
+
+    .mobile-menu-footer .status-dot {
+        flex-shrink: 0;
+    }
+}
+
+/* ── ซ่อน hamburger บนจอใหญ่ ── */
+.hamburger-btn {
+    display: none;
+}
+
+.mobile-menu {
+    display: none;
+}   
