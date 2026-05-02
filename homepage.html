@@ -570,9 +570,9 @@
                 html += pageBtn(1);
                 const start = Math.max(2, currentPage - 1);
                 const end = Math.min(totalPages - 1, currentPage + 1);
-                if (start > 2) html += `<span>...</span>`;
+                if (start > 2) html += `<span class="ellipsis">...</span>`;
                 for (let i = start; i <= end; i++) html += pageBtn(i);
-                if (end < totalPages - 1) html += `<span>...</span>`;
+                if (end < totalPages - 1) html += `<span class="ellipsis">...</span>`;
                 html += pageBtn(totalPages);
             }
 
