@@ -308,7 +308,7 @@
     }
 
     .main-nav a,
-    .nav-dropdown > a {
+    .nav-dropdown>a {
         padding: 0 10px;
         font-size: .78rem;
     }
@@ -363,7 +363,7 @@
         display: block;
         width: 22px;
         height: 2px;
-        background: rgba(255,255,255,.7);
+        background: rgba(255, 255, 255, .7);
         border-radius: 2px;
         transition: all .25s;
     }
@@ -371,10 +371,12 @@
     .hamburger-btn.open span:nth-child(1) {
         transform: translateY(7px) rotate(45deg);
     }
+
     .hamburger-btn.open span:nth-child(2) {
         opacity: 0;
         transform: scaleX(0);
     }
+
     .hamburger-btn.open span:nth-child(3) {
         transform: translateY(-7px) rotate(-45deg);
     }
@@ -388,11 +390,11 @@
         right: 0;
         background: var(--navy);
         border-top: 2px solid var(--gold);
-        box-shadow: 0 12px 40px rgba(0,0,0,.6);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, .6);
         z-index: 9998;
         max-height: 0;
         overflow: hidden;
-        transition: max-height .35s cubic-bezier(.4,0,.2,1);
+        transition: max-height .35s cubic-bezier(.4, 0, .2, 1);
     }
 
     .mobile-menu.open {
@@ -407,15 +409,15 @@
         padding: 14px 20px;
         font-size: .88rem;
         font-weight: 500;
-        color: rgba(255,255,255,.7);
+        color: rgba(255, 255, 255, .7);
         text-decoration: none;
-        border-bottom: 1px solid rgba(201,168,76,.1);
+        border-bottom: 1px solid rgba(201, 168, 76, .1);
         transition: background .15s, color .15s;
     }
 
     .mobile-menu a:hover,
     .mobile-menu a.active {
-        background: rgba(201,168,76,.1);
+        background: rgba(201, 168, 76, .1);
         color: #e2c97e;
     }
 
@@ -423,7 +425,7 @@
         padding: 8px 20px 4px;
         font-size: .68rem;
         font-weight: 700;
-        color: rgba(201,168,76,.5);
+        color: rgba(201, 168, 76, .5);
         letter-spacing: .12em;
         text-transform: uppercase;
     }
@@ -434,7 +436,7 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        border-top: 1px solid rgba(201,168,76,.2);
+        border-top: 1px solid rgba(201, 168, 76, .2);
         color: #e2c97e;
         font-size: .78rem;
     }
@@ -451,4 +453,4 @@
 
 .mobile-menu {
     display: none;
-}   
+}
