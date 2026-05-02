@@ -34,6 +34,9 @@
             color: var(--text-dark);
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         /* ── Optimized Animation ── */
@@ -67,6 +70,7 @@
            NEWS SECTION
         ======================== */
         .news-section {
+            flex: 1;
             padding: 3rem 1rem 4rem;
             min-height: 600px;
             /* ป้องกันหน้าเว็บยุบตัวเวลาเปลี่ยนหมวด */
@@ -259,20 +263,22 @@
             color: var(--gray-600);
         }
 
-         .news-arrow {
+        .news-arrow {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             gap: 4px;
         }
-        
-.news-tag-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 4px; /* ปรับตามที่ tag-pill เคยมี */
-}
+
+        .news-tag-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+            /* ปรับตามที่ tag-pill เคยมี */
+        }
+
         .new-badge {
             display: inline-flex;
             align-items: center;
@@ -290,6 +296,15 @@
         }
 
         @keyframes pulse-badge {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50%       { opacity: .75; transform: scale(1.08); }
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: .75;
+                transform: scale(1.08);
+            }
         }

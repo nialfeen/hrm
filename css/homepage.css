@@ -26,15 +26,26 @@
             scroll-behavior: smooth;
         }
 
+        html,
+        body {
+            height: 100%;
+        }
+
+
         body {
             font-family: 'Sarabun', sans-serif;
             background: var(--cream);
             color: var(--text-dark);
             overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         /* ── Layout ── */
         .main-wrap {
+            flex: 1;
+            /* ← เพิ่มบรรทัดนี้ */
             max-width: 1280px;
             margin: 0 auto;
             padding: 44px 28px;
@@ -545,7 +556,7 @@
                 font-size: .82rem;
             }
 
-         
+
         }
 
 
@@ -740,20 +751,22 @@
             width: 40px;
         }
 
-         .news-arrow {
+        .news-arrow {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             gap: 4px;
         }
-        
-.news-tag-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 4px; /* ปรับตามที่ tag-pill เคยมี */
-}
+
+        .news-tag-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+            /* ปรับตามที่ tag-pill เคยมี */
+        }
+
         .new-badge {
             display: inline-flex;
             align-items: center;
@@ -771,8 +784,15 @@
         }
 
         @keyframes pulse-badge {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50%       { opacity: .75; transform: scale(1.08); }
-        }
 
-        
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: .75;
+                transform: scale(1.08);
+            }
+        }

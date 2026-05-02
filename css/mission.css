@@ -37,6 +37,9 @@ body {
     font-family: 'Sarabun', sans-serif;
     background: var(--bg);
     color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 /* ══════════════════════════════
@@ -85,6 +88,7 @@ body {
    BODY WRAPPER
 ══════════════════════════════ */
 .gs-body {
+    flex: 1;
     padding: 28px 32px;
     max-width: 1700px;
     margin: auto;

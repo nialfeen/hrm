@@ -34,6 +34,9 @@ body {
     background: var(--cream);
     color: var(--text-dark);
     overflow-x: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 /* ─── FORMAL BACKGROUND PATTERN ─── */
@@ -77,6 +80,7 @@ body::after {
 
 /* ─── ORG SECTION ─── */
 .org-section {
+    flex: 1;
     padding: 60px 20px 100px;
     background: transparent;
     position: relative;

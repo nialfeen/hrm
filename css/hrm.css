@@ -33,10 +33,15 @@
             background: var(--cream);
             color: var(--text);
             overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+
         }
 
         /* ── Main wrap ── */
         .main-wrap {
+            flex: 1;
             max-width: 1320px;
             margin: 0 auto;
             padding: 44px 32px 80px;
