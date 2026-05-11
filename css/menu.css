@@ -1,10 +1,19 @@
+/* ══════════════════════════════════════════════
+   SITE HEADER
+══════════════════════════════════════════════ */
+
+/* ── Variables & Custom Properties ── */
+:root {
+    --header-height: 65px;
+}
+
+/* ── Base Header ── */
 .site-header {
     background: var(--navy);
     position: sticky;
     top: 0;
     z-index: 9999;
-    overflow: visible;
-    /* ห้าม hidden — dropdown จะถูก clip */
+    overflow: visible; /* ห้าม hidden — dropdown จะถูก clip */
     box-shadow: 0 4px 32px rgba(0, 0, 0, .45);
     border-bottom: 2px solid var(--gold);
     color: #e2c97e !important;
@@ -16,11 +25,11 @@
     padding: 0 20px;
     display: flex;
     align-items: stretch;
-    height: 65px;
-    overflow: visible;
-    /* ห้าม hidden — dropdown จะถูก clip */
+    height: var(--header-height);
+    overflow: visible; /* ห้าม hidden — dropdown จะถูก clip */
 }
 
+/* ── Logo ── */
 .logo-block {
     display: flex;
     align-items: center;
@@ -44,13 +53,7 @@
     white-space: nowrap;
 }
 
-.logo-text p {
-    font-size: .68rem;
-    color: rgba(255, 255, 255, .35);
-    font-weight: 300;
-    white-space: nowrap;
-}
-
+.logo-text p,
 .logo-text h6 {
     font-size: .68rem;
     color: rgba(255, 255, 255, .35);
@@ -58,17 +61,18 @@
     white-space: nowrap;
 }
 
+/* ── Main Navigation ── */
 .main-nav {
     flex: 1;
     display: flex;
     align-items: stretch;
-    overflow: visible;
-    /* ← แก้จาก overflow-x: auto → visible */
+    justify-content: center;
+    overflow: visible; /* overflow-x: auto ทำให้ dropdown ถูกตัด */
     padding-left: 8px;
-    /*   overflow-x: auto ทำให้ dropdown ถูกตัด */
 }
 
-.main-nav a {
+.main-nav a,
+.nav-dropdown > a {
     display: flex;
     align-items: center;
     padding: 0 16px;
@@ -82,7 +86,8 @@
     flex-shrink: 0;
 }
 
-.main-nav a::after {
+.main-nav a::after,
+.nav-dropdown > a::after {
     content: '';
     position: absolute;
     bottom: 0;
@@ -95,11 +100,13 @@
     transition: transform .22s cubic-bezier(.4, 0, .2, 1);
 }
 
-.main-nav a:hover {
+.main-nav a:hover,
+.nav-dropdown:hover > a {
     color: rgba(255, 255, 255, .9);
 }
 
-.main-nav a:hover::after {
+.main-nav a:hover::after,
+.nav-dropdown:hover > a::after {
     transform: scaleX(.6);
     opacity: .5;
 }
@@ -112,13 +119,14 @@
     transform: scaleX(1);
 }
 
+/* ── Status Block ── */
 .header-status {
     display: inline-flex;
     flex-direction: column;
     align-items: center;
     gap: 6px;
     padding: 10px 20px;
-    border-left: 1px solid rgba(201, 168, 76, 0.2);
+    border-left: 1px solid rgba(201, 168, 76, .2);
 }
 
 .status-top {
@@ -150,59 +158,23 @@
 }
 
 @keyframes blink {
-
-    0%,
-    100% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: .15;
-    }
+    0%, 100% { opacity: 1; }
+    50%       { opacity: .15; }
 }
 
-/* ── Dropdown ── */
+/* ══════════════════════════════════════════════
+   DROPDOWN MENU
+══════════════════════════════════════════════ */
+
 .nav-dropdown {
     position: relative;
     display: flex;
     align-items: stretch;
 }
 
-.nav-dropdown>a {
-    display: flex;
-    align-items: center;
+.nav-dropdown > a {
     gap: 5px;
-    padding: 0 16px;
-    font-size: .84rem;
-    font-weight: 500;
-    color: rgba(255, 255, 255, .55);
-    text-decoration: none;
-    white-space: nowrap;
-    position: relative;
-    transition: color .18s;
     cursor: pointer;
-}
-
-.nav-dropdown>a::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 12px;
-    right: 12px;
-    height: 2px;
-    background: var(--gold);
-    border-radius: 1px 1px 0 0;
-    transform: scaleX(0);
-    transition: transform .22s;
-}
-
-.nav-dropdown:hover>a {
-    color: rgba(255, 255, 255, .9);
-}
-
-.nav-dropdown:hover>a::after {
-    transform: scaleX(.6);
-    opacity: .5;
 }
 
 .chevron {
@@ -231,13 +203,11 @@
     border-radius: 0 0 8px 8px;
     min-width: 240px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, .5);
+    z-index: 10000;
     opacity: 0;
     visibility: hidden;
     transform: translateY(-6px);
     transition: opacity .2s, transform .2s, visibility .2s;
-    z-index: 10000;
-    /* ← แก้จาก 300 → 10000 ให้สูงกว่า header */
-    /* ลบ overflow: hidden ออก — ทำให้ dropdown item ถูก clip */
 }
 
 .nav-dropdown:hover .dropdown-menu {
@@ -255,8 +225,8 @@
     font-weight: 500;
     color: rgba(255, 255, 255, .6);
     text-decoration: none;
-    transition: background .15s, color .15s;
     border-bottom: 1px solid rgba(201, 168, 76, .08);
+    transition: background .15s, color .15s;
 }
 
 .dropdown-menu a:last-child {
@@ -280,27 +250,22 @@
     color: var(--gold);
 }
 
-.main-nav {
-    justify-content: center;
-    /* เพิ่มบรรทัดนี้ */
-}
-
-/* ═══════════════════════════════════════════
-   RESPONSIVE — แก้ให้พอดีทุกขนาดหน้าจอ
-═══════════════════════════════════════════ */
+/* ══════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════ */
 
 /* ── Tablet (≤ 1100px) ── */
 @media (max-width: 1100px) {
     .header-inner {
         height: auto;
-        min-height: 65px;
+        min-height: var(--header-height);
         flex-wrap: wrap;
         padding: 0 12px;
     }
 
     .logo-block {
-        padding-right: 12px;
         gap: 10px;
+        padding-right: 12px;
     }
 
     .logo-text h1 {
@@ -308,28 +273,22 @@
     }
 
     .main-nav a,
-    .nav-dropdown>a {
+    .nav-dropdown > a {
         padding: 0 10px;
         font-size: .78rem;
     }
 
     .header-status {
-        padding: 6px 12px;
         gap: 4px;
+        padding: 6px 12px;
     }
 
-    .status-top {
-        font-size: .75rem;
-    }
-
-    .status-label {
-        font-size: .62rem;
-    }
+    .status-top   { font-size: .75rem; }
+    .status-label { font-size: .62rem; }
 }
 
-/* ── Mobile (≤ 768px) — Hamburger Menu ── */
+/* ── Mobile (≤ 768px) — Hamburger ── */
 @media (max-width: 768px) {
-
     .header-inner {
         height: 60px;
         flex-wrap: nowrap;
@@ -337,13 +296,12 @@
         padding: 0 16px;
     }
 
-    /* ซ่อน nav และ status บน mobile */
     .main-nav,
     .header-status {
         display: none;
     }
 
-    /* แสดง hamburger button */
+    /* Hamburger button */
     .hamburger-btn {
         display: flex !important;
         flex-direction: column;
@@ -368,20 +326,12 @@
         transition: all .25s;
     }
 
-    .hamburger-btn.open span:nth-child(1) {
-        transform: translateY(7px) rotate(45deg);
-    }
+    /* Hamburger → X animation */
+    .hamburger-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger-btn.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .hamburger-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-    .hamburger-btn.open span:nth-child(2) {
-        opacity: 0;
-        transform: scaleX(0);
-    }
-
-    .hamburger-btn.open span:nth-child(3) {
-        transform: translateY(-7px) rotate(-45deg);
-    }
-
-    /* Mobile Drawer Menu */
+    /* Mobile drawer */
     .mobile-menu {
         display: block !important;
         position: fixed;
@@ -430,12 +380,11 @@
         text-transform: uppercase;
     }
 
-    /* เวลาทำการใน drawer */
     .mobile-menu-footer {
-        padding: 14px 20px;
         display: flex;
         align-items: center;
         gap: 8px;
+        padding: 14px 20px;
         border-top: 1px solid rgba(201, 168, 76, .2);
         color: #e2c97e;
         font-size: .78rem;
@@ -446,11 +395,6 @@
     }
 }
 
-/* ── ซ่อน hamburger บนจอใหญ่ ── */
-.hamburger-btn {
-    display: none;
-}
-
-.mobile-menu {
-    display: none;
-}
+/* ── ซ่อน hamburger / drawer บนจอใหญ่ ── */
+.hamburger-btn { display: none; }
+.mobile-menu   { display: none; }

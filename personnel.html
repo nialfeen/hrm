@@ -10,9 +10,7 @@
     <link rel="stylesheet" href="css/footer.css">
     <link rel="stylesheet" href="css/benner.css">
     <link rel="stylesheet" href="css/personnel.css">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Noto+Serif+Thai:wght@400;600;700&display=swap"
-        rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Noto+Serif+Thai:wght@400;600;700&display=swap">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 </head>
 
@@ -29,17 +27,18 @@
         <div class="header-inner">
             <a href="homepage.html" style="text-decoration:none;color:inherit;display:contents;">
                 <div class="logo-block">
-                    <img src="image/logo-โรงพยาบาลปัตตานี.png" width="50" height="50">
+                    <img src="image/logo-โรงพยาบาลปัตตานี.png" width="50" height="50" alt="โรงพยาบาลปัตตานี">
                     <div class="logo-text">
                         <h1>กลุ่มงานทรัพยากรบุคคล</h1>
                         <p>โรงพยาบาลปัตตานี</p>
                     </div>
                 </div>
             </a>
+
             <nav class="main-nav">
                 <a href="homepage.html">หน้าแรก</a>
                 <div class="nav-dropdown">
-                    <a href="#">โครงสร้าง<span class="chevron"></span></a>
+                    <a href="#">โครงสร้าง <span class="chevron"></span></a>
                     <div class="dropdown-menu">
                         <a href="hospital.html">โครงสร้างโรงพยาบาลปัตตานี</a>
                         <a href="administrator.html">โครงสร้างภารกิจอำนวยการ</a>
@@ -50,6 +49,7 @@
                 <a href="form.html">เอกสารต่าง ๆ</a>
                 <a href="news.html">ข่าวประกาศ</a>
             </nav>
+
             <div class="header-status">
                 <div class="status-top">เวลาทำการ</div>
                 <div class="status-row">
@@ -107,11 +107,11 @@
         <div class="filters-bar">
             <span class="filter-label">กรอง :</span>
             <div class="filter-dropdowns">
-                <div id="ms-type" class="ms-wrap"></div>
-                <div id="ms-dept" class="ms-wrap"></div>
-                <div id="ms-pos" class="ms-wrap"></div>
+                <div id="ms-type"     class="ms-wrap"></div>
+                <div id="ms-dept"     class="ms-wrap"></div>
+                <div id="ms-pos"      class="ms-wrap"></div>
                 <div id="ms-religion" class="ms-wrap"></div>
-                <div id="ms-gen" class="ms-wrap"></div>
+                <div id="ms-gen"      class="ms-wrap"></div>
             </div>
             <button class="filter-reset" onclick="resetFilters()">รีเซ็ต</button>
         </div>
@@ -123,14 +123,16 @@
         <div class="charts-grid">
             <div class="chart-card">
                 <div class="chart-title">
-                    <span class="chart-title-dot" style="background:var(--blue)"></span>สัดส่วนประเภทเจ้าหน้าที่
+                    <span class="chart-title-dot" style="background:var(--blue)"></span>
+                    สัดส่วนประเภทเจ้าหน้าที่
                 </div>
                 <div style="height:220px"><canvas id="donutType"></canvas></div>
                 <div id="legendType" class="legend-wrap"></div>
             </div>
             <div class="chart-card">
                 <div class="chart-title">
-                    <span class="chart-title-dot" style="background:var(--green)"></span>ตำแหน่ง 15 อันดับแรก
+                    <span class="chart-title-dot" style="background:var(--green)"></span>
+                    ตำแหน่ง 15 อันดับแรก
                 </div>
                 <div id="positionBars" class="hbar-list" style="max-height:270px"></div>
             </div>
@@ -140,21 +142,24 @@
         <div class="charts-grid-4">
             <div class="chart-card">
                 <div class="chart-title">
-                    <span class="chart-title-dot" style="background:var(--amber)"></span>สัดส่วนตามศาสนา
+                    <span class="chart-title-dot" style="background:var(--amber)"></span>
+                    สัดส่วนตามศาสนา
                 </div>
                 <div style="height:190px"><canvas id="donutReligion"></canvas></div>
                 <div id="legendReligion" class="legend-wrap"></div>
             </div>
             <div class="chart-card" style="grid-column:span 2">
                 <div class="chart-title">
-                    <span class="chart-title-dot" style="background:var(--purple)"></span>สัดส่วนตาม Generation
+                    <span class="chart-title-dot" style="background:var(--purple)"></span>
+                    สัดส่วนตาม Generation
                 </div>
                 <div style="height:190px"><canvas id="donutGen"></canvas></div>
                 <div id="legendGen" class="legend-wrap"></div>
             </div>
             <div class="chart-card">
                 <div class="chart-title">
-                    <span class="chart-title-dot" style="background:var(--teal)"></span>สัดส่วนตามเพศ
+                    <span class="chart-title-dot" style="background:var(--teal)"></span>
+                    สัดส่วนตามเพศ
                 </div>
                 <div style="height:190px"><canvas id="donutGender"></canvas></div>
                 <div id="legendGender" class="legend-wrap"></div>
@@ -165,11 +170,12 @@
         <div class="bar-section">
             <div class="bar-section-header">
                 <div class="chart-title" style="margin:0">
-                    <span class="chart-title-dot" style="background:var(--purple)"></span>จำนวนบุคลากรแต่ละกลุ่มงาน
+                    <span class="chart-title-dot" style="background:var(--purple)"></span>
+                    จำนวนบุคลากรแต่ละกลุ่มงาน
                 </div>
                 <div class="bar-tab-row">
-                    <button class="bar-tab active" onclick="setDeptView('top15',this)">15 อันดับแรก</button>
-                    <button class="bar-tab" onclick="setDeptView('all',this)">ทั้งหมด</button>
+                    <button class="bar-tab active" onclick="setDeptView('top15', this)">15 อันดับแรก</button>
+                    <button class="bar-tab"        onclick="setDeptView('all',   this)">ทั้งหมด</button>
                 </div>
             </div>
             <div id="deptBars" class="hbar-list"></div>
@@ -180,55 +186,72 @@
     <div id="footer"></div>
 
     <script>
-        /* ─── Load footer ─────────────────────────────────────────── */
-        fetch("footer.html").then(r => r.text()).then(d => {
-            document.getElementById("footer").innerHTML = d;
-        });
-
-        /* ─── Config ──────────────────────────────────────────────── */
-        const SHEET_ID = "1ns74e0f2p0j0pab2vhEUMLOvjPDcmzZtVdZrTulhq0w";
+        /* ══════════════════════════════════════════
+           CONFIG & STATE
+        ══════════════════════════════════════════ */
+        const SHEET_ID  = "1ns74e0f2p0j0pab2vhEUMLOvjPDcmzZtVdZrTulhq0w";
         const SHEET_GID = "477794309";
-        const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${SHEET_GID}`;
+        const CSV_URL   = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${SHEET_GID}`;
 
         const COL_NAMES = {
-            pos: "ตำแหน่งสายงาน",
-            dept: 4,
-            type: "ประเภทเจ้าหน้าที่",
+            pos:      "ตำแหน่งสายงาน",
+            dept:     4,
+            type:     "ประเภทเจ้าหน้าที่",
             religion: "ศาสนา",
-            gender: "เพศ",
-            gen: "generation",
+            gender:   "เพศ",
+            gen:      "generation",
         };
 
-        /* ─── State ───────────────────────────────────────────────── */
+        const FILTER_KEYS = ["type", "dept", "pos", "religion", "gen"];
+
+        const DROPDOWN_CONFIG = [
+            { id: "ms-type",     key: "type",     ph: "ประเภทเจ้าหน้าที่" },
+            { id: "ms-dept",     key: "dept",     ph: "กลุ่มงาน" },
+            { id: "ms-pos",      key: "pos",      ph: "ตำแหน่ง" },
+            { id: "ms-religion", key: "religion", ph: "ศาสนา" },
+            { id: "ms-gen",      key: "gen",      ph: "Generation" },
+        ];
+
         let allData = [], filteredData = [], deptView = "top15", charts = {};
 
-        /* ─── Color palettes ──────────────────────────────────────── */
-        const PALETTE = ["#185FA5", "#1D9E75", "#BA7517", "#D4537E", "#534AB7", "#5DCAA5", "#F0997B", "#1D7A8C", "#E5A020", "#6B48C0"];
+        /* ══════════════════════════════════════════
+           COLOR PALETTES
+        ══════════════════════════════════════════ */
+        const PALETTE = [
+            "#185FA5", "#1D9E75", "#BA7517", "#D4537E",
+            "#534AB7", "#5DCAA5", "#F0997B", "#1D7A8C", "#E5A020", "#6B48C0",
+        ];
 
         const TYPE_COLORS = {
-            "ข้าราชการ": "#185FA5",
-            "พนักงานกระทรวงสาธารณสุข": "#1D9E75",
-            "ลูกจ้างชั่วคราว": "#BA7517",
-            "ลูกจ้างรายคาบ": "#D4537E",
-            "พนักงานราชการ": "#534AB7",
-            "ลูกจ้างประจำ": "#5DCAA5",
-            "ลูกจ้างรายวัน": "#F0997B",
+            "ข้าราชการ":                    "#185FA5",
+            "พนักงานกระทรวงสาธารณสุข":     "#1D9E75",
+            "ลูกจ้างชั่วคราว":              "#BA7517",
+            "ลูกจ้างรายคาบ":               "#D4537E",
+            "พนักงานราชการ":               "#534AB7",
+            "ลูกจ้างประจำ":               "#5DCAA5",
+            "ลูกจ้างรายวัน":               "#F0997B",
         };
         const RELIGION_COLORS = {
             "อิสลาม": "#1D7A8C", "พุทธ": "#E5A020", "คริสต์": "#6B48C0", "ไม่ระบุ": "#9898a8",
         };
         const GEN_COLORS = {
-            "Gen Alpha": "#F0997B", "Gen Z": "#D4537E", "Gen Y": "#185FA5",
-            "Gen X": "#1D9E75", "Baby Boomer": "#BA7517", "ไม่ระบุ": "#9898a8",
+            "Gen Alpha": "#F0997B", "Gen Z": "#D4537E", "Gen Y":  "#185FA5",
+            "Gen X":     "#1D9E75", "Baby Boomer": "#BA7517",     "ไม่ระบุ": "#9898a8",
         };
         const GENDER_COLORS = { "ชาย": "#185FA5", "หญิง": "#D4537E", "ไม่ระบุ": "#9898a8" };
 
-        /* ─── Utilities ───────────────────────────────────────────── */
+        /* ══════════════════════════════════════════
+           UTILITIES
+        ══════════════════════════════════════════ */
         const _cleanCache = new Map();
         function clean(s) {
             if (!s) return "";
             if (_cleanCache.has(s)) return _cleanCache.get(s);
-            const r = s.replace(/^\uFEFF/, "").replace(/[\u200B-\u200D\u00A0]/g, "").replace(/\s+/, " ").trim();
+            const r = s
+                .replace(/^\uFEFF/, "")
+                .replace(/[\u200B-\u200D\u00A0]/g, "")
+                .replace(/\s+/, " ")
+                .trim();
             _cleanCache.set(s, r);
             return r;
         }
@@ -236,44 +259,50 @@
         function splitCSV(line) {
             const r = []; let cur = "", q = false;
             for (const c of line) {
-                if (c === '"') { q = !q; }
-                else if (c === ',' && !q) { r.push(cur); cur = ""; }
-                else cur += c;
+                if      (c === '"')           q = !q;
+                else if (c === ',' && !q)     { r.push(cur); cur = ""; }
+                else                          cur += c;
             }
             r.push(cur);
             return r;
         }
 
-        const colorOf = (map, label, i) => map[label] || PALETTE[i % PALETTE.length];
-        const pct = (a, b) => b ? Math.round(a / b * 100) : 0;
+        const colorOf  = (map, label, i) => map[label] || PALETTE[i % PALETTE.length];
+        const pct      = (a, b) => b ? Math.round(a / b * 100) : 0;
         const killChart = id => { if (charts[id]) { charts[id].destroy(); delete charts[id]; } };
         const sortedKeys = map => Object.keys(map).sort();
-        const escHtml = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-        const escJs = s => s.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+        const escHtml  = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+        const escJs    = s => s.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
 
         function countMapOf(arr, key) {
             const m = {};
             arr.forEach(d => { const k = d[key] || "ไม่ระบุ"; m[k] = (m[k] || 0) + 1; });
             return m;
         }
+
         function countBy(arr, key) {
             const m = {};
             for (const row of arr) { const k = row[key] || "ไม่ระบุ"; m[k] = (m[k] || 0) + 1; }
             return Object.entries(m).sort((a, b) => b[1] - a[1]);
         }
 
-        /* ─── Fetch & parse CSV ───────────────────────────────────── */
+        /* ══════════════════════════════════════════
+           FETCH & PARSE
+        ══════════════════════════════════════════ */
         async function loadSheetData() {
             document.getElementById("loadingOverlay").style.display = "flex";
             document.getElementById("errorBox").style.display = "none";
+
             try {
-                const ctrl = new AbortController();
+                const ctrl  = new AbortController();
                 const timer = setTimeout(() => ctrl.abort(), 15000);
-                const resp = await fetch(CSV_URL, { signal: ctrl.signal, cache: "no-cache" });
+                const resp  = await fetch(CSV_URL, { signal: ctrl.signal, cache: "no-cache" });
                 clearTimeout(timer);
                 if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
 
                 const lines = (await resp.text()).replace(/^\uFEFF/, "").split(/\r?\n/);
+
+                /* Find header row */
                 let headerIdx = -1, headers = [];
                 for (let i = 0; i < Math.min(5, lines.length); i++) {
                     const h = splitCSV(lines[i]).map(c => clean(c.replace(/^"|"$/g, "")));
@@ -283,37 +312,41 @@
                 }
                 if (headerIdx === -1) throw new Error("ไม่พบ header row กรุณาตรวจสอบ Google Sheets");
 
+                /* Map column indices */
                 const idx = {};
                 Object.entries(COL_NAMES).forEach(([key, col]) => {
-                    if (typeof col === "number") { idx[key] = col; }
-                    else {
+                    if (typeof col === "number") {
+                        idx[key] = col;
+                    } else {
                         const i = headers.findIndex(h => clean(h).toLowerCase() === clean(col).toLowerCase());
                         if (i !== -1) idx[key] = i;
                     }
                 });
 
                 const GEN_MAP = { x: "Gen X", y: "Gen Y", z: "Gen Z", alpha: "Gen Alpha" };
-                const getCol = (cols, key) => typeof idx[key] === "number"
+                const getCol  = (cols, key) => typeof idx[key] === "number"
                     ? (clean(cols[idx[key]]?.replace(/^"|"$/g, "") || "") || "ไม่ระบุ")
                     : "ไม่ระบุ";
 
-                allData = lines.slice(headerIdx + 1)
+                allData = lines
+                    .slice(headerIdx + 1)
                     .filter(line => line.trim() && !splitCSV(line).every(c => !c.trim()))
                     .map(line => {
                         const cols = splitCSV(line);
                         let gen = getCol(cols, "gen");
                         gen = GEN_MAP[gen.toLowerCase()] || (/alpha/i.test(gen) ? "Gen Alpha" : gen || "ไม่ระบุ");
                         return {
-                            pos: getCol(cols, "pos"),
-                            dept: getCol(cols, "dept"),
-                            type: getCol(cols, "type"),
+                            pos:      getCol(cols, "pos"),
+                            dept:     getCol(cols, "dept"),
+                            type:     getCol(cols, "type"),
                             religion: getCol(cols, "religion"),
-                            gender: getCol(cols, "gender"),
+                            gender:   getCol(cols, "gender"),
                             gen,
                         };
                     });
 
                 if (!allData.length) throw new Error("ไม่พบข้อมูล กรุณาตรวจสอบชื่อคอลัมน์");
+
                 document.getElementById("loadingOverlay").style.display = "none";
                 initAllDropdowns();
 
@@ -326,66 +359,59 @@
             }
         }
 
-        /* ─── Multi-select dropdown ───────────────────────────────── */
+        /* ══════════════════════════════════════════
+           MULTI-SELECT DROPDOWN
+        ══════════════════════════════════════════ */
         const msRegistry = {};
-        const FILTER_KEYS = ["type", "dept", "pos", "religion", "gen"];
-
-        const DROPDOWN_CONFIG = [
-            { id: "ms-type", key: "type", ph: "ประเภทเจ้าหน้าที่" },
-            { id: "ms-dept", key: "dept", ph: "กลุ่มงาน" },
-            { id: "ms-pos", key: "pos", ph: "ตำแหน่ง" },
-            { id: "ms-religion", key: "religion", ph: "ศาสนา" },
-            { id: "ms-gen", key: "gen", ph: "Generation" },
-        ];
 
         function buildDropdown(wrapEl, key, placeholder, options) {
             const id = `msd-${key}`;
             wrapEl.innerHTML = `
-        <div class="ms-btn" id="${id}-btn" tabindex="0">
-          <span class="ms-btn-label placeholder" id="${id}-label">${placeholder}</span>
-          <span class="ms-badge"       id="${id}-badge"></span>
-          <span class="ms-pending-dot" id="${id}-dot"></span>
-          <svg class="ms-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="ms-panel" id="${id}-panel">
-          <div class="ms-search-wrap">
-            <svg class="ms-search-icon" viewBox="0 0 24 24">
-              <circle cx="11" cy="11" r="8"/>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
-            <input class="ms-search" id="${id}-search" type="text" placeholder="พิมพ์เพื่อค้นหา…" autocomplete="off">
-          </div>
-          <div class="ms-toolbar">
-            <button onclick="msSelectAll('${key}')">เลือกทั้งหมด</button>
-            <button class="ms-clear-btn" onclick="msClearPending('${key}')">ล้างทั้งหมด</button>
-          </div>
-          <div class="ms-list" id="${id}-list"></div>
-          <div class="ms-footer">
-            <button class="ms-btn-confirm" onclick="msConfirm('${key}')">ตกลง</button>
-            <button class="ms-btn-cancel"  onclick="msCancelPending('${key}')">ยกเลิก</button>
-          </div>
-        </div>`;
+                <div class="ms-btn" id="${id}-btn" tabindex="0">
+                    <span class="ms-btn-label placeholder" id="${id}-label">${placeholder}</span>
+                    <span class="ms-badge"       id="${id}-badge"></span>
+                    <span class="ms-pending-dot" id="${id}-dot"></span>
+                    <svg class="ms-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+                <div class="ms-panel" id="${id}-panel">
+                    <div class="ms-search-wrap">
+                        <svg class="ms-search-icon" viewBox="0 0 24 24">
+                            <circle cx="11" cy="11" r="8"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                        <input class="ms-search" id="${id}-search" type="text" placeholder="พิมพ์เพื่อค้นหา…" autocomplete="off">
+                    </div>
+                    <div class="ms-toolbar">
+                        <button onclick="msSelectAll('${key}')">เลือกทั้งหมด</button>
+                        <button class="ms-clear-btn" onclick="msClearPending('${key}')">ล้างทั้งหมด</button>
+                    </div>
+                    <div class="ms-list" id="${id}-list"></div>
+                    <div class="ms-footer">
+                        <button class="ms-btn-confirm" onclick="msConfirm('${key}')">ตกลง</button>
+                        <button class="ms-btn-cancel"  onclick="msCancelPending('${key}')">ยกเลิก</button>
+                    </div>
+                </div>`;
 
             msRegistry[key] = {
                 el: wrapEl, id, placeholder,
-                selectedSet: new Set(),   // committed (applied) selections
-                pendingSet: new Set(),   // in-panel draft selections
-                options: [...options],
+                selectedSet: new Set(),
+                pendingSet:  new Set(),
+                options:     [...options],
             };
+
             renderOptionList(key, options);
 
-            const btn = document.getElementById(`${id}-btn`);
-            const panel = document.getElementById(`${id}-panel`);
+            const btn    = document.getElementById(`${id}-btn`);
+            const panel  = document.getElementById(`${id}-panel`);
             const search = document.getElementById(`${id}-search`);
 
-            btn.addEventListener("click", e => { e.stopPropagation(); msToggle(key); });
+            btn.addEventListener("click",   e => { e.stopPropagation(); msToggle(key); });
             btn.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); msToggle(key); } });
             panel.addEventListener("click", e => e.stopPropagation());
-            search.addEventListener("input", () => msSearch(key, search.value));
+            search.addEventListener("input",   () => msSearch(key, search.value));
             search.addEventListener("keydown", e => e.stopPropagation());
         }
 
-        /* Render checkbox list based on pendingSet */
         function renderOptionList(key, options) {
             const { id, pendingSet } = msRegistry[key];
             const list = document.getElementById(`${id}-list`);
@@ -393,13 +419,12 @@
             list.innerHTML = options.map(opt => {
                 const checked = pendingSet.has(opt);
                 return `<label class="ms-option${checked ? " checked" : ""}" data-val="${escHtml(opt)}">
-          <input type="checkbox" ${checked ? "checked" : ""} onchange="msPendingToggle('${key}','${escJs(opt)}',this.checked)">
-          <span class="ms-option-label" title="${escHtml(opt)}">${escHtml(opt)}</span>
-        </label>`;
+                    <input type="checkbox" ${checked ? "checked" : ""} onchange="msPendingToggle('${key}','${escJs(opt)}',this.checked)">
+                    <span class="ms-option-label" title="${escHtml(opt)}">${escHtml(opt)}</span>
+                </label>`;
             }).join("");
         }
 
-        /* Toggle checkbox – only updates pendingSet (not applied yet) */
         function msPendingToggle(key, val, checked) {
             const reg = msRegistry[key];
             reg.pendingSet[checked ? "add" : "delete"](val);
@@ -409,15 +434,13 @@
             updatePendingDot(key);
         }
 
-        /* Show orange dot when pending differs from committed */
         function updatePendingDot(key) {
             const { id, selectedSet, pendingSet } = msRegistry[key];
             const diff = [...pendingSet].some(v => !selectedSet.has(v)) ||
-                [...selectedSet].some(v => !pendingSet.has(v));
+                         [...selectedSet].some(v => !pendingSet.has(v));
             document.getElementById(`${id}-dot`).classList.toggle("show", diff);
         }
 
-        /* ตกลง – commit pendingSet → selectedSet, apply filter, close */
         function msConfirm(key) {
             const reg = msRegistry[key];
             reg.selectedSet = new Set(reg.pendingSet);
@@ -429,7 +452,6 @@
             applyFilters();
         }
 
-        /* ยกเลิก – revert pendingSet back to committed, close */
         function msCancelPending(key) {
             const reg = msRegistry[key];
             reg.pendingSet = new Set(reg.selectedSet);
@@ -438,23 +460,21 @@
             msCloseAll();
         }
 
-        /* ล้างทั้งหมด – clears pendingSet only (not committed until ตกลง) */
         function msClearPending(key) {
-            const reg = msRegistry[key];
+            const reg    = msRegistry[key];
+            const search = document.getElementById(`${reg.id}-search`);
             reg.pendingSet.clear();
             document.getElementById(`${reg.id}-list`).querySelectorAll(".ms-option").forEach(el => {
                 el.classList.remove("checked");
                 const cb = el.querySelector("input");
                 if (cb) cb.checked = false;
             });
-            const search = document.getElementById(`${reg.id}-search`);
             if (search) { search.value = ""; msSearch(key, ""); }
             updatePendingDot(key);
         }
 
-        /* เลือกทั้งหมด – adds all visible options to pendingSet */
         function msSelectAll(key) {
-            const reg = msRegistry[key];
+            const reg  = msRegistry[key];
             const list = document.getElementById(`${reg.id}-list`);
             list.querySelectorAll(".ms-option:not(.hidden)").forEach(el => {
                 reg.pendingSet.add(el.dataset.val);
@@ -469,7 +489,7 @@
             const { id, placeholder, selectedSet } = msRegistry[key];
             const badge = document.getElementById(`${id}-badge`);
             const label = document.getElementById(`${id}-label`);
-            const n = selectedSet.size;
+            const n     = selectedSet.size;
             if (n === 0) {
                 label.textContent = placeholder;
                 label.classList.add("placeholder");
@@ -482,13 +502,11 @@
             }
         }
 
-        /* Open/close panel – sync pendingSet from selectedSet on open */
         function msToggle(key) {
-            const reg = msRegistry[key];
+            const reg    = msRegistry[key];
             const isOpen = reg.el.classList.contains("open");
             msCloseAll();
             if (!isOpen) {
-                // sync pending to current committed state
                 reg.pendingSet = new Set(reg.selectedSet);
                 renderOptionList(key, reg.options);
                 document.getElementById(`${reg.id}-dot`).classList.remove("show");
@@ -498,11 +516,9 @@
             }
         }
 
-        /* Close all: revert any uncommitted pendingSet changes */
         function msCloseAll() {
             Object.entries(msRegistry).forEach(([key, reg]) => {
                 if (reg.el.classList.contains("open")) {
-                    // revert pending to committed on close-without-confirm
                     reg.pendingSet = new Set(reg.selectedSet);
                     renderOptionList(key, reg.options);
                     document.getElementById(`${reg.id}-dot`).classList.remove("show");
@@ -511,28 +527,37 @@
                 document.getElementById(`${reg.id}-btn`)?.classList.remove("open");
             });
         }
+
         document.addEventListener("click", msCloseAll);
 
         function msSearch(key, q) {
             const { id } = msRegistry[key];
-            const list = document.getElementById(`${id}-list`);
-            const lq = q.trim().toLowerCase();
+            const list   = document.getElementById(`${id}-list`);
+            const lq     = q.trim().toLowerCase();
             let anyVisible = false;
+
             list.querySelectorAll(".ms-option").forEach(el => {
                 const match = !lq || (el.dataset.val || "").toLowerCase().includes(lq);
                 el.classList.toggle("hidden", !match);
                 if (match) anyVisible = true;
             });
+
             let noRes = list.querySelector(".ms-no-results-q");
             if (!anyVisible) {
-                if (!noRes) { noRes = document.createElement("div"); noRes.className = "ms-no-results ms-no-results-q"; list.appendChild(noRes); }
+                if (!noRes) {
+                    noRes = document.createElement("div");
+                    noRes.className = "ms-no-results ms-no-results-q";
+                    list.appendChild(noRes);
+                }
                 noRes.textContent = `ไม่พบ "${q}"`;
             } else {
                 noRes?.remove();
             }
         }
 
-        /* ─── Initialise dropdowns ────────────────────────────────── */
+        /* ══════════════════════════════════════════
+           DROPDOWN INIT & DEPENDENTS
+        ══════════════════════════════════════════ */
         function initAllDropdowns() {
             const counts = {};
             FILTER_KEYS.forEach(k => { counts[k] = countMapOf(allData, k); });
@@ -542,7 +567,6 @@
             applyFilters();
         }
 
-        /* ─── Dependent rebuild ───────────────────────────────────── */
         const HIERARCHY = ["type", "dept", "pos", "religion", "gen"];
 
         function getPoolForKey(stopKey) {
@@ -555,9 +579,9 @@
         function rebuildDropdown(key, options) {
             const reg = msRegistry[key];
             if (!reg) return;
-            reg.options = [...options];
+            reg.options     = [...options];
             reg.selectedSet = new Set([...reg.selectedSet].filter(v => options.includes(v)));
-            reg.pendingSet = new Set(reg.selectedSet);
+            reg.pendingSet  = new Set(reg.selectedSet);
             renderOptionList(key, options);
             updateBtnLabel(key);
         }
@@ -566,11 +590,14 @@
             rebuildDropdown("dept", sortedKeys(countMapOf(getPoolForKey("type"), "dept")));
             rebuildPos();
         }
+
         function rebuildPos() {
             rebuildDropdown("pos", sortedKeys(countMapOf(getPoolForKey("dept"), "pos")));
         }
 
-        /* ─── Filter & render ─────────────────────────────────────── */
+        /* ══════════════════════════════════════════
+           FILTER & RENDER
+        ══════════════════════════════════════════ */
         function applyFilters() {
             filteredData = allData.filter(d =>
                 FILTER_KEYS.every(k => {
@@ -592,12 +619,14 @@
             initAllDropdowns();
         }
 
-        /* ─── Render ──────────────────────────────────────────────── */
+        /* ══════════════════════════════════════════
+           RENDER
+        ══════════════════════════════════════════ */
         function renderAll() {
             renderKPI();
-            renderDonut("donutType", "legendType", countBy(filteredData, "type"), TYPE_COLORS);
+            renderDonut("donutType",     "legendType",     countBy(filteredData, "type"),     TYPE_COLORS);
             renderDonut("donutReligion", "legendReligion", countBy(filteredData, "religion"), RELIGION_COLORS);
-            renderDonut("donutGender", "legendGender", countBy(filteredData, "gender"), GENDER_COLORS);
+            renderDonut("donutGender",   "legendGender",   countBy(filteredData, "gender"),   GENDER_COLORS);
             renderGenDonut();
             renderPosBars();
             renderDeptBars();
@@ -615,23 +644,23 @@
         }
 
         function renderKPI() {
-            const total = filteredData.length;
+            const total  = filteredData.length;
             const topPos = countBy(filteredData, "pos")[0];
             document.getElementById("kpiRow").innerHTML = [
-                kpi("k-blue", "บุคลากรทั้งหมด", total, "จากข้อมูลที่กรอง", '<path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>'),
-                kpi("k-green", "จำนวนตำแหน่ง", new Set(filteredData.map(d => d.pos)).size, "ประเภทตำแหน่งทั้งหมด", '<path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13zm-2 9H7v-2h4v2zm4-4H7v-2h8v2zm0-4H7V8h8v2z"/>'),
-                kpi("k-purple", "กลุ่มงานทั้งหมด", new Set(filteredData.map(d => d.dept)).size, "จากข้อมูลที่กรอง", '<path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>'),
-                kpi("k-amber", "ตำแหน่งสูงสุด", topPos?.[1] || 0, topPos?.[0] || "-", '<path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/>'),
+                kpi("k-blue",   "บุคลากรทั้งหมด",  total,                                   "จากข้อมูลที่กรอง",     '<path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>'),
+                kpi("k-green",  "จำนวนตำแหน่ง",    new Set(filteredData.map(d => d.pos)).size, "ประเภทตำแหน่งทั้งหมด", '<path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13zm-2 9H7v-2h4v2zm4-4H7v-2h8v2zm0-4H7V8h8v2z"/>'),
+                kpi("k-purple", "กลุ่มงานทั้งหมด", new Set(filteredData.map(d => d.dept)).size, "จากข้อมูลที่กรอง",   '<path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>'),
+                kpi("k-amber",  "ตำแหน่งสูงสุด",   topPos?.[1] || 0,                         topPos?.[0] || "-",     '<path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/>'),
             ].join("");
         }
 
         function kpi(cls, label, val, sub, icon) {
             return `<div class="kpi-card ${cls}">
-        <div class="kpi-icon"><svg viewBox="0 0 24 24">${icon}</svg></div>
-        <div class="kpi-num">${Number(val).toLocaleString("th-TH")}</div>
-        <div class="kpi-label">${label}</div>
-        <div class="kpi-sub">${sub}</div>
-      </div>`;
+                <div class="kpi-icon"><svg viewBox="0 0 24 24">${icon}</svg></div>
+                <div class="kpi-num">${Number(val).toLocaleString("th-TH")}</div>
+                <div class="kpi-label">${label}</div>
+                <div class="kpi-sub">${sub}</div>
+            </div>`;
         }
 
         function renderDonut(cid, lid, entries, cmap) {
@@ -667,15 +696,15 @@
 
             document.getElementById(lid).innerHTML = entries.map(([l, v], i) =>
                 `<span style="display:flex;align-items:center;gap:4px;white-space:nowrap">
-          <span style="width:10px;height:10px;border-radius:2px;background:${colorOf(cmap, l, i)};flex-shrink:0"></span>
-          ${l} <b>${v.toLocaleString("th-TH")}</b>
-        </span>`
+                    <span style="width:10px;height:10px;border-radius:2px;background:${colorOf(cmap,l,i)};flex-shrink:0"></span>
+                    ${l} <b>${v.toLocaleString("th-TH")}</b>
+                </span>`
             ).join("");
         }
 
         function renderPosBars() {
             const entries = countBy(filteredData, "pos").slice(0, 15);
-            const max = entries[0]?.[1] || 1;
+            const max     = entries[0]?.[1] || 1;
             document.getElementById("positionBars").innerHTML = entries.length
                 ? entries.map(([l, v]) => hbar(l, v, max, pct(v, filteredData.length), "#1D9E75")).join("")
                 : "<span style='color:#aaa;font-size:13px;padding:12px'>ไม่มีข้อมูล</span>";
@@ -699,18 +728,24 @@
 
         function hbar(label, val, max, p, color) {
             return `<div class="hbar-row">
-        <span class="hbar-label" title="${label}">${label}</span>
-        <div class="hbar-track">
-          <div class="hbar-fill" style="width:${Math.round(val / max * 100)}%;background:${color}"></div>
-        </div>
-        <span class="hbar-val">${val.toLocaleString("th-TH")}</span>
-        <span class="hbar-pct">${p}%</span>
-      </div>`;
+                <span class="hbar-label" title="${label}">${label}</span>
+                <div class="hbar-track">
+                    <div class="hbar-fill" style="width:${Math.round(val / max * 100)}%;background:${color}"></div>
+                </div>
+                <span class="hbar-val">${val.toLocaleString("th-TH")}</span>
+                <span class="hbar-pct">${p}%</span>
+            </div>`;
         }
 
-        /* ─── Kick-off ────────────────────────────────────────────── */
+        /* ══════════════════════════════════════════
+           KICK-OFF
+        ══════════════════════════════════════════ */
+        fetch("footer.html")
+            .then(r => r.text())
+            .then(html => { document.getElementById("footer").innerHTML = html; });
+
         loadSheetData();
     </script>
-</body>
 
+</body>
 </html>

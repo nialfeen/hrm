@@ -6,10 +6,15 @@ footer {
     border-top: 3px solid var(--gold);
 }
 
-.footer-inner {
+.footer-inner,
+.footer-bottom {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 0 28px 24px;
+    padding-inline: 28px;
+}
+
+.footer-inner {
+    padding-bottom: 24px;
     display: grid;
     grid-template-columns: 2fr 1fr 1fr;
     gap: 36px;
@@ -38,7 +43,7 @@ footer {
 .footer-inner ul a {
     color: rgba(255, 255, 255, 0.42);
     text-decoration: none;
-    transition: color .18s;
+    transition: color 0.18s;
 }
 
 .footer-inner ul a:hover {
@@ -46,13 +51,10 @@ footer {
 }
 
 .footer-bottom {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 14px 28px 24px;
+    padding-block: 14px 24px;
     border-top: 1px solid rgba(255, 255, 255, 0.07);
     display: flex;
     justify-content: space-between;
     font-size: 0.73rem;
     color: rgba(255, 255, 255, 0.26);
 }
-

@@ -1,33 +1,35 @@
 @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
 
-/* mission.css — เพิ่มตรงหัวไฟล์ */
+/* ══════════════════════════════════════════════
+   VARIABLES
+══════════════════════════════════════════════ */
 :root {
-    /* === สีหลักที่ menu.css และ footer.css ใช้ === */
-    --navy: #0f172a;
-    /* พื้นหลัง header / footer */
-    --gold: #c9a84c;
-    /* เส้นขอบทอง / active */
+    /* Shared with menu.css / footer.css */
+    --navy:      #0f172a;
+    --gold:      #c9a84c;
     --gold-light: #e2c97e;
-    /* ตัวหนังสือทอง */
 
-    /* === สีเดิมของ mission.css === */
-    --primary: #1a73e8;
-    --bg: #f0f4fb;
-    --card: #ffffff;
-    --text: #1f2937;
-    --subtext: #6b7280;
-    --border: #d1d9e6;
-    --mission-bg: #cfe2ff;
-    --mission-text: #0d2f6e;
+    /* Mission page */
+    --primary:        #1a73e8;
+    --bg:             #f0f4fb;
+    --card:           #ffffff;
+    --text:           #1f2937;
+    --subtext:        #6b7280;
+    --border:         #d1d9e6;
+    --mission-bg:     #cfe2ff;
+    --mission-text:   #0d2f6e;
     --mission-num-bg: #9dc3f7;
-    --group-bg: #d4edda;
-    --group-text: #155724;
-    --group-num-bg: #a8d5b5;
-    --row-hover: #eef4ff;
-    --num-color: #1a56db;
+    --group-bg:       #d4edda;
+    --group-text:     #155724;
+    --group-num-bg:   #a8d5b5;
+    --row-hover:      #eef4ff;
+    --num-color:      #1a56db;
 }
 
-* {
+/* ══════════════════════════════════════════════
+   RESET & BASE
+══════════════════════════════════════════════ */
+*, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -42,19 +44,18 @@ body {
     flex-direction: column;
 }
 
-/* ══════════════════════════════
+/* ══════════════════════════════════════════════
    APP BAR
-══════════════════════════════ */
+══════════════════════════════════════════════ */
 .gs-app-bar {
-    background: linear-gradient(135deg, #0f172a, #1e3a8a);
-    color: #fff;
-    padding: 20px 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    padding: 20px 30px;
+    background: linear-gradient(135deg, #0f172a, #1e3a8a);
+    color: #fff;
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .18);
 }
 
 .gs-doc-title {
@@ -63,20 +64,20 @@ body {
 }
 
 .gs-doc-subtitle {
-    font-size: 0.88rem;
-    opacity: 0.65;
+    font-size: .88rem;
     margin-top: 3px;
+    opacity: .65;
 }
 
 .gs-back-btn {
-    text-decoration: none;
-    background: rgba(255, 255, 255, 0.14);
     padding: 9px 20px;
+    background: rgba(255, 255, 255, .14);
+    border: 1px solid rgba(255, 255, 255, .22);
     border-radius: 10px;
     color: #fff;
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    transition: all 0.22s;
-    font-size: 0.9rem;
+    font-size: .9rem;
+    text-decoration: none;
+    transition: background .22s, color .22s;
 }
 
 .gs-back-btn:hover {
@@ -84,27 +85,28 @@ body {
     color: #1e3a8a;
 }
 
-/* ══════════════════════════════
+/* ══════════════════════════════════════════════
    BODY WRAPPER
-══════════════════════════════ */
+══════════════════════════════════════════════ */
 .gs-body {
     flex: 1;
-    padding: 28px 32px;
     max-width: 1700px;
     margin: auto;
+    padding: 28px 32px;
 }
 
-/* ══════════════════════════════
-   MISSION BANNER  (แถบฟ้า ภารกิจ)
-══════════════════════════════ */
+/* ══════════════════════════════════════════════
+   MISSION BANNER  (แถบฟ้า)
+══════════════════════════════════════════════ */
 .gs-mission-banner {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-top: 32px;
+    padding: 11px 18px;
     background: var(--mission-bg);
     border: 1px solid #9dc3f7;
     border-radius: 10px 10px 0 0;
-    padding: 11px 18px;
 }
 
 .gs-mission-banner .gs-label {
@@ -114,19 +116,19 @@ body {
 }
 
 .gs-mission-banner .gs-badge {
+    min-width: 44px;
+    padding: 2px 16px;
     background: var(--mission-num-bg);
     color: var(--mission-text);
+    font-size: .95rem;
     font-weight: 800;
-    font-size: 0.95rem;
-    padding: 2px 16px;
     border-radius: 6px;
-    min-width: 44px;
     text-align: center;
 }
 
-/* ══════════════════════════════
-   GROUPS GRID  (ถัดจาก banner)
-══════════════════════════════ */
+/* ══════════════════════════════════════════════
+   GROUPS GRID
+══════════════════════════════════════════════ */
 .gs-groups-wrap {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -139,71 +141,73 @@ body {
     margin-bottom: 28px;
 }
 
-/* ══════════════════════════════
-   GROUP BLOCK  (กล่องกลุ่มงาน)
-══════════════════════════════ */
+/* ══════════════════════════════════════════════
+   GROUP BLOCK
+══════════════════════════════════════════════ */
 .gs-group {
+    background: #fff;
     border: 1px solid var(--border);
     border-radius: 8px;
     overflow: hidden;
-    background: #fff;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-    animation: fadeIn 0.35s ease both;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .05);
+    animation: fadeIn .35s ease both;
 }
 
-/* --- group header (green) --- */
+/* Staggered animation delays */
+.gs-group:nth-child(1) { animation-delay: .00s; }
+.gs-group:nth-child(2) { animation-delay: .05s; }
+.gs-group:nth-child(3) { animation-delay: .10s; }
+.gs-group:nth-child(4) { animation-delay: .15s; }
+.gs-group:nth-child(5) { animation-delay: .20s; }
+.gs-group:nth-child(6) { animation-delay: .25s; }
+.gs-group:nth-child(7) { animation-delay: .30s; }
+.gs-group:nth-child(8) { animation-delay: .35s; }
+
+/* Group header (green) */
 .gs-group-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: var(--group-bg);
-    padding: 9px 13px;
-    border-bottom: 1px solid #a8d5b5;
     gap: 8px;
+    padding: 9px 13px;
+    background: var(--group-bg);
+    border-bottom: 1px solid #a8d5b5;
 }
 
 .gs-group-header .gs-label {
-    font-size: 0.84rem;
+    flex: 1;
+    font-size: .84rem;
     font-weight: 700;
     color: var(--group-text);
     line-height: 1.35;
-    flex: 1;
 }
 
 .gs-group-header .gs-badge {
+    min-width: 38px;
+    padding: 2px 12px;
     background: var(--group-num-bg);
     color: var(--group-text);
+    font-size: .9rem;
     font-weight: 800;
-    font-size: 0.9rem;
-    padding: 2px 12px;
     border-radius: 5px;
-    min-width: 38px;
     text-align: center;
     white-space: nowrap;
 }
 
-/* --- data rows inside group --- */
+/* Data rows */
 .gs-group-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 7px 13px;
-    border-bottom: 1px solid #f0f2f6;
     gap: 8px;
-    font-size: 0.82rem;
+    padding: 7px 13px;
+    font-size: .82rem;
+    border-bottom: 1px solid #f0f2f6;
 }
 
-.gs-group-row:last-child {
-    border-bottom: none;
-}
-
-.gs-group-row:nth-child(even) {
-    background: #fafbfe;
-}
-
-.gs-group-row:hover {
-    background: var(--row-hover);
-}
+.gs-group-row:last-child          { border-bottom: none; }
+.gs-group-row:nth-child(even)     { background: #fafbfe; }
+.gs-group-row:hover               { background: var(--row-hover); }
 
 .gs-group-row .gs-row-label {
     flex: 1;
@@ -212,95 +216,39 @@ body {
 }
 
 .gs-group-row .gs-row-num {
-    font-weight: 700;
-    color: var(--num-color);
-    font-size: 0.88rem;
-    background: #eef2ff;
-    padding: 2px 10px;
-    border-radius: 5px;
     min-width: 34px;
+    padding: 2px 10px;
+    background: #eef2ff;
+    color: var(--num-color);
+    font-size: .88rem;
+    font-weight: 700;
+    border-radius: 5px;
     text-align: center;
     white-space: nowrap;
 }
 
-/* ══════════════════════════════
-   ANIMATION
-══════════════════════════════ */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(8px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* ══════════════════════════════════════════════
+   INLINE NOTE
+══════════════════════════════════════════════ */
+.gs-note-inline {
+    grid-column: 1 / -1;
+    margin-top: 10px;
+    padding-top: 10px;
+    font-size: 13px;
+    color: #444;
+    background: transparent;
 }
 
-.gs-group:nth-child(1) {
-    animation-delay: 0.00s;
-}
+.note-line { margin-bottom: 4px; }
 
-.gs-group:nth-child(2) {
-    animation-delay: 0.05s;
-}
-
-.gs-group:nth-child(3) {
-    animation-delay: 0.10s;
-}
-
-.gs-group:nth-child(4) {
-    animation-delay: 0.15s;
-}
-
-.gs-group:nth-child(5) {
-    animation-delay: 0.20s;
-}
-
-.gs-group:nth-child(6) {
-    animation-delay: 0.25s;
-}
-
-.gs-group:nth-child(7) {
-    animation-delay: 0.30s;
-}
-
-.gs-group:nth-child(8) {
-    animation-delay: 0.35s;
-}
-
-/* ══════════════════════════════
-   RESPONSIVE
-══════════════════════════════ */
-@media (max-width: 1100px) {
-    .gs-groups-wrap {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-@media (max-width: 780px) {
-    .gs-groups-wrap {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .gs-body {
-        padding: 16px 12px;
-    }
-}
-
-@media (max-width: 480px) {
-    .gs-groups-wrap {
-        grid-template-columns: 1fr;
-    }
-}
-
+/* ══════════════════════════════════════════════
+   STATES: LOADING / ERROR
+══════════════════════════════════════════════ */
 .gs-loading {
-    text-align: center;
     padding: 48px;
     color: #888;
-    font-family: 'Sarabun', sans-serif;
     font-size: 16px;
+    text-align: center;
 }
 
 .gs-loading::before {
@@ -308,41 +256,43 @@ body {
     display: block;
     width: 36px;
     height: 36px;
+    margin: 0 auto 12px;
     border: 3px solid #dde3ec;
     border-top-color: #1a3a6e;
     border-radius: 50%;
-    margin: 0 auto 12px;
-    animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
+    animation: spin .8s linear infinite;
 }
 
 .gs-error {
-    text-align: center;
     padding: 32px;
     color: #c0392b;
-    font-family: 'Sarabun', sans-serif;
+    text-align: center;
 }
 
-.gs-mission-banner {
-    margin-top: 32px
+/* ══════════════════════════════════════════════
+   ANIMATIONS
+══════════════════════════════════════════════ */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
-.gs-note-inline {
-    grid-column: 1 / -1;
-    /* 🔥 สำคัญ: ให้กินเต็มแถว */
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: none;
-    font-size: 13px;
-    color: #444;
-    background: transparent;
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 
-.note-line {
-    margin-bottom: 4px;
+/* ══════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════ */
+@media (max-width: 1100px) {
+    .gs-groups-wrap { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 780px) {
+    .gs-groups-wrap { grid-template-columns: repeat(2, 1fr); }
+    .gs-body        { padding: 16px 12px; }
+}
+
+@media (max-width: 480px) {
+    .gs-groups-wrap { grid-template-columns: 1fr; }
 }
