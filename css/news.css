@@ -63,9 +63,9 @@ body {
    NEWS SECTION
 ══════════════════════════════════════════════ */
 .news-section {
-    flex: 1;
-    padding: 3rem 1rem 4rem;
-    min-height: 600px; /* ป้องกันหน้าเว็บยุบตัวเวลาเปลี่ยนหมวด */
+  flex: 1;
+    padding: 3rem 1rem 2rem;
+    min-height: 600px;
 }
 
 .news-wrap {
@@ -263,8 +263,8 @@ body {
     justify-content: center;
     align-items: center;
     gap: 8px;
-    margin-top: 40px;
-    margin-bottom: 40px;
+    margin-top: 28px;
+    margin-bottom: 16px;
 }
 
 /* ปุ่มตัวเลข และปุ่ม << < > >> */
