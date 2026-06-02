@@ -256,3 +256,49 @@ body {
     transform: translateX(6px);
     opacity: 1;
 }
+
+/* คอนเทนเนอร์ของ Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+/* ปุ่มตัวเลข และปุ่ม << < > >> */
+.pagination button {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    color: #333333;
+    padding: 8px 16px;
+    font-size: 16px;
+    font-family: 'Sarabun', sans-serif;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+/* เอฟเฟกต์เมื่อเมาส์ชี้ (Hover) */
+.pagination button:hover:not(:disabled) {
+    background-color: #f5f5f5;
+    border-color: #b91c1c; /* เปลี่ยนเป็นสีหลักของเว็บท่านได้ */
+    color: #b91c1c;
+}
+
+/* ปุ่มของหน้าปัจจุบัน (Active) */
+.pagination button.active {
+    background-color: #b91c1c; /* สีปุ่มตอนเปิดหน้านั้นอยู่ */
+    border-color: #b91c1c;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* ปุ่มที่กดไม่ได้ (Disabled) เช่น อยู่หน้าแรกสุดแล้วกดปุ่มย้อนกลับ */
+.pagination button:disabled {
+    background-color: #f9f9f9;
+    color: #cccccc;
+    border-color: #eeeeee;
+    cursor: not-allowed;
+}

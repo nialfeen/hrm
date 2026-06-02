@@ -100,10 +100,16 @@
                 <div class="card-photo"><img src="image/department/rusta.png" onerror="phErr(this)" alt="นายรุซตา สาและ"></div>
             </div>
             <div class="card-info">
-                <div class="card-name">นายรุซตา สาและ</div>
-                <div class="card-pos">ผู้อำนวยการโรงพยาบาลปัตตานี</div>
-            </div>
+    <div class="card-name">นายรุซตา สาและ</div>
+    <div class="card-pos">ผู้อำนวยการโรงพยาบาลปัตตานี</div>
+  
+</div>
+
         </div>
+        <div class="card-hint">
+        <i class="ti ti-hand-click"></i> คลิกเพื่อดูข้อมูลกรอบอัตรากำลัง
+    </div>
+        
 
         <!-- Row 2 — Deputies -->
         <div class="card" id="c-d1" onclick="goDept('1495693999')">
@@ -197,6 +203,12 @@
     </div>
 </section>
 
+<div class="org-hint">
+    <i class="ti ti-hand-click"></i>
+    คลิกที่รูปภาพเพื่อดูข้อมูลกรอบอัตรากำลังแต่ละภารกิจ
+</div><br><br>
+
+
 
 <!-- ═══════════════ WORKFORCE FRAME ═══════════════ -->
 <section class="wf-section">
@@ -218,10 +230,20 @@
                 <i></i>
                 <span></span>
             </div>
+            
         </div>
 
-        <div id="wf-panels">
-            <div class="wf-loading">กำลังโหลดข้อมูลกรอบอัตรากำลัง...</div>
+        <div class="wf-img-wrap">
+            <img src="image/กรอบอัตรากำลัง/กรอบอัตรากำลังโรงพยาบาลปัตตานี 1.jpg"  alt="กรอบอัตรากำลัง หน้า 1">
+            <img src="image/กรอบอัตรากำลัง/กรอบอัตรากำลังโรงพยาบาลปัตตานี 2.jpg"  alt="กรอบอัตรากำลัง หน้า 2">
+            <img src="image/กรอบอัตรากำลัง/กรอบอัตรากำลังโรงพยาบาลปัตตานี 3.jpg"  alt="กรอบอัตรากำลัง หน้า 3">
+            <img src="image/กรอบอัตรากำลัง/กรอบอัตรากำลังโรงพยาบาลปัตตานี 4.jpg"  alt="กรอบอัตรากำลัง หน้า 4">
+            <img src="image/กรอบอัตรากำลัง/กรอบอัตรากำลังโรงพยาบาลปัตตานี 5.jpg"  alt="กรอบอัตรากำลัง หน้า 5">
+            <img src="image/กรอบอัตรากำลัง/กรอบอัตรากำลังโรงพยาบาลปัตตานี 6.jpg"  alt="กรอบอัตรากำลัง หน้า 6">
+            <img src="image/กรอบอัตรากำลัง/กรอบอัตรากำลังโรงพยาบาลปัตตานี 7.jpg"  alt="กรอบอัตรากำลัง หน้า 7">
+            <img src="image/กรอบอัตรากำลัง/กรอบอัตรากำลังโรงพยาบาลปัตตานี 8.jpg"  alt="กรอบอัตรากำลัง หน้า 8">
+            <img src="image/กรอบอัตรากำลัง/กรอบอัตรากำลังโรงพยาบาลปัตตานี 9.jpg"  alt="กรอบอัตรากำลัง หน้า 9">
+            <img src="image/กรอบอัตรากำลัง/กรอบอัตรากำลังโรงพยาบาลปัตตานี 10.jpg" alt="กรอบอัตรากำลัง หน้า 10">
         </div>
 
     </div>
@@ -237,14 +259,6 @@
     const CARD_W  = 200;
     const GAP     = 120;
     const ROW_GAP = 100;
-
-    const WF_SHEET_ID = '1EO2QWq6Jd1LDEe1KJawoCeeRoH5kqX0WllneNnbLIyk';
-    const WF_GIDS = [
-        '541980223', '554011934', '776956477', '745919876',
-        '1495693999', '322784243', '223431880', '1545194419',
-        '102264963', '319803234',
-    ];
-
 
     /* ─── Footer ─── */
     fetch('footer.html')
@@ -360,153 +374,6 @@
     new ResizeObserver(drawLines).observe(document.getElementById('treeWrap'));
     window.addEventListener('load', () => { drawLines(); revealCards(); });
     document.fonts.ready.then(drawLines);
-
-
-    /* ══════════════════════════════════════════
-       WORKFORCE FRAME — CSV Fetch & Render
-    ══════════════════════════════════════════ */
-    function wfParseCSV(text) {
-        const rows = [];
-        let row = [], field = '', inQ = false;
-
-        for (let i = 0; i < text.length; i++) {
-            const c = text[i];
-            if (inQ) {
-                if (c === '"' && text[i + 1] === '"') { field += '"'; i++; }
-                else if (c === '"') inQ = false;
-                else field += c;
-            } else {
-                if      (c === ',')  { row.push(field.trim()); field = ''; }
-                else if (c === '\n') { row.push(field.trim()); rows.push(row); row = []; field = ''; }
-                else if (c !== '\r') field += c;
-            }
-        }
-        if (row.length || field) { row.push(field.trim()); rows.push(row); }
-        return rows;
-    }
-
-    const wfIsEmpty = row => row.every(c => c === '');
-
-    function wfClassify(row) {
-        if (wfIsEmpty(row)) return 'spacer';
-        const cells = row.filter(c => c !== '');
-        const first = cells[0] || '';
-        if (first.trim().startsWith('*')) return 'note';
-        if (cells.some(c => c.includes('ภารกิจ') || c.includes('โรงพยาบาลปัตตานี') || c.includes('สรุปกรอบอัตรากำลัง'))) return 'mission';
-        if (/^\d+\./.test(first) || cells.some(c => /กลุ่มงาน/.test(c))) return 'subgroup';
-        return 'data';
-    }
-
-    function wfExtract(row) {
-        const ne = row.filter(c => c !== '');
-        if (!ne.length)     return { label: '',                         num: '' };
-        if (ne.length === 1) return { label: ne[0],                     num: '' };
-        return                      { label: ne.slice(0, -1).join(' '), num: ne[ne.length - 1] };
-    }
-
-    function wfRender(rows, container) {
-        let currentGrid  = null;
-        let currentBlock = null;
-        const notes = [];
-
-        rows.forEach(row => {
-            if (wfIsEmpty(row)) return;
-
-            const type         = wfClassify(row);
-            const { label, num } = wfExtract(row);
-
-            if (type === 'note') {
-                notes.push(label);
-                return;
-            }
-
-            if (type === 'mission') {
-                const banner = document.createElement('div');
-                banner.className = 'wf-mission-banner wf-reveal';
-                banner.innerHTML = `
-                    <span class="wf-m-label">${label}</span>
-                    ${num ? `<span class="wf-m-badge">${num}</span>` : ''}`;
-                container.appendChild(banner);
-
-                currentGrid = document.createElement('div');
-                currentGrid.className = 'wf-groups-wrap';
-                container.appendChild(currentGrid);
-                currentBlock = null;
-
-            } else if (type === 'subgroup') {
-                if (!currentGrid) {
-                    currentGrid = document.createElement('div');
-                    currentGrid.className = 'wf-groups-wrap';
-                    container.appendChild(currentGrid);
-                }
-                currentBlock = document.createElement('div');
-                currentBlock.className = 'wf-group wf-reveal';
-                currentBlock.innerHTML = `
-                    <div class="wf-group-header">
-                        <span class="wf-g-label">${label}</span>
-                        ${num ? `<span class="wf-g-badge">${num}</span>` : ''}
-                    </div>`;
-                currentGrid.appendChild(currentBlock);
-
-            } else { /* data */
-                if (!currentBlock) return;
-                const rowEl = document.createElement('div');
-                rowEl.className = 'wf-group-row';
-                rowEl.innerHTML = `
-                    <span class="wf-r-label">${label}</span>
-                    ${num ? `<span class="wf-r-num">${num}</span>` : ''}`;
-                currentBlock.appendChild(rowEl);
-            }
-        });
-
-        if (notes.length && currentGrid) {
-            const noteBox = document.createElement('div');
-            noteBox.className = 'wf-note-inline';
-            noteBox.innerHTML = notes.map(n => `<div class="wf-note-line">${n}</div>`).join('');
-            currentGrid.appendChild(noteBox);
-        }
-    }
-
-    async function wfLoad() {
-        const panel = document.getElementById('wf-panels');
-        panel.innerHTML = '<div class="wf-loading">กำลังโหลดข้อมูลกรอบอัตรากำลัง...</div>';
-
-        const results = await Promise.allSettled(
-            WF_GIDS.map(gid =>
-                fetch(`https://docs.google.com/spreadsheets/d/${WF_SHEET_ID}/export?format=csv&gid=${gid}`)
-                    .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
-                    .then(csv => ({ gid, csv, ok: true }))
-                    .catch(err => ({ gid, err, ok: false }))
-            )
-        );
-
-        const box = document.createElement('div');
-
-        results.forEach(({ value }) => {
-            if (value.ok) {
-                wfRender(wfParseCSV(value.csv), box);
-            } else {
-                const errEl = document.createElement('div');
-                errEl.className = 'wf-error';
-                errEl.textContent = `⚠ โหลดไม่สำเร็จ (gid=${value.gid}): ${value.err.message}`;
-                box.appendChild(errEl);
-            }
-        });
-
-        panel.innerHTML = '';
-        panel.appendChild(box);
-
-        /* Scroll-reveal observer */
-        const obs = new IntersectionObserver(
-            entries => entries.forEach(en => {
-                if (en.isIntersecting) { en.target.classList.add('wf-visible'); obs.unobserve(en.target); }
-            }),
-            { threshold: 0.06 }
-        );
-        box.querySelectorAll('.wf-reveal').forEach(el => obs.observe(el));
-    }
-
-    wfLoad();
 </script>
 
 </body>

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=1280">
@@ -12,10 +11,8 @@
     <link rel="stylesheet" href="css/news.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Noto+Serif+Thai:wght@400;600;700&display=swap">
 </head>
-
 <body>
 
-    <!-- HEADER -->
     <header class="site-header">
         <div class="header-inner">
             <a href="homepage.html" style="text-decoration:none;color:inherit;display:contents;">
@@ -53,7 +50,6 @@
         </div>
     </header>
 
-    <!-- HERO BANNER -->
     <section class="hero">
         <div class="hero-bg"><img src="image/benner.JPG" alt=""></div>
         <div class="hero-overlay"></div>
@@ -86,11 +82,11 @@
         </div>
     </section>
 
-    <!-- NEWS CONTENT -->
     <section class="news-section">
         <div class="news-wrap">
             <div class="filter-row" id="filterRow"></div>
             <div class="news-list" id="newsList"></div>
+            <div id="pagination" class="pagination"></div>
         </div>
     </section>
 
@@ -105,15 +101,16 @@
         const SHEET_URL = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/gviz/tq?tqx=out:csv&gid=${CONFIG.GID}`;
 
         let items = [];
+        let currentPage = 1;
+        const perPage = 5;
+        let currentFilter = 'all';
 
-        /* ── Footer ── */
+        // Load Footer
         fetch("footer.html")
             .then(r => r.text())
             .then(html => { document.getElementById("footer").innerHTML = html; });
 
-        /* ══════════════════════════════════════════
-           HELPERS
-        ══════════════════════════════════════════ */
+        /* ── Helpers ── */
         function splitDate(dateStr) {
             if (!dateStr) return { day: '-', month: '-' };
             const parts = dateStr.trim().split(' ');
@@ -126,43 +123,39 @@
 
             for (let i = 0; i < text.length; i++) {
                 const ch = text[i];
-
                 if (inQuotes) {
                     if (ch === '"' && text[i + 1] === '"') { field += '"'; i++; }
                     else if (ch === '"') inQuotes = false;
                     else field += ch;
                 } else {
-                    if      (ch === '"')  inQuotes = true;
-                    else if (ch === ',')  { row.push(field.trim()); field = ''; }
+                    if (ch === '"') inQuotes = true;
+                    else if (ch === ',') { row.push(field.trim()); field = ''; }
                     else if (ch === '\n') { row.push(field.trim()); rows.push(row); row = []; field = ''; }
                     else if (ch !== '\r') field += ch;
                 }
             }
-
             if (field || row.length) { row.push(field.trim()); rows.push(row); }
             return rows;
         }
 
-        /* ══════════════════════════════════════════
-           RENDER
-        ══════════════════════════════════════════ */
+        /* ── Render ── */
         function renderFilters() {
             const uniqueTags = [...new Set(items.map(i => i.tag))];
-
             const html = [
                 `<button class="filter-btn active" onclick="filterNews('all', this)">ทั้งหมด</button>`,
-                ...uniqueTags.map(tag =>
-                    `<button class="filter-btn" onclick="filterNews('${tag}', this)">${tag}</button>`
-                ),
+                ...uniqueTags.map(tag => `<button class="filter-btn" onclick="filterNews('${tag}', this)">${tag}</button>`)
             ].join('');
-
             document.getElementById('filterRow').innerHTML = html;
         }
 
-        function renderNews(filter) {
+        function renderNews(filter = currentFilter) {
+            currentFilter = filter;
             const filtered = filter === 'all' ? items : items.filter(i => i.tag === filter);
 
-            document.getElementById('newsList').innerHTML = filtered.map(item => `
+            const start = (currentPage - 1) * perPage;
+            const pageItems = filtered.slice(start, start + perPage);
+
+            document.getElementById('newsList').innerHTML = pageItems.map(item => `
                 <a class="news-card" href="${item.link}" target="_blank">
                     <div class="news-date-block">
                         <div class="news-date-day">${item.day}</div>
@@ -179,20 +172,56 @@
                     <div class="news-arrow">&#x203A;</div>
                 </a>
             `).join('');
+
+            renderPagination(filtered.length);
+        }
+
+        function renderPagination(totalItems) {
+            const totalPages = Math.ceil(totalItems / perPage);
+            if (totalPages <= 1) {
+                document.getElementById('pagination').innerHTML = '';
+                return;
+            }
+
+            let html = `
+                <button class="nav-btn" onclick="changePage(1)" ${currentPage === 1 ? 'disabled' : ''}>&laquo;</button>
+                <button class="nav-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>&lt;</button>
+            `;
+
+            for (let i = 1; i <= totalPages; i++) {
+                html += `<button class="${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+            }
+
+            html += `
+                <button class="nav-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>&gt;</button>
+                <button class="nav-btn" onclick="changePage(${totalPages})" ${currentPage === totalPages ? 'disabled' : ''}>&raquo;</button>
+            `;
+
+            document.getElementById('pagination').innerHTML = html;
+        }
+
+        /* ── Actions ── */
+        function changePage(page) {
+            currentPage = page;
+            renderNews(currentFilter);
+            window.scrollTo({
+                top: document.querySelector('.news-section').offsetTop - 100,
+                behavior: 'smooth'
+            });
         }
 
         function filterNews(type, btn) {
+            currentPage = 1;
+            currentFilter = type;
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             renderNews(type);
         }
 
-        /* ══════════════════════════════════════════
-           LOAD DATA
-        ══════════════════════════════════════════ */
+        /* ── Load Data ── */
         async function loadSheetData() {
             try {
-                const res  = await fetch(SHEET_URL, { cache: 'no-store' });
+                const res = await fetch(SHEET_URL, { cache: 'no-store' });
                 const rows = parseCSV(await res.text());
 
                 items = rows.slice(1)
@@ -212,7 +241,6 @@
 
                 renderFilters();
                 renderNews('all');
-
             } catch (err) {
                 console.error(err);
                 document.getElementById('newsList').innerHTML = 'โหลดข้อมูลไม่สำเร็จ';
@@ -221,6 +249,5 @@
 
         window.addEventListener('DOMContentLoaded', loadSheetData);
     </script>
-
 </body>
 </html>
