@@ -107,9 +107,7 @@
                 fetchSheetData(),
                 fetch('footer.html').then(r => r.ok ? r.text() : '').catch(() => '')
             ]);
-
             if (footerHtml) document.getElementById('footer').innerHTML = footerHtml;
-
             if (data) {
                 allData = data;
                 render(allData);
@@ -133,6 +131,29 @@
         }, {});
     }
 
+    function isWordFile(link, type) {
+        if (!link) return false;
+        // docs.google.com/document = Google Docs (มักเป็น Word)
+        if (link.includes('docs.google.com/document')) return true;
+        // drive.google.com/file ที่มี rtpof=true = Word ที่อัปโหลดขึ้น Drive
+        if (link.includes('drive.google.com') && link.includes('rtpof=true')) return true;
+        return false;
+    }
+
+    function getDownloadUrl(link) {
+        if (!link?.startsWith('http')) return '#';
+        const driveMatch = link.match(/\/d\/([a-zA-Z0-9_-]+)/);
+        if (!driveMatch) return link;
+        const fileId = driveMatch[1];
+        if (link.includes('docs.google.com/document')) {
+            return `https://docs.google.com/document/d/${fileId}/export?format=docx`;
+        }
+        if (link.includes('drive.google.com')) {
+            return `https://drive.google.com/uc?export=download&id=${fileId}`;
+        }
+        return link;
+    }
+
     function handleSearch(query) {
         const searchTerm = query.toLowerCase().trim();
         const filtered = {};
@@ -153,32 +174,22 @@
         for (const [category, items] of Object.entries(groups)) {
             const theme = CONFIG.THEMES[themeIndex++ % CONFIG.THEMES.length];
             const rows = items.map(item => {
-               const isValid = item.link?.startsWith('http');
-const downloadUrl = getDownloadUrl(item.link, item.type);
+                const isValid = item.link?.startsWith('http');
+                const word = isWordFile(item.link, item.type);
+                const href = word ? getDownloadUrl(item.link) : (isValid ? item.link : '#');
 
-function getDownloadUrl(link, type) {
-    if (!link?.startsWith('http')) return '#';
-    
-    // แปลง Google Drive link ให้ดาวน์โหลดตรง
-    const driveMatch = link.match(/\/d\/([a-zA-Z0-9_-]+)/);
-    if (driveMatch) {
-        return `https://drive.google.com/uc?export=download&id=${driveMatch[1]}`;
-    }
-    return link;
-}
-
-return `<tr>
-    <td class="col-name">${item.name}</td>
-    <td class="col-type">${item.type ? `<span class="badge">${item.type}</span>` : ''}</td>
-    <td class="col-btn">
-        <a href="${isValid ? downloadUrl : '#'}" 
-           class="btn ${isValid ? '' : 'disabled'}" 
-           download
-           target="_blank" rel="noopener">
-            ดาวน์โหลด ${CONFIG.DL_ICON}
-        </a>
-    </td>
-</tr>`;
+                return `<tr>
+                    <td class="col-name">${item.name}</td>
+                    <td class="col-type">${item.type ? `<span class="badge">${item.type}</span>` : ''}</td>
+                    <td class="col-btn">
+                        <a href="${href}"
+                           class="btn ${isValid ? '' : 'disabled'}"
+                           ${word ? 'download' : 'target="_blank"'}
+                           rel="noopener">
+                            ดาวน์โหลด ${CONFIG.DL_ICON}
+                        </a>
+                    </td>
+                </tr>`;
             }).join('');
 
             html += `<div class="section ${theme}">
