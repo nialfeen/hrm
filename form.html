@@ -153,16 +153,32 @@
         for (const [category, items] of Object.entries(groups)) {
             const theme = CONFIG.THEMES[themeIndex++ % CONFIG.THEMES.length];
             const rows = items.map(item => {
-                const isValid = item.link?.startsWith('http');
-                return `<tr>
-                    <td class="col-name">${item.name}</td>
-                    <td class="col-type">${item.type ? `<span class="badge">${item.type}</span>` : ''}</td>
-                    <td class="col-btn">
-                        <a href="${isValid ? item.link : '#'}" class="btn ${isValid ? '' : 'disabled'}" target="_blank" rel="noopener">
-                            ดาวน์โหลด ${CONFIG.DL_ICON}
-                        </a>
-                    </td>
-                </tr>`;
+               const isValid = item.link?.startsWith('http');
+const downloadUrl = getDownloadUrl(item.link, item.type);
+
+function getDownloadUrl(link, type) {
+    if (!link?.startsWith('http')) return '#';
+    
+    // แปลง Google Drive link ให้ดาวน์โหลดตรง
+    const driveMatch = link.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if (driveMatch) {
+        return `https://drive.google.com/uc?export=download&id=${driveMatch[1]}`;
+    }
+    return link;
+}
+
+return `<tr>
+    <td class="col-name">${item.name}</td>
+    <td class="col-type">${item.type ? `<span class="badge">${item.type}</span>` : ''}</td>
+    <td class="col-btn">
+        <a href="${isValid ? downloadUrl : '#'}" 
+           class="btn ${isValid ? '' : 'disabled'}" 
+           download
+           target="_blank" rel="noopener">
+            ดาวน์โหลด ${CONFIG.DL_ICON}
+        </a>
+    </td>
+</tr>`;
             }).join('');
 
             html += `<div class="section ${theme}">
