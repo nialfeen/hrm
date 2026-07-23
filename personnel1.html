@@ -108,8 +108,6 @@
             <span class="filter-label">กรอง :</span>
             <div class="filter-dropdowns">
                 <div id="ms-type"     class="ms-wrap"></div>
-                <div id="ms-mission"  class="ms-wrap"></div>
-                <div id="ms-dept1"    class="ms-wrap"></div>
                 <div id="ms-dept"     class="ms-wrap"></div>
                 <div id="ms-pos"      class="ms-wrap"></div>
                 <div id="ms-religion" class="ms-wrap"></div>
@@ -121,20 +119,39 @@
         <!-- KPI cards -->
         <div class="kpi-row" id="kpiRow"></div>
 
-        <!-- Charts row: type / generation / religion, balanced 3-up -->
-        <div class="charts-grid-3">
+        <!-- Charts row 1 -->
+        <div class="charts-grid">
             <div class="chart-card">
                 <div class="chart-title">
                     <span class="chart-title-dot" style="background:var(--blue)"></span>
-                    ประเภทเจ้าหน้าที่
+                    สัดส่วนประเภทเจ้าหน้าที่
                 </div>
-                <div style="height:190px"><canvas id="donutType"></canvas></div>
+                <div style="height:220px"><canvas id="donutType"></canvas></div>
                 <div id="legendType" class="legend-wrap"></div>
             </div>
             <div class="chart-card">
                 <div class="chart-title">
+                    <span class="chart-title-dot" style="background:var(--green)"></span>
+                    ตำแหน่ง 15 อันดับแรก
+                </div>
+                <div id="positionBars" class="hbar-list" style="max-height:270px"></div>
+            </div>
+        </div>
+
+        <!-- Charts row 2 -->
+        <div class="charts-grid-4">
+            <div class="chart-card">
+                <div class="chart-title">
+                    <span class="chart-title-dot" style="background:var(--amber)"></span>
+                    สัดส่วนตามศาสนา
+                </div>
+                <div style="height:190px"><canvas id="donutReligion"></canvas></div>
+                <div id="legendReligion" class="legend-wrap"></div>
+            </div>
+            <div class="chart-card" style="grid-column:span 2">
+                <div class="chart-title">
                     <span class="chart-title-dot" style="background:var(--purple)"></span>
-                    Generation
+                    สัดส่วนตาม Generation
                 </div>
                 <div style="height:190px"><canvas id="donutGen"></canvas></div>
                 <div id="legendGen" class="legend-wrap"></div>
@@ -142,10 +159,10 @@
             <div class="chart-card">
                 <div class="chart-title">
                     <span class="chart-title-dot" style="background:var(--teal)"></span>
-                    ศาสนา
+                    สัดส่วนตามเพศ
                 </div>
-                <div style="height:190px"><canvas id="donutReligion"></canvas></div>
-                <div id="legendReligion" class="legend-wrap"></div>
+                <div style="height:190px"><canvas id="donutGender"></canvas></div>
+                <div id="legendGender" class="legend-wrap"></div>
             </div>
         </div>
 
@@ -157,26 +174,11 @@
                     จำนวนบุคลากรแต่ละกลุ่มงาน
                 </div>
                 <div class="bar-tab-row">
-                    <button class="bar-tab active" onclick="setDeptView('top10', this)">10 อันดับแรก</button>
+                    <button class="bar-tab active" onclick="setDeptView('top15', this)">15 อันดับแรก</button>
                     <button class="bar-tab"        onclick="setDeptView('all',   this)">ทั้งหมด</button>
                 </div>
             </div>
             <div id="deptBars" class="hbar-list"></div>
-        </div>
-
-        <!-- Position bar chart -->
-        <div class="bar-section">
-            <div class="bar-section-header">
-                <div class="chart-title" style="margin:0">
-                    <span class="chart-title-dot" style="background:var(--amber)"></span>
-                    จำนวนบุคลากรแต่ละตำแหน่ง
-                </div>
-                <div class="bar-tab-row">
-                    <button class="bar-tab active" onclick="setPosView('top10', this)">10 อันดับแรก</button>
-                    <button class="bar-tab"        onclick="setPosView('all',   this)">ทั้งหมด</button>
-                </div>
-            </div>
-            <div id="posBars" class="hbar-list"></div>
         </div>
 
     </div><!-- /.wrap -->
@@ -188,36 +190,29 @@
            CONFIG & STATE
         ══════════════════════════════════════════ */
         const SHEET_ID  = "1ns74e0f2p0j0pab2vhEUMLOvjPDcmzZtVdZrTulhq0w";
-        const SHEET_GID = "639543527";
+        const SHEET_GID = "477794309";
         const CSV_URL   = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${SHEET_GID}`;
 
-        /* Column indices below are 0-based spreadsheet columns (A=0, B=1, ... Q=16, S=18, T=19, U=20, V=21) */
         const COL_NAMES = {
-            pos:        "ตำแหน่งสายงาน",
-            dept1:      20, // column U — กลุ่มงานตาม จ.18
-            dept:       19, // column T — กลุ่มงานตามปฏิบัติจริง
-            mission:    18, // column S — กลุ่มภารกิจ
-            status:     16, // column Q — สถานะไปช่วย/ลาศึกษา/มาช่วย
-            deptTotal:  21, // column V — ใช้นับ "กลุ่มงานทั้งหมด"
-            type:       "ประเภทเจ้าหน้าที่",
-            religion:   "ศาสนา",
-            gender:     "เพศ",
-            gen:        "generation",
+            pos:      "ตำแหน่งสายงาน",
+            dept:     4,
+            type:     "ประเภทเจ้าหน้าที่",
+            religion: "ศาสนา",
+            gender:   "เพศ",
+            gen:      "generation",
         };
 
-        const FILTER_KEYS = ["type", "mission", "dept1", "dept", "pos", "religion", "gen"];
+        const FILTER_KEYS = ["type", "dept", "pos", "religion", "gen"];
 
         const DROPDOWN_CONFIG = [
             { id: "ms-type",     key: "type",     ph: "ประเภทเจ้าหน้าที่" },
-            { id: "ms-mission",  key: "mission",  ph: "กลุ่มภารกิจ" },
-            { id: "ms-dept1",    key: "dept1",    ph: "กลุ่มงานตาม จ.18" },
-            { id: "ms-dept",     key: "dept",     ph: "กลุ่มงานตามปฏิบัติจริง" },
+            { id: "ms-dept",     key: "dept",     ph: "กลุ่มงาน" },
             { id: "ms-pos",      key: "pos",      ph: "ตำแหน่ง" },
             { id: "ms-religion", key: "religion", ph: "ศาสนา" },
             { id: "ms-gen",      key: "gen",      ph: "Generation" },
         ];
 
-        let allData = [], filteredData = [], deptView = "top10", posView = "top10", charts = {};
+        let allData = [], filteredData = [], deptView = "top15", charts = {};
 
         /* ══════════════════════════════════════════
            COLOR PALETTES
@@ -240,28 +235,10 @@
             "อิสลาม": "#1D7A8C", "พุทธ": "#E5A020", "คริสต์": "#6B48C0", "ไม่ระบุ": "#9898a8",
         };
         const GEN_COLORS = {
-            "Silent Gen": "#8D6E63", "Baby Boomer": "#BA7517", "Gen X": "#1D9E75",
-            "Gen Y": "#185FA5", "Gen Z": "#D4537E", "Gen Alpha": "#F0997B", "ไม่ระบุ": "#9898a8",
+            "Gen Alpha": "#F0997B", "Gen Z": "#D4537E", "Gen Y":  "#185FA5",
+            "Gen X":     "#1D9E75", "Baby Boomer": "#BA7517",     "ไม่ระบุ": "#9898a8",
         };
         const GENDER_COLORS = { "ชาย": "#185FA5", "หญิง": "#D4537E", "ไม่ระบุ": "#9898a8" };
-
-        /* Fixed display order for certain filters — "ไม่ระบุ" is always forced to the end */
-        const TYPE_ORDER = [
-            "ข้าราชการ", "ลูกจ้างประจำ", "พนักงานราชการ", "พนักงานกระทรวงสาธารณสุข",
-            "ลูกจ้างชั่วคราว", "ลูกจ้างรายคาบ", "ลูกจ้างรายวัน", "intearm 68", "intearm 69",
-        ];
-        const GEN_ORDER = ["Silent Gen", "Baby Boomer", "Gen X", "Gen Y", "Gen Z", "Gen Alpha"];
-
-        /* Reorder [label, count] entries per a fixed order list; anything not listed keeps its
-           original (count-desc) relative position, and "ไม่ระบุ" is always forced last. */
-        function orderEntries(entries, order) {
-            const map = new Map(entries);
-            const ordered = [];
-            order.forEach(k => { if (map.has(k)) { ordered.push([k, map.get(k)]); map.delete(k); } });
-            entries.forEach(([k, v]) => { if (map.has(k) && k !== "ไม่ระบุ") { ordered.push([k, v]); map.delete(k); } });
-            if (map.has("ไม่ระบุ")) ordered.push(["ไม่ระบุ", map.get("ไม่ระบุ")]);
-            return ordered;
-        }
 
         /* ══════════════════════════════════════════
            UTILITIES
@@ -346,7 +323,7 @@
                     }
                 });
 
-                const GEN_MAP = { x: "Gen X", y: "Gen Y", z: "Gen Z", alpha: "Gen Alpha", silent: "Silent Gen" };
+                const GEN_MAP = { x: "Gen X", y: "Gen Y", z: "Gen Z", alpha: "Gen Alpha" };
                 const getCol  = (cols, key) => typeof idx[key] === "number"
                     ? (clean(cols[idx[key]]?.replace(/^"|"$/g, "") || "") || "ไม่ระบุ")
                     : "ไม่ระบุ";
@@ -357,19 +334,13 @@
                     .map(line => {
                         const cols = splitCSV(line);
                         let gen = getCol(cols, "gen");
-                        gen = GEN_MAP[gen.toLowerCase()]
-                            || (/alpha/i.test(gen) ? "Gen Alpha"
-                            : (/silent/i.test(gen) ? "Silent Gen" : (gen || "ไม่ระบุ")));
+                        gen = GEN_MAP[gen.toLowerCase()] || (/alpha/i.test(gen) ? "Gen Alpha" : gen || "ไม่ระบุ");
                         return {
-                            pos:        getCol(cols, "pos"),
-                            dept1:      getCol(cols, "dept1"),
-                            dept:       getCol(cols, "dept"),
-                            deptTotal:  getCol(cols, "deptTotal"),
-                            mission:    getCol(cols, "mission"),
-                            status:     getCol(cols, "status"),
-                            type:       getCol(cols, "type"),
-                            religion:   getCol(cols, "religion"),
-                            gender:     getCol(cols, "gender"),
+                            pos:      getCol(cols, "pos"),
+                            dept:     getCol(cols, "dept"),
+                            type:     getCol(cols, "type"),
+                            religion: getCol(cols, "religion"),
+                            gender:   getCol(cols, "gender"),
                             gen,
                         };
                     });
@@ -477,8 +448,6 @@
             updateBtnLabel(key);
             msCloseAll();
             if (key === "type") rebuildDependents();
-            else if (key === "mission") rebuildDept1Chain();
-            else if (key === "dept1") rebuildDeptChain();
             else if (key === "dept") rebuildPos();
             applyFilters();
         }
@@ -598,7 +567,7 @@
             applyFilters();
         }
 
-        const HIERARCHY = ["type", "mission", "dept1", "dept", "pos", "religion", "gen"];
+        const HIERARCHY = ["type", "dept", "pos", "religion", "gen"];
 
         function getPoolForKey(stopKey) {
             return HIERARCHY.slice(0, HIERARCHY.indexOf(stopKey)).reduce((pool, k) => {
@@ -618,22 +587,12 @@
         }
 
         function rebuildDependents() {
-            rebuildDropdown("mission", sortedKeys(countMapOf(getPoolForKey("mission"), "mission")));
-            rebuildDept1Chain();
-        }
-
-        function rebuildDept1Chain() {
-            rebuildDropdown("dept1", sortedKeys(countMapOf(getPoolForKey("dept1"), "dept1")));
-            rebuildDeptChain();
-        }
-
-        function rebuildDeptChain() {
-            rebuildDropdown("dept", sortedKeys(countMapOf(getPoolForKey("dept"), "dept")));
+            rebuildDropdown("dept", sortedKeys(countMapOf(getPoolForKey("type"), "dept")));
             rebuildPos();
         }
 
         function rebuildPos() {
-            rebuildDropdown("pos", sortedKeys(countMapOf(getPoolForKey("pos"), "pos")));
+            rebuildDropdown("pos", sortedKeys(countMapOf(getPoolForKey("dept"), "pos")));
         }
 
         /* ══════════════════════════════════════════
@@ -665,67 +624,42 @@
         ══════════════════════════════════════════ */
         function renderAll() {
             renderKPI();
-            renderDonut("donutType",     "legendType",     orderEntries(countBy(filteredData, "type"), TYPE_ORDER), TYPE_COLORS);
+            renderDonut("donutType",     "legendType",     countBy(filteredData, "type"),     TYPE_COLORS);
             renderDonut("donutReligion", "legendReligion", countBy(filteredData, "religion"), RELIGION_COLORS);
+            renderDonut("donutGender",   "legendGender",   countBy(filteredData, "gender"),   GENDER_COLORS);
             renderGenDonut();
-            renderDeptBars();
             renderPosBars();
+            renderDeptBars();
         }
 
         function renderGenDonut() {
-            renderDonut("donutGen", "legendGen", orderEntries(countBy(filteredData, "gen"), GEN_ORDER), GEN_COLORS);
+            const ORDER = ["Gen Y", "Gen X", "Gen Z", "Gen Alpha", "Baby Boomer", "ไม่ระบุ"];
+            const m = {};
+            filteredData.forEach(d => { m[d.gen] = (m[d.gen] || 0) + 1; });
+            const entries = [
+                ...ORDER.filter(k => m[k]).map(k => [k, m[k]]),
+                ...Object.entries(m).filter(([k]) => !ORDER.includes(k)),
+            ];
+            renderDonut("donutGen", "legendGen", entries.length ? entries : countBy(filteredData, "gen"), GEN_COLORS);
         }
 
         function renderKPI() {
             const total  = filteredData.length;
-            const male   = filteredData.filter(d => d.gender === "ชาย").length;
-            const female = filteredData.filter(d => d.gender === "หญิง").length;
-
-            /* column Q (status): exclude rows tagged "ไปช่วย" or "ลาศึกษา" */
-            const excludeHelpStudy = filteredData.filter(d => {
-                const s = d.status || "";
-                return !s.includes("ไปช่วย") && !s.includes("ลาศึกษา");
-            }).length;
-
-            /* column Q (status): exclude rows tagged "มาช่วย" */
-            const excludeIncomingHelp = filteredData.filter(d => {
-                const s = d.status || "";
-                return !s.includes("มาช่วย");
-            }).length;
-
-            /* column Q (status): แยกนับ มาช่วย / ไปช่วย / ลาศึกษา */
-            const comeHelpCount   = filteredData.filter(d => (d.status || "").includes("มาช่วย")).length;
-            const goHelpCount     = filteredData.filter(d => (d.status || "").includes("ไปช่วย")).length;
-            const studyLeaveCount = filteredData.filter(d => (d.status || "").includes("ลาศึกษา")).length;
-
-            /* column V: unique count for "กลุ่มงานทั้งหมด" */
-            const deptTotalCount = new Set(
-                filteredData.map(d => d.deptTotal).filter(v => v && v !== "ไม่ระบุ")
-            ).size;
-
+            const topPos = countBy(filteredData, "pos")[0];
             document.getElementById("kpiRow").innerHTML = [
-                kpi("k-blue",   "บุคลากรทั้งหมดรวมมาช่วยไปช่วยและลาศึกษา",  total,                                   '<path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>'),
-                kpi("k-blue",   "บุคลากรไม่รวมไปช่วยและลาศึกษา",  excludeHelpStudy,        '<path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>'),
-                kpi("k-blue",   "บุคลากรไม่รวมมาช่วย",  excludeIncomingHelp,               '<path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>'),
-                kpi("k-purple", "กลุ่มงานทั้งหมด", deptTotalCount,                          '<path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>'),
-                kpi("k-amber",  "มาช่วย / ไปช่วย / ลาศึกษา",
-                    `<span style="color:#1D9E75">${comeHelpCount.toLocaleString("th-TH")}</span> / <span style="color:#DC2626">${goHelpCount.toLocaleString("th-TH")}</span> / <span style="color:#534AB7">${studyLeaveCount.toLocaleString("th-TH")}</span>`,
-                    '<path d="M9.01 14H2v2h7.01v3L13 15l-3.99-4v3zm5.98-1v-3H22V8h-7.01V5L11 9l3.99 4z"/>'),
-                kpi("k-teal",   "เพศหญิง / เพศชาย",
-                    `<span style="color:#D4537E">${female.toLocaleString("th-TH")}</span> / <span style="color:var(--blue)">${male.toLocaleString("th-TH")}</span>`,
-                    '<path d="M12 2a5 5 0 100 10 5 5 0 000-10zm0 12c-3.31 0-6 1.79-6 4v2h12v-2c0-2.21-2.69-4-6-4z"/>'),
+                kpi("k-blue",   "บุคลากรทั้งหมด",  total,                                   "จากข้อมูลที่กรอง",     '<path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>'),
+                kpi("k-green",  "จำนวนตำแหน่ง",    new Set(filteredData.map(d => d.pos)).size, "ประเภทตำแหน่งทั้งหมด", '<path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13zm-2 9H7v-2h4v2zm4-4H7v-2h8v2zm0-4H7V8h8v2z"/>'),
+                kpi("k-purple", "กลุ่มงานทั้งหมด", new Set(filteredData.map(d => d.dept)).size, "จากข้อมูลที่กรอง",   '<path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>'),
+                kpi("k-amber",  "ตำแหน่งสูงสุด",   topPos?.[1] || 0,                         topPos?.[0] || "-",     '<path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/>'),
             ].join("");
         }
 
-        function kpi(cls, label, val, icon, sub) {
-            const display = typeof val === "number" ? val.toLocaleString("th-TH") : val;
+        function kpi(cls, label, val, sub, icon) {
             return `<div class="kpi-card ${cls}">
-                <div class="kpi-head">
-                    <div class="kpi-icon"><svg viewBox="0 0 24 24">${icon}</svg></div>
-                    <div class="kpi-label">${label}</div>
-                </div>
-                <div class="kpi-num">${display}</div>
-                ${sub ? `<div class="kpi-sub">${sub}</div>` : ""}
+                <div class="kpi-icon"><svg viewBox="0 0 24 24">${icon}</svg></div>
+                <div class="kpi-num">${Number(val).toLocaleString("th-TH")}</div>
+                <div class="kpi-label">${label}</div>
+                <div class="kpi-sub">${sub}</div>
             </div>`;
         }
 
@@ -768,35 +702,27 @@
             ).join("");
         }
 
+        function renderPosBars() {
+            const entries = countBy(filteredData, "pos").slice(0, 15);
+            const max     = entries[0]?.[1] || 1;
+            document.getElementById("positionBars").innerHTML = entries.length
+                ? entries.map(([l, v]) => hbar(l, v, max, pct(v, filteredData.length), "#1D9E75")).join("")
+                : "<span style='color:#aaa;font-size:13px;padding:12px'>ไม่มีข้อมูล</span>";
+        }
+
         function setDeptView(v, btn) {
             deptView = v;
-            btn.closest(".bar-tab-row").querySelectorAll(".bar-tab").forEach(b => b.classList.remove("active"));
+            document.querySelectorAll(".bar-tab").forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
             renderDeptBars();
         }
 
         function renderDeptBars() {
             let entries = countBy(filteredData, "dept");
-            if (deptView === "top10") entries = entries.slice(0, 10);
+            if (deptView === "top15") entries = entries.slice(0, 15);
             const max = entries[0]?.[1] || 1;
             document.getElementById("deptBars").innerHTML = entries.length
                 ? entries.map(([l, v]) => hbar(l, v, max, pct(v, filteredData.length), "#534AB7")).join("")
-                : "<span style='color:#aaa;font-size:13px;padding:12px'>ไม่มีข้อมูล</span>";
-        }
-
-        function setPosView(v, btn) {
-            posView = v;
-            btn.closest(".bar-tab-row").querySelectorAll(".bar-tab").forEach(b => b.classList.remove("active"));
-            btn.classList.add("active");
-            renderPosBars();
-        }
-
-        function renderPosBars() {
-            let entries = countBy(filteredData, "pos");
-            if (posView === "top10") entries = entries.slice(0, 10);
-            const max = entries[0]?.[1] || 1;
-            document.getElementById("posBars").innerHTML = entries.length
-                ? entries.map(([l, v]) => hbar(l, v, max, pct(v, filteredData.length), "#BA7517")).join("")
                 : "<span style='color:#aaa;font-size:13px;padding:12px'>ไม่มีข้อมูล</span>";
         }
 
