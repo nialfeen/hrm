@@ -422,10 +422,11 @@ body {
 
 /* ══════════════════════════════════════════════
    KPI CARDS
+   6 cards laid out 3-up / 3-up for visual balance
 ══════════════════════════════════════════════ */
 .kpi-row {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 14px;
     margin-bottom: 24px;
 }
@@ -454,15 +455,23 @@ body {
 .k-green::before  { background: var(--green); }
 .k-amber::before  { background: var(--amber); }
 .k-purple::before { background: var(--purple); }
+.k-teal::before   { background: var(--teal); }
+
+.kpi-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
 
 .kpi-icon {
     width: 36px;
     height: 36px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 9px;
-    margin-bottom: 12px;
 }
 
 .kpi-icon svg { width: 18px; height: 18px; }
@@ -471,29 +480,32 @@ body {
 .k-green .kpi-icon  { background: #E1F5EE; }
 .k-amber .kpi-icon  { background: #FAEEDA; }
 .k-purple .kpi-icon { background: #EEEDFE; }
+.k-teal .kpi-icon   { background: #E1F7F7; }
 
 .k-blue .kpi-icon svg   { fill: var(--blue); }
 .k-green .kpi-icon svg  { fill: var(--green); }
 .k-amber .kpi-icon svg  { fill: var(--amber); }
 .k-purple .kpi-icon svg { fill: var(--purple); }
+.k-teal .kpi-icon svg   { fill: var(--teal); }
+
+.kpi-label {
+    font-size: .8rem;
+    line-height: 1.4;
+    font-weight: 500;
+    color: var(--gray-600);
+}
 
 .kpi-num {
     font-size: 2rem;
     font-weight: 700;
     line-height: 1;
-    margin-bottom: 4px;
 }
 
 .k-blue .kpi-num   { color: var(--blue); }
 .k-green .kpi-num  { color: var(--green); }
 .k-amber .kpi-num  { color: var(--amber); }
 .k-purple .kpi-num { color: var(--purple); }
-
-.kpi-label {
-    font-size: .8rem;
-    font-weight: 500;
-    color: var(--gray-600);
-}
+.k-teal .kpi-num   { color: var(--teal); }
 
 .kpi-sub {
     margin-top: 2px;
@@ -507,16 +519,9 @@ body {
 /* ══════════════════════════════════════════════
    CHART CARDS
 ══════════════════════════════════════════════ */
-.charts-grid {
+.charts-grid-3 {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 18px;
-    margin-bottom: 18px;
-}
-
-.charts-grid-4 {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 18px;
     margin-bottom: 18px;
 }
@@ -657,14 +662,16 @@ body {
 /* ══════════════════════════════════════════════
    RESPONSIVE
 ══════════════════════════════════════════════ */
-@media (max-width: 1100px) {
-    .charts-grid-4 { grid-template-columns: 1fr 1fr; }
+@media (max-width: 900px) {
+    .kpi-row       { grid-template-columns: repeat(2, 1fr); }
+    .charts-grid-3 { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 900px) {
     .wrap        { padding: 20px 16px 60px; }
-    .kpi-row     { grid-template-columns: 1fr 1fr; }
-    .charts-grid,
-    .charts-grid-4 { grid-template-columns: 1fr; }
     .hbar-label  { min-width: 110px; max-width: 110px; }
+}
+
+@media (max-width: 560px) {
+    .kpi-row { grid-template-columns: 1fr; }
 }
