@@ -12,6 +12,116 @@
     <link rel="stylesheet" href="css/personnel.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Noto+Serif+Thai:wght@400;600;700&display=swap">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        .export-modal-overlay {
+            display: none;
+            position: fixed; inset: 0; z-index: 9999;
+            background: rgba(20, 20, 25, 0.5);
+            align-items: center; justify-content: center;
+        }
+        .export-modal-overlay.show { display: flex; }
+        .export-modal {
+            background: #fff; border-radius: 12px; width: min(420px, 92vw);
+            max-height: 86vh; display: flex; flex-direction: column;
+            box-shadow: 0 10px 40px rgba(0,0,0,.25); overflow: hidden;
+        }
+        .export-modal-title {
+            font-weight: 700; font-size: 16px; padding: 18px 20px 4px;
+        }
+        .export-modal-toolbar {
+            display: flex; gap: 8px; padding: 8px 20px;
+        }
+        .export-modal-toolbar button {
+            font-size: 12px; padding: 4px 10px; border-radius: 6px;
+            border: 1px solid #ddd; background: #f7f7f7; cursor: pointer;
+        }
+        .export-modal-toolbar button:hover { background: #eee; }
+        .export-field-list {
+            padding: 4px 20px 12px; overflow-y: auto; flex: 1;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px;
+        }
+        .export-field-opt {
+            display: flex; align-items: center; gap: 8px;
+            padding: 6px 4px; font-size: 14px; cursor: pointer; border-radius: 6px;
+        }
+        .export-field-opt:hover { background: #f5f5f5; }
+        .export-field-opt input { width: 16px; height: 16px; cursor: pointer; flex-shrink: 0; }
+        .export-passcode-wrap {
+            padding: 4px 20px 6px; border-top: 1px solid #eee;
+        }
+        .export-passcode-label {
+            display: block; font-size: 13px; color: #555; margin: 10px 0 6px;
+        }
+        .export-passcode-input {
+            width: 100%; box-sizing: border-box; padding: 9px 12px;
+            border: 1px solid #ddd; border-radius: 8px; font-size: 14px;
+        }
+        .export-passcode-input:focus { outline: none; border-color: #1D9E75; }
+        .export-modal-actions {
+            display: flex; gap: 10px; padding: 14px 20px; border-top: 1px solid #eee;
+        }
+        .export-modal-actions button {
+            flex: 1; padding: 10px; border-radius: 8px; border: none;
+            font-size: 14px; font-weight: 600; cursor: pointer;
+        }
+        .export-btn-confirm { background: #1D9E75; color: #fff; }
+        .export-btn-confirm:hover { background: #17835f; }
+        .export-btn-cancel { background: #f0f0f0; color: #333; }
+        .export-btn-cancel:hover { background: #e2e2e2; }
+
+        /* ทำให้แถบตัวกรองสมดุล: ฟิลด์กรองอยู่กลุ่มเดียว จัดเป็นกริด 4 คอลัมน์ (8 ตัวกรอง = 2 แถว 4 คอลัมน์เท่ากัน)
+           ส่วนปุ่มรีเซ็ต/ดาวน์โหลด แยกออกไปอยู่คนละกลุ่ม ไม่ไปเบียดให้แถวตัวกรองเอียง */
+        .filters-bar {
+            display: flex; flex-wrap: wrap; align-items: flex-start;
+            gap: 16px; justify-content: space-between;
+        }
+        .filters-fields {
+            display: flex; align-items: flex-start; gap: 10px;
+            flex: 1 1 640px; min-width: 0;
+        }
+        .filter-dropdowns {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(150px, 1fr));
+            gap: 10px;
+            flex: 1; min-width: 0;
+        }
+        .filters-actions {
+            display: flex; gap: 10px; flex: 0 0 auto;
+            align-self: flex-start;
+        }
+        .filter-dropdowns .ms-wrap {
+            max-width: none;
+        }
+        .filter-dropdowns .ms-wrap .ms-btn {
+            width: 100%; box-sizing: border-box;
+        }
+        .filter-dropdowns .ms-wrap .ms-panel {
+            min-width: 260px;
+        }
+        .filter-dropdowns .ms-wrap .ms-option-label {
+            white-space: normal; line-height: 1.35;
+        }
+        @media (max-width: 900px) {
+            .filter-dropdowns { grid-template-columns: repeat(2, minmax(150px, 1fr)); }
+        }
+
+        /* ตัวเลือกแยกชีทก่อนดาวน์โหลด Excel */
+        .export-split-wrap {
+            padding: 4px 20px 10px; border-top: 1px solid #eee;
+        }
+        .export-split-label {
+            display: block; font-size: 13px; color: #555; margin: 10px 0 6px;
+        }
+        .export-split-options {
+            display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px 10px;
+        }
+        .export-split-options label {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 14px; cursor: pointer;
+        }
+        .export-split-options input { cursor: pointer; }
+    </style>
 </head>
 
 <body>
@@ -105,53 +215,42 @@
 
         <!-- Filters -->
         <div class="filters-bar">
-            <span class="filter-label">กรอง :</span>
-            <div class="filter-dropdowns">
-                <div id="ms-type"     class="ms-wrap"></div>
-                <div id="ms-dept"     class="ms-wrap"></div>
-                <div id="ms-pos"      class="ms-wrap"></div>
-                <div id="ms-religion" class="ms-wrap"></div>
-                <div id="ms-gen"      class="ms-wrap"></div>
+            <div class="filters-fields">
+                <span class="filter-label">กรอง :</span>
+                <div class="filter-dropdowns">
+                    <div id="ms-type"     class="ms-wrap"></div>
+                    <div id="ms-mission"  class="ms-wrap"></div>
+                    <div id="ms-dept1"    class="ms-wrap"></div>
+                    <div id="ms-dept"     class="ms-wrap"></div>
+                    <div id="ms-ward"     class="ms-wrap"></div>
+                    <div id="ms-pos"      class="ms-wrap"></div>
+                    <div id="ms-religion" class="ms-wrap"></div>
+                    <div id="ms-gen"      class="ms-wrap"></div>
+                </div>
             </div>
-            <button class="filter-reset" onclick="resetFilters()">รีเซ็ต</button>
+            <div class="filters-actions">
+                <button class="filter-reset" onclick="resetFilters()">รีเซ็ต</button>
+                <button class="filter-reset" id="exportExcelBtn" onclick="openExportModal()" style="background:#1D9E75;border-color:#1D9E75;color:#fff;">⬇ ดาวน์โหลด Excel</button>
+            </div>
         </div>
 
         <!-- KPI cards -->
         <div class="kpi-row" id="kpiRow"></div>
 
-        <!-- Charts row 1 -->
-        <div class="charts-grid">
+        <!-- Charts row: type / generation / religion, balanced 3-up -->
+        <div class="charts-grid-3">
             <div class="chart-card">
                 <div class="chart-title">
                     <span class="chart-title-dot" style="background:var(--blue)"></span>
-                    สัดส่วนประเภทเจ้าหน้าที่
+                    ประเภทเจ้าหน้าที่
                 </div>
-                <div style="height:220px"><canvas id="donutType"></canvas></div>
+                <div style="height:190px"><canvas id="donutType"></canvas></div>
                 <div id="legendType" class="legend-wrap"></div>
             </div>
             <div class="chart-card">
                 <div class="chart-title">
-                    <span class="chart-title-dot" style="background:var(--green)"></span>
-                    ตำแหน่ง 15 อันดับแรก
-                </div>
-                <div id="positionBars" class="hbar-list" style="max-height:270px"></div>
-            </div>
-        </div>
-
-        <!-- Charts row 2 -->
-        <div class="charts-grid-4">
-            <div class="chart-card">
-                <div class="chart-title">
-                    <span class="chart-title-dot" style="background:var(--amber)"></span>
-                    สัดส่วนตามศาสนา
-                </div>
-                <div style="height:190px"><canvas id="donutReligion"></canvas></div>
-                <div id="legendReligion" class="legend-wrap"></div>
-            </div>
-            <div class="chart-card" style="grid-column:span 2">
-                <div class="chart-title">
                     <span class="chart-title-dot" style="background:var(--purple)"></span>
-                    สัดส่วนตาม Generation
+                    Generation
                 </div>
                 <div style="height:190px"><canvas id="donutGen"></canvas></div>
                 <div id="legendGen" class="legend-wrap"></div>
@@ -159,10 +258,10 @@
             <div class="chart-card">
                 <div class="chart-title">
                     <span class="chart-title-dot" style="background:var(--teal)"></span>
-                    สัดส่วนตามเพศ
+                    ศาสนา
                 </div>
-                <div style="height:190px"><canvas id="donutGender"></canvas></div>
-                <div id="legendGender" class="legend-wrap"></div>
+                <div style="height:190px"><canvas id="donutReligion"></canvas></div>
+                <div id="legendReligion" class="legend-wrap"></div>
             </div>
         </div>
 
@@ -174,14 +273,53 @@
                     จำนวนบุคลากรแต่ละกลุ่มงาน
                 </div>
                 <div class="bar-tab-row">
-                    <button class="bar-tab active" onclick="setDeptView('top15', this)">15 อันดับแรก</button>
+                    <button class="bar-tab active" onclick="setDeptView('top10', this)">10 อันดับแรก</button>
                     <button class="bar-tab"        onclick="setDeptView('all',   this)">ทั้งหมด</button>
                 </div>
             </div>
             <div id="deptBars" class="hbar-list"></div>
         </div>
 
+        <!-- Position bar chart -->
+        <div class="bar-section">
+            <div class="bar-section-header">
+                <div class="chart-title" style="margin:0">
+                    <span class="chart-title-dot" style="background:var(--amber)"></span>
+                    จำนวนบุคลากรแต่ละตำแหน่ง
+                </div>
+                <div class="bar-tab-row">
+                    <button class="bar-tab active" onclick="setPosView('top10', this)">10 อันดับแรก</button>
+                    <button class="bar-tab"        onclick="setPosView('all',   this)">ทั้งหมด</button>
+                </div>
+            </div>
+            <div id="posBars" class="hbar-list"></div>
+        </div>
+
     </div><!-- /.wrap -->
+
+    <!-- Export field selection modal -->
+    <div id="exportModalOverlay" class="export-modal-overlay" onclick="if(event.target===this) closeExportModal()">
+        <div class="export-modal">
+            <div class="export-modal-title">เลือกข้อมูลที่ต้องการดึงออก</div>
+            <div class="export-modal-toolbar">
+                <button type="button" onclick="exportSetAll(true)">เลือกทั้งหมด</button>
+                <button type="button" onclick="exportSetAll(false)">ล้างทั้งหมด</button>
+            </div>
+            <div id="exportFieldList" class="export-field-list"></div>
+            <div class="export-split-wrap">
+                <label class="export-split-label">แยกชีทตาม</label>
+                <div id="exportSplitOptions" class="export-split-options"></div>
+            </div>
+            <div class="export-passcode-wrap">
+                <label for="exportPasscode" class="export-passcode-label">กรุณาใส่รหัสก่อนดาวน์โหลด</label>
+                <input type="password" id="exportPasscode" class="export-passcode-input" placeholder="รหัส" autocomplete="off">
+            </div>
+            <div class="export-modal-actions">
+                <button type="button" class="export-btn-confirm" onclick="confirmExport()">ดาวน์โหลด Excel</button>
+                <button type="button" class="export-btn-cancel"  onclick="closeExportModal()">ยกเลิก</button>
+            </div>
+        </div>
+    </div>
 
     <div id="footer"></div>
 
@@ -190,29 +328,46 @@
            CONFIG & STATE
         ══════════════════════════════════════════ */
         const SHEET_ID  = "1ns74e0f2p0j0pab2vhEUMLOvjPDcmzZtVdZrTulhq0w";
-        const SHEET_GID = "477794309";
+        const SHEET_GID = "639543527";
         const CSV_URL   = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${SHEET_GID}`;
 
+        /* Column indices below are 0-based spreadsheet columns (A=0, B=1, ... Q=16, S=18, T=19, U=20, V=21, W=22, X=23) */
         const COL_NAMES = {
-            pos:      "ตำแหน่งสายงาน",
-            dept:     4,
-            type:     "ประเภทเจ้าหน้าที่",
-            religion: "ศาสนา",
-            gender:   "เพศ",
-            gen:      "generation",
+            idCard:     ["เลขบัตรประชาชน", "เลขที่บัตรประชาชน", "เลขประจำตัวประชาชน", "เลขบัตร ประชาชน", "เลขบัตร", "รหัสประจำตัวประชาชน"],
+            prefix:     ["คำนำหน้า", "คำนำหน้าชื่อ", "คำนำหน้านาม", "คำนำหน้า ชื่อ"],
+            name:       ["ชื่อ-สกุล", "ชื่อ - สกุล", "ชื่อ นามสกุล", "ชื่อ-นามสกุล", "ชื่อ สกุล", "ชื่อ-สกุล (ไทย)", "ชื่อ-นามสกุล (ภาษาไทย)", "ชื่อตัว-นามสกุล"],
+            firstName:  ["ชื่อ", "ชื่อตัว", "ชื่อจริง"],
+            lastName:   ["นามสกุล", "สกุล"],
+            pos:        "ตำแหน่ง",
+            dept1:      19, // column T — กลุ่มงานตาม จ.18
+            dept:       21, // column V — กลุ่มงานตามปฏิบัติจริง (ใช้นับ "กลุ่มงานทั้งหมด" ด้วย)
+            ward:       23, // column X — ตึก/ward
+            mission:    18, // column S — กลุ่มภารกิจ
+            status:     16, // column Q — สถานะไปช่วย/ลาศึกษา/มาช่วย
+            type:       "ประเภทเจ้าหน้าที่",
+            religion:   "ศาสนา",
+            gender:     "เพศ",
+            gen:        "generation",
         };
 
-        const FILTER_KEYS = ["type", "dept", "pos", "religion", "gen"];
+        const FILTER_KEYS = ["type", "mission", "dept1", "dept", "ward", "pos", "religion", "gen"];
 
         const DROPDOWN_CONFIG = [
             { id: "ms-type",     key: "type",     ph: "ประเภทเจ้าหน้าที่" },
-            { id: "ms-dept",     key: "dept",     ph: "กลุ่มงาน" },
+            { id: "ms-mission",  key: "mission",  ph: "กลุ่มภารกิจ" },
+            { id: "ms-dept1",    key: "dept1",    ph: "กลุ่มงานตาม จ.18" },
+            { id: "ms-dept",     key: "dept",     ph: "กลุ่มงานตามปฏิบัติจริง" },
+            { id: "ms-ward",     key: "ward",     ph: "ตึก/ward" },
             { id: "ms-pos",      key: "pos",      ph: "ตำแหน่ง" },
             { id: "ms-religion", key: "religion", ph: "ศาสนา" },
             { id: "ms-gen",      key: "gen",      ph: "Generation" },
         ];
 
-        let allData = [], filteredData = [], deptView = "top15", charts = {};
+        /* กลุ่มงาน (คอลัมน์ V) ที่ไม่นับรวมใน KPI "กลุ่มงานทั้งหมด" และไม่แยกชีทใน Excel ตามกลุ่มงาน
+           (เป็นตำแหน่งผู้บริหาร ไม่ใช่กลุ่มงานจริง) */
+        const EXCLUDED_DEPT_GROUPS = ["ผู้อำนวยการ", "หัวหน้าภารกิจด้านทันตกรรม", "หัวหน้าภารกิจด้านอำนวยการ"];
+
+        let allData = [], filteredData = [], deptView = "top10", posView = "top10", charts = {};
 
         /* ══════════════════════════════════════════
            COLOR PALETTES
@@ -235,10 +390,28 @@
             "อิสลาม": "#1D7A8C", "พุทธ": "#E5A020", "คริสต์": "#6B48C0", "ไม่ระบุ": "#9898a8",
         };
         const GEN_COLORS = {
-            "Gen Alpha": "#F0997B", "Gen Z": "#D4537E", "Gen Y":  "#185FA5",
-            "Gen X":     "#1D9E75", "Baby Boomer": "#BA7517",     "ไม่ระบุ": "#9898a8",
+            "Silent Gen": "#8D6E63", "Baby Boomer": "#BA7517", "Gen X": "#1D9E75",
+            "Gen Y": "#185FA5", "Gen Z": "#D4537E", "Gen Alpha": "#F0997B", "ไม่ระบุ": "#9898a8",
         };
         const GENDER_COLORS = { "ชาย": "#185FA5", "หญิง": "#D4537E", "ไม่ระบุ": "#9898a8" };
+
+        /* Fixed display order for certain filters — "ไม่ระบุ" is always forced to the end */
+        const TYPE_ORDER = [
+            "ข้าราชการ", "ลูกจ้างประจำ", "พนักงานราชการ", "พนักงานกระทรวงสาธารณสุข",
+            "ลูกจ้างชั่วคราว", "ลูกจ้างรายคาบ", "ลูกจ้างรายวัน", "intearm 68", "intearm 69",
+        ];
+        const GEN_ORDER = ["Silent Gen", "Baby Boomer", "Gen X", "Gen Y", "Gen Z", "Gen Alpha"];
+
+        /* Reorder [label, count] entries per a fixed order list; anything not listed keeps its
+           original (count-desc) relative position, and "ไม่ระบุ" is always forced last. */
+        function orderEntries(entries, order) {
+            const map = new Map(entries);
+            const ordered = [];
+            order.forEach(k => { if (map.has(k)) { ordered.push([k, map.get(k)]); map.delete(k); } });
+            entries.forEach(([k, v]) => { if (map.has(k) && k !== "ไม่ระบุ") { ordered.push([k, v]); map.delete(k); } });
+            if (map.has("ไม่ระบุ")) ordered.push(["ไม่ระบุ", map.get("ไม่ระบุ")]);
+            return ordered;
+        }
 
         /* ══════════════════════════════════════════
            UTILITIES
@@ -306,24 +479,29 @@
                 let headerIdx = -1, headers = [];
                 for (let i = 0; i < Math.min(5, lines.length); i++) {
                     const h = splitCSV(lines[i]).map(c => clean(c.replace(/^"|"$/g, "")));
-                    if (h.some(x => x === "ตำแหน่งสายงาน" || x === "กลุ่มงาน จ.18")) {
+                    if (h.some(x => x === "ตำแหน่ง" || x === "กลุ่มงาน จ.18")) {
                         headerIdx = i; headers = h; break;
                     }
                 }
                 if (headerIdx === -1) throw new Error("ไม่พบ header row กรุณาตรวจสอบ Google Sheets");
+                console.log("[personnel] หัวตารางที่พบในชีท:", headers);
 
                 /* Map column indices */
                 const idx = {};
+                const norm = s => clean(s).toLowerCase().replace(/[\s\-–—()（）.]/g, "");
                 Object.entries(COL_NAMES).forEach(([key, col]) => {
                     if (typeof col === "number") {
                         idx[key] = col;
                     } else {
-                        const i = headers.findIndex(h => clean(h).toLowerCase() === clean(col).toLowerCase());
+                        const candidates = Array.isArray(col) ? col : [col];
+                        const i = headers.findIndex(h =>
+                            candidates.some(c => norm(h) === norm(c))
+                        );
                         if (i !== -1) idx[key] = i;
                     }
                 });
-
-                const GEN_MAP = { x: "Gen X", y: "Gen Y", z: "Gen Z", alpha: "Gen Alpha" };
+                console.log("[personnel] คอลัมน์ที่จับคู่ได้:", idx);
+                const GEN_MAP = { x: "Gen X", y: "Gen Y", z: "Gen Z", alpha: "Gen Alpha", silent: "Silent Gen" };
                 const getCol  = (cols, key) => typeof idx[key] === "number"
                     ? (clean(cols[idx[key]]?.replace(/^"|"$/g, "") || "") || "ไม่ระบุ")
                     : "ไม่ระบุ";
@@ -334,13 +512,31 @@
                     .map(line => {
                         const cols = splitCSV(line);
                         let gen = getCol(cols, "gen");
-                        gen = GEN_MAP[gen.toLowerCase()] || (/alpha/i.test(gen) ? "Gen Alpha" : gen || "ไม่ระบุ");
+                        gen = GEN_MAP[gen.toLowerCase()]
+                            || (/alpha/i.test(gen) ? "Gen Alpha"
+                            : (/silent/i.test(gen) ? "Silent Gen" : (gen || "ไม่ระบุ")));
+                        const firstName = getCol(cols, "firstName");
+                        const lastName  = getCol(cols, "lastName");
+                        let name = getCol(cols, "name");
+                        if (name === "ไม่ระบุ") {
+                            const combined = [firstName, lastName].filter(v => v && v !== "ไม่ระบุ").join(" ");
+                            if (combined) name = combined;
+                        }
                         return {
-                            pos:      getCol(cols, "pos"),
-                            dept:     getCol(cols, "dept"),
-                            type:     getCol(cols, "type"),
-                            religion: getCol(cols, "religion"),
-                            gender:   getCol(cols, "gender"),
+                            idCard:     getCol(cols, "idCard"),
+                            prefix:     getCol(cols, "prefix"),
+                            firstName:  firstName,
+                            lastName:   lastName,
+                            name:       name,
+                            pos:        getCol(cols, "pos"),
+                            dept1:      getCol(cols, "dept1"),
+                            dept:       getCol(cols, "dept"),
+                            ward:       getCol(cols, "ward"),
+                            mission:    getCol(cols, "mission"),
+                            status:     getCol(cols, "status"),
+                            type:       getCol(cols, "type"),
+                            religion:   getCol(cols, "religion"),
+                            gender:     getCol(cols, "gender"),
                             gen,
                         };
                     });
@@ -448,7 +644,10 @@
             updateBtnLabel(key);
             msCloseAll();
             if (key === "type") rebuildDependents();
-            else if (key === "dept") rebuildPos();
+            else if (key === "mission") rebuildDept1Chain();
+            else if (key === "dept1") rebuildDeptChain();
+            else if (key === "dept") rebuildWardChain();
+            else if (key === "ward") rebuildPos();
             applyFilters();
         }
 
@@ -567,7 +766,7 @@
             applyFilters();
         }
 
-        const HIERARCHY = ["type", "dept", "pos", "religion", "gen"];
+        const HIERARCHY = ["type", "mission", "dept1", "dept", "ward", "pos", "religion", "gen"];
 
         function getPoolForKey(stopKey) {
             return HIERARCHY.slice(0, HIERARCHY.indexOf(stopKey)).reduce((pool, k) => {
@@ -587,12 +786,27 @@
         }
 
         function rebuildDependents() {
-            rebuildDropdown("dept", sortedKeys(countMapOf(getPoolForKey("type"), "dept")));
+            rebuildDropdown("mission", sortedKeys(countMapOf(getPoolForKey("mission"), "mission")));
+            rebuildDept1Chain();
+        }
+
+        function rebuildDept1Chain() {
+            rebuildDropdown("dept1", sortedKeys(countMapOf(getPoolForKey("dept1"), "dept1")));
+            rebuildDeptChain();
+        }
+
+        function rebuildDeptChain() {
+            rebuildDropdown("dept", sortedKeys(countMapOf(getPoolForKey("dept"), "dept")));
+            rebuildWardChain();
+        }
+
+        function rebuildWardChain() {
+            rebuildDropdown("ward", sortedKeys(countMapOf(getPoolForKey("ward"), "ward")));
             rebuildPos();
         }
 
         function rebuildPos() {
-            rebuildDropdown("pos", sortedKeys(countMapOf(getPoolForKey("dept"), "pos")));
+            rebuildDropdown("pos", sortedKeys(countMapOf(getPoolForKey("pos"), "pos")));
         }
 
         /* ══════════════════════════════════════════
@@ -624,42 +838,69 @@
         ══════════════════════════════════════════ */
         function renderAll() {
             renderKPI();
-            renderDonut("donutType",     "legendType",     countBy(filteredData, "type"),     TYPE_COLORS);
+            renderDonut("donutType",     "legendType",     orderEntries(countBy(filteredData, "type"), TYPE_ORDER), TYPE_COLORS);
             renderDonut("donutReligion", "legendReligion", countBy(filteredData, "religion"), RELIGION_COLORS);
-            renderDonut("donutGender",   "legendGender",   countBy(filteredData, "gender"),   GENDER_COLORS);
             renderGenDonut();
-            renderPosBars();
             renderDeptBars();
+            renderPosBars();
         }
 
         function renderGenDonut() {
-            const ORDER = ["Gen Y", "Gen X", "Gen Z", "Gen Alpha", "Baby Boomer", "ไม่ระบุ"];
-            const m = {};
-            filteredData.forEach(d => { m[d.gen] = (m[d.gen] || 0) + 1; });
-            const entries = [
-                ...ORDER.filter(k => m[k]).map(k => [k, m[k]]),
-                ...Object.entries(m).filter(([k]) => !ORDER.includes(k)),
-            ];
-            renderDonut("donutGen", "legendGen", entries.length ? entries : countBy(filteredData, "gen"), GEN_COLORS);
+            renderDonut("donutGen", "legendGen", orderEntries(countBy(filteredData, "gen"), GEN_ORDER), GEN_COLORS);
         }
 
         function renderKPI() {
             const total  = filteredData.length;
-            const topPos = countBy(filteredData, "pos")[0];
+            const male   = filteredData.filter(d => d.gender === "ชาย").length;
+            const female = filteredData.filter(d => d.gender === "หญิง").length;
+
+            /* column Q (status): exclude rows tagged "ไปช่วย" or "ลาศึกษา" */
+            const excludeHelpStudy = filteredData.filter(d => {
+                const s = d.status || "";
+                return !s.includes("ไปช่วย") && !s.includes("ลาศึกษา");
+            }).length;
+
+            /* column Q (status): exclude rows tagged "มาช่วย" */
+            const excludeIncomingHelp = filteredData.filter(d => {
+                const s = d.status || "";
+                return !s.includes("มาช่วย");
+            }).length;
+
+            /* column Q (status): แยกนับ มาช่วย / ไปช่วย / ลาศึกษา */
+            const comeHelpCount   = filteredData.filter(d => (d.status || "").includes("มาช่วย")).length;
+            const goHelpCount     = filteredData.filter(d => (d.status || "").includes("ไปช่วย")).length;
+            const studyLeaveCount = filteredData.filter(d => (d.status || "").includes("ลาศึกษา")).length;
+
+            /* column V (dept): unique count for "กลุ่มงานทั้งหมด" — ไม่นับ EXCLUDED_DEPT_GROUPS */
+            const deptTotalCount = new Set(
+                filteredData
+                    .map(d => d.dept)
+                    .filter(v => v && v !== "ไม่ระบุ" && !EXCLUDED_DEPT_GROUPS.includes(v))
+            ).size;
+
             document.getElementById("kpiRow").innerHTML = [
-                kpi("k-blue",   "บุคลากรทั้งหมด",  total,                                   "จากข้อมูลที่กรอง",     '<path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>'),
-                kpi("k-green",  "จำนวนตำแหน่ง",    new Set(filteredData.map(d => d.pos)).size, "ประเภทตำแหน่งทั้งหมด", '<path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13zm-2 9H7v-2h4v2zm4-4H7v-2h8v2zm0-4H7V8h8v2z"/>'),
-                kpi("k-purple", "กลุ่มงานทั้งหมด", new Set(filteredData.map(d => d.dept)).size, "จากข้อมูลที่กรอง",   '<path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>'),
-                kpi("k-amber",  "ตำแหน่งสูงสุด",   topPos?.[1] || 0,                         topPos?.[0] || "-",     '<path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/>'),
+                kpi("k-blue",   "บุคลากรทั้งหมด (รวม ตัดมาช่วย ตัดไปช่วยและลาศึกษา)",  total,                                   '<path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>'),
+                kpi("k-blue",   "บุคลากรตามปฏิบัติจริง (รวมตัดมาช่วย) (ไม่รามตัดไปช่วยและลาศึกษา)",  excludeHelpStudy,        '<path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>'),
+                kpi("k-blue",   "บุคลากรตาม จ.18",  excludeIncomingHelp,               '<path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>'),
+                kpi("k-purple", "กลุ่มงานทั้งหมด", deptTotalCount,                          '<path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>'),
+                kpi("k-amber",  "มาช่วย / ไปช่วย / ลาศึกษา",
+                    `<span style="color:#1D9E75">${comeHelpCount.toLocaleString("th-TH")}</span> / <span style="color:#DC2626">${goHelpCount.toLocaleString("th-TH")}</span> / <span style="color:#534AB7">${studyLeaveCount.toLocaleString("th-TH")}</span>`,
+                    '<path d="M9.01 14H2v2h7.01v3L13 15l-3.99-4v3zm5.98-1v-3H22V8h-7.01V5L11 9l3.99 4z"/>'),
+                kpi("k-teal",   "เพศหญิง / เพศชาย",
+                    `<span style="color:#D4537E">${female.toLocaleString("th-TH")}</span> / <span style="color:var(--blue)">${male.toLocaleString("th-TH")}</span>`,
+                    '<path d="M12 2a5 5 0 100 10 5 5 0 000-10zm0 12c-3.31 0-6 1.79-6 4v2h12v-2c0-2.21-2.69-4-6-4z"/>'),
             ].join("");
         }
 
-        function kpi(cls, label, val, sub, icon) {
+        function kpi(cls, label, val, icon, sub) {
+            const display = typeof val === "number" ? val.toLocaleString("th-TH") : val;
             return `<div class="kpi-card ${cls}">
-                <div class="kpi-icon"><svg viewBox="0 0 24 24">${icon}</svg></div>
-                <div class="kpi-num">${Number(val).toLocaleString("th-TH")}</div>
-                <div class="kpi-label">${label}</div>
-                <div class="kpi-sub">${sub}</div>
+                <div class="kpi-head">
+                    <div class="kpi-icon"><svg viewBox="0 0 24 24">${icon}</svg></div>
+                    <div class="kpi-label">${label}</div>
+                </div>
+                <div class="kpi-num">${display}</div>
+                ${sub ? `<div class="kpi-sub">${sub}</div>` : ""}
             </div>`;
         }
 
@@ -702,27 +943,35 @@
             ).join("");
         }
 
-        function renderPosBars() {
-            const entries = countBy(filteredData, "pos").slice(0, 15);
-            const max     = entries[0]?.[1] || 1;
-            document.getElementById("positionBars").innerHTML = entries.length
-                ? entries.map(([l, v]) => hbar(l, v, max, pct(v, filteredData.length), "#1D9E75")).join("")
-                : "<span style='color:#aaa;font-size:13px;padding:12px'>ไม่มีข้อมูล</span>";
-        }
-
         function setDeptView(v, btn) {
             deptView = v;
-            document.querySelectorAll(".bar-tab").forEach(b => b.classList.remove("active"));
+            btn.closest(".bar-tab-row").querySelectorAll(".bar-tab").forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
             renderDeptBars();
         }
 
         function renderDeptBars() {
             let entries = countBy(filteredData, "dept");
-            if (deptView === "top15") entries = entries.slice(0, 15);
+            if (deptView === "top10") entries = entries.slice(0, 10);
             const max = entries[0]?.[1] || 1;
             document.getElementById("deptBars").innerHTML = entries.length
                 ? entries.map(([l, v]) => hbar(l, v, max, pct(v, filteredData.length), "#534AB7")).join("")
+                : "<span style='color:#aaa;font-size:13px;padding:12px'>ไม่มีข้อมูล</span>";
+        }
+
+        function setPosView(v, btn) {
+            posView = v;
+            btn.closest(".bar-tab-row").querySelectorAll(".bar-tab").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            renderPosBars();
+        }
+
+        function renderPosBars() {
+            let entries = countBy(filteredData, "pos");
+            if (posView === "top10") entries = entries.slice(0, 10);
+            const max = entries[0]?.[1] || 1;
+            document.getElementById("posBars").innerHTML = entries.length
+                ? entries.map(([l, v]) => hbar(l, v, max, pct(v, filteredData.length), "#BA7517")).join("")
                 : "<span style='color:#aaa;font-size:13px;padding:12px'>ไม่มีข้อมูล</span>";
         }
 
@@ -735,6 +984,184 @@
                 <span class="hbar-val">${val.toLocaleString("th-TH")}</span>
                 <span class="hbar-pct">${p}%</span>
             </div>`;
+        }
+
+        /* ══════════════════════════════════════════
+           EXCEL EXPORT (แยกชีทตามกลุ่มงาน คอลัมน์ V — deptTotal)
+        ══════════════════════════════════════════ */
+        const EXPORT_HEADERS = [
+            ["idCard",   "เลขบัตรประชาชน"],
+            ["prefix",   "คำนำหน้า"],
+            ["name",     "ชื่อ-สกุล"],
+            ["pos",      "ตำแหน่ง"],
+            ["type",     "ประเภทเจ้าหน้าที่"],
+            ["mission",  "กลุ่มภารกิจ"],
+            ["dept1",    "กลุ่มงานตาม จ.18"],
+            ["dept",     "กลุ่มงานตามปฏิบัติจริง"],
+            ["ward",     "ตึก/ward"],
+            ["religion", "ศาสนา"],
+            ["gender",   "เพศ"],
+            ["gen",      "Generation"],
+            ["status",   "สถานะ (มาช่วย/ไปช่วย/ลาศึกษา)"],
+        ];
+
+        /* ตัวเลือก "แยกชีทตาม" ในโมดัลดาวน์โหลด Excel */
+        const SPLIT_FIELDS = [
+            { key: "pos",      label: "ตำแหน่ง" },
+            { key: "type",     label: "ประเภทเจ้าหน้าที่" },
+            { key: "mission",  label: "กลุ่มภารกิจ" },
+            { key: "dept1",    label: "กลุ่มงานตาม จ.18" },
+            { key: "dept",     label: "กลุ่มงานตามปฏิบัติจริง" },
+            { key: "ward",     label: "ตึก/ward" },
+            { key: "religion", label: "ศาสนา" },
+            { key: "gender",   label: "เพศ" },
+            { key: "gen",      label: "Generation" },
+        ];
+
+        /* ค่าเริ่มต้น: เลือกทุกฟิลด์ */
+        const exportFieldState = {};
+        EXPORT_HEADERS.forEach(([key]) => { exportFieldState[key] = false; });
+
+        /* รหัสยืนยันก่อนดาวน์โหลด */
+        const EXPORT_PASSCODE = "hrm123456";
+
+        function openExportModal() {
+            if (!filteredData.length) { alert("ไม่มีข้อมูลสำหรับส่งออก (ตามตัวกรองปัจจุบัน)"); return; }
+            const list = document.getElementById("exportFieldList");
+            list.innerHTML = EXPORT_HEADERS.map(([key, label]) => `
+                <label class="export-field-opt">
+                    <input type="checkbox" data-key="${key}" ${exportFieldState[key] ? "checked" : ""}
+                           onchange="exportFieldState['${key}'] = this.checked">
+                    <span>${label}</span>
+                </label>`).join("");
+            document.getElementById("exportSplitOptions").innerHTML = SPLIT_FIELDS.map(f => `
+                <label>
+                    <input type="radio" name="exportSplitMode" value="${f.key}" ${f.key === "dept" ? "checked" : ""}>
+                    ${f.label}
+                </label>`).join("");
+            document.getElementById("exportPasscode").value = "";
+            document.getElementById("exportModalOverlay").classList.add("show");
+        }
+
+        function closeExportModal() {
+            document.getElementById("exportModalOverlay").classList.remove("show");
+        }
+
+        function exportSetAll(checked) {
+            EXPORT_HEADERS.forEach(([key]) => { exportFieldState[key] = checked; });
+            document.querySelectorAll("#exportFieldList input[type=checkbox]").forEach(cb => { cb.checked = checked; });
+        }
+
+        function confirmExport() {
+            const passcodeInput = document.getElementById("exportPasscode");
+            if (passcodeInput.value.trim() !== EXPORT_PASSCODE) {
+                alert("รหัสไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง");
+                passcodeInput.value = "";
+                passcodeInput.focus();
+                return;
+            }
+            const selectedHeaders = EXPORT_HEADERS.filter(([key]) => exportFieldState[key]);
+            if (!selectedHeaders.length) { alert("กรุณาเลือกข้อมูลอย่างน้อย 1 รายการ"); return; }
+            const splitMode = document.querySelector('input[name="exportSplitMode"]:checked')?.value || "dept";
+            closeExportModal();
+            exportToExcel(selectedHeaders, splitMode);
+        }
+
+        /* Excel sheet names: max 31 chars, no \ / ? * [ ] :, must be unique */
+        function sanitizeSheetName(name, usedNames) {
+            let clean = (name || "ไม่ระบุ").replace(/[\\/?*\[\]:]/g, "_").trim();
+            if (!clean) clean = "ไม่ระบุ";
+            if (clean.length > 31) clean = clean.slice(0, 31);
+            let final = clean, n = 1;
+            while (usedNames.has(final)) {
+                const suffix = `(${n})`;
+                final = clean.slice(0, 31 - suffix.length) + suffix;
+                n++;
+            }
+            return final;
+        }
+
+        function buildSheetFromRows(rows, headers) {
+            const headerRow = headers.map(([, label]) => label);
+            const dataRows  = rows.map(r => headers.map(([key]) => r[key] || ""));
+            const ws = XLSX.utils.aoa_to_sheet([headerRow, ...dataRows]);
+            ws["!cols"] = headerRow.map(h => ({ wch: Math.max(16, h.length + 4) }));
+            return ws;
+        }
+
+        const SPLIT_ORDER_MAP = { type: TYPE_ORDER, gen: GEN_ORDER };
+
+        function exportToExcel(headers, splitKey) {
+            const btn = document.getElementById("exportExcelBtn");
+            const originalLabel = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = "กำลังสร้างไฟล์…";
+
+            try {
+                const fieldMeta = SPLIT_FIELDS.find(f => f.key === splitKey) || SPLIT_FIELDS.find(f => f.key === "dept");
+                const key0      = fieldMeta.key;
+
+                /* จัดกลุ่มข้อมูลตามฟิลด์ที่เลือก — ถ้าแยกตาม "กลุ่มงานตามปฏิบัติจริง" จะไม่รวม EXCLUDED_DEPT_GROUPS */
+                const groups = {};
+                filteredData.forEach(d => {
+                    const k = d[key0] || "ไม่ระบุ";
+                    if (key0 === "dept" && EXCLUDED_DEPT_GROUPS.includes(k)) return;
+                    (groups[k] = groups[k] || []).push(d);
+                });
+
+                const groupKeys = SPLIT_ORDER_MAP[key0]
+                    ? orderEntries(Object.entries(groups).map(([k, v]) => [k, v.length]), SPLIT_ORDER_MAP[key0]).map(([k]) => k)
+                    : Object.keys(groups).sort((a, b) => groups[b].length - groups[a].length);
+
+                const wb = XLSX.utils.book_new();
+                const usedNames = new Set();
+
+                /* ชีทสรุป */
+                const summaryRows = [[fieldMeta.label, "จำนวนบุคลากร"]];
+                groupKeys.forEach(k => summaryRows.push([k, groups[k].length]));
+                const groupedTotal = groupKeys.reduce((s, k) => s + groups[k].length, 0);
+                summaryRows.push([key0 === "dept" ? "รวมทั้งหมด (ไม่รวมตำแหน่งผู้บริหาร)" : "รวมทั้งหมด", groupedTotal]);
+
+                /* สัดส่วน intearm 69 ต่อข้าราชการ (%) — เฉพาะตอนแยกตามประเภทเจ้าหน้าที่ */
+                if (key0 === "type") {
+                    const khrachakarnCount = groups["ข้าราชการ"]?.length || 0;
+                    const intearm69Count   = groups["intearm 69"]?.length || 0;
+                    const pctIntearm69 = khrachakarnCount
+                        ? ((intearm69Count / khrachakarnCount) * 100).toFixed(2)
+                        : "0.00";
+                    summaryRows.push([]);
+                    summaryRows.push(["สัดส่วน intearm 69 ต่อข้าราชการ (%)", `${pctIntearm69}%`]);
+                }
+
+                const summarySheet = XLSX.utils.aoa_to_sheet(summaryRows);
+                summarySheet["!cols"] = [{ wch: 40 }, { wch: 16 }];
+                const summaryName = sanitizeSheetName("สรุป", usedNames);
+                usedNames.add(summaryName);
+                XLSX.utils.book_append_sheet(wb, summarySheet, summaryName);
+
+                /* ชีทข้อมูลทั้งหมด (ไม่แยกกลุ่ม รวมทุกคนตามตัวกรองปัจจุบัน) */
+                const allSheet = buildSheetFromRows(filteredData, headers);
+                const allName = sanitizeSheetName("ข้อมูลทั้งหมด", usedNames);
+                usedNames.add(allName);
+                XLSX.utils.book_append_sheet(wb, allSheet, allName);
+
+                /* ชีทแยกตามฟิลด์ที่เลือก */
+                groupKeys.forEach(k => {
+                    const ws = buildSheetFromRows(groups[k], headers);
+                    const sheetName = sanitizeSheetName(k, usedNames);
+                    usedNames.add(sheetName);
+                    XLSX.utils.book_append_sheet(wb, ws, sheetName);
+                });
+
+                const dateStr = new Date().toLocaleDateString("th-TH").replace(/\//g, "-");
+                XLSX.writeFile(wb, `ข้อมูลบุคลากร_${dateStr}.xlsx`);
+            } catch (err) {
+                console.error(err);
+                alert("เกิดข้อผิดพลาดขณะสร้างไฟล์ Excel: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = originalLabel;
+            }
         }
 
         /* ══════════════════════════════════════════
