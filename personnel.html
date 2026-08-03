@@ -13,6 +13,62 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Noto+Serif+Thai:wght@400;600;700&display=swap">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
     <style>
+        .export-modal-overlay {
+            display: none;
+            position: fixed; inset: 0; z-index: 9999;
+            background: rgba(20, 20, 25, 0.5);
+            align-items: center; justify-content: center;
+        }
+        .export-modal-overlay.show { display: flex; }
+        .export-modal {
+            background: #fff; border-radius: 12px; width: min(420px, 92vw);
+            max-height: 86vh; display: flex; flex-direction: column;
+            box-shadow: 0 10px 40px rgba(0,0,0,.25); overflow: hidden;
+        }
+        .export-modal-title {
+            font-weight: 700; font-size: 16px; padding: 18px 20px 4px;
+        }
+        .export-modal-toolbar {
+            display: flex; gap: 8px; padding: 8px 20px;
+        }
+        .export-modal-toolbar button {
+            font-size: 12px; padding: 4px 10px; border-radius: 6px;
+            border: 1px solid #ddd; background: #f7f7f7; cursor: pointer;
+        }
+        .export-modal-toolbar button:hover { background: #eee; }
+        .export-field-list {
+            padding: 4px 20px 12px; overflow-y: auto; flex: 1;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px;
+        }
+        .export-field-opt {
+            display: flex; align-items: center; gap: 8px;
+            padding: 6px 4px; font-size: 14px; cursor: pointer; border-radius: 6px;
+        }
+        .export-field-opt:hover { background: #f5f5f5; }
+        .export-field-opt input { width: 16px; height: 16px; cursor: pointer; flex-shrink: 0; }
+        .export-passcode-wrap {
+            padding: 4px 20px 6px; border-top: 1px solid #eee;
+        }
+        .export-passcode-label {
+            display: block; font-size: 13px; color: #555; margin: 10px 0 6px;
+        }
+        .export-passcode-input {
+            width: 100%; box-sizing: border-box; padding: 9px 12px;
+            border: 1px solid #ddd; border-radius: 8px; font-size: 14px;
+        }
+        .export-passcode-input:focus { outline: none; border-color: #1D9E75; }
+        .export-modal-actions {
+            display: flex; gap: 10px; padding: 14px 20px; border-top: 1px solid #eee;
+        }
+        .export-modal-actions button {
+            flex: 1; padding: 10px; border-radius: 8px; border: none;
+            font-size: 14px; font-weight: 600; cursor: pointer;
+        }
+        .export-btn-confirm { background: #1D9E75; color: #fff; }
+        .export-btn-confirm:hover { background: #17835f; }
+        .export-btn-cancel { background: #f0f0f0; color: #333; }
+        .export-btn-cancel:hover { background: #e2e2e2; }
+
         /* ทำให้แถบตัวกรองสมดุล: ฟิลด์กรองอยู่กลุ่มเดียว จัดเป็นกริด 4 คอลัมน์ (8 ตัวกรอง = 2 แถว 4 คอลัมน์เท่ากัน)
            ส่วนปุ่มรีเซ็ต/ดาวน์โหลด แยกออกไปอยู่คนละกลุ่ม ไม่ไปเบียดให้แถวตัวกรองเอียง */
         .filters-bar {
@@ -48,6 +104,22 @@
         @media (max-width: 900px) {
             .filter-dropdowns { grid-template-columns: repeat(2, minmax(150px, 1fr)); }
         }
+
+        /* ตัวเลือกแยกชีทก่อนดาวน์โหลด Excel */
+        .export-split-wrap {
+            padding: 4px 20px 10px; border-top: 1px solid #eee;
+        }
+        .export-split-label {
+            display: block; font-size: 13px; color: #555; margin: 10px 0 6px;
+        }
+        .export-split-options {
+            display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px 10px;
+        }
+        .export-split-options label {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 14px; cursor: pointer;
+        }
+        .export-split-options input { cursor: pointer; }
     </style>
 </head>
 
@@ -222,6 +294,8 @@
         </div>
 
     </div><!-- /.wrap -->
+
+    <!-- Export modal removed -->
 
     <div id="footer"></div>
 
@@ -888,6 +962,8 @@
             </div>`;
         }
 
+        /* Excel export removed */
+
         /* ══════════════════════════════════════════
            KICK-OFF
         ══════════════════════════════════════════ */
@@ -898,5 +974,6 @@
         loadSheetData();
     </script>
 
+    <script src="js/page-log.js"></script>
 </body>
 </html>
