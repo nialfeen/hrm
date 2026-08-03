@@ -12,6 +12,43 @@
     <link rel="stylesheet" href="css/personnel.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Noto+Serif+Thai:wght@400;600;700&display=swap">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <style>
+        /* ทำให้แถบตัวกรองสมดุล: ฟิลด์กรองอยู่กลุ่มเดียว จัดเป็นกริด 4 คอลัมน์ (8 ตัวกรอง = 2 แถว 4 คอลัมน์เท่ากัน)
+           ส่วนปุ่มรีเซ็ต/ดาวน์โหลด แยกออกไปอยู่คนละกลุ่ม ไม่ไปเบียดให้แถวตัวกรองเอียง */
+        .filters-bar {
+            display: flex; flex-wrap: wrap; align-items: flex-start;
+            gap: 16px; justify-content: space-between;
+        }
+        .filters-fields {
+            display: flex; align-items: flex-start; gap: 10px;
+            flex: 1 1 640px; min-width: 0;
+        }
+        .filter-dropdowns {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(150px, 1fr));
+            gap: 10px;
+            flex: 1; min-width: 0;
+        }
+        .filters-actions {
+            display: flex; gap: 10px; flex: 0 0 auto;
+            align-self: flex-start;
+        }
+        .filter-dropdowns .ms-wrap {
+            max-width: none;
+        }
+        .filter-dropdowns .ms-wrap .ms-btn {
+            width: 100%; box-sizing: border-box;
+        }
+        .filter-dropdowns .ms-wrap .ms-panel {
+            min-width: 260px;
+        }
+        .filter-dropdowns .ms-wrap .ms-option-label {
+            white-space: normal; line-height: 1.35;
+        }
+        @media (max-width: 900px) {
+            .filter-dropdowns { grid-template-columns: repeat(2, minmax(150px, 1fr)); }
+        }
+    </style>
 </head>
 
 <body>
@@ -105,17 +142,22 @@
 
         <!-- Filters -->
         <div class="filters-bar">
-            <span class="filter-label">กรอง :</span>
-            <div class="filter-dropdowns">
-                <div id="ms-type"     class="ms-wrap"></div>
-                <div id="ms-mission"  class="ms-wrap"></div>
-                <div id="ms-dept1"    class="ms-wrap"></div>
-                <div id="ms-dept"     class="ms-wrap"></div>
-                <div id="ms-pos"      class="ms-wrap"></div>
-                <div id="ms-religion" class="ms-wrap"></div>
-                <div id="ms-gen"      class="ms-wrap"></div>
+            <div class="filters-fields">
+                <span class="filter-label">กรอง :</span>
+                <div class="filter-dropdowns">
+                    <div id="ms-type"     class="ms-wrap"></div>
+                    <div id="ms-mission"  class="ms-wrap"></div>
+                    <div id="ms-dept1"    class="ms-wrap"></div>
+                    <div id="ms-dept"     class="ms-wrap"></div>
+                    <div id="ms-ward"     class="ms-wrap"></div>
+                    <div id="ms-pos"      class="ms-wrap"></div>
+                    <div id="ms-religion" class="ms-wrap"></div>
+                    <div id="ms-gen"      class="ms-wrap"></div>
+                </div>
             </div>
-            <button class="filter-reset" onclick="resetFilters()">รีเซ็ต</button>
+            <div class="filters-actions">
+                <button class="filter-reset" onclick="resetFilters()">รีเซ็ต</button>
+            </div>
         </div>
 
         <!-- KPI cards -->
@@ -191,31 +233,41 @@
         const SHEET_GID = "639543527";
         const CSV_URL   = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${SHEET_GID}`;
 
-        /* Column indices below are 0-based spreadsheet columns (A=0, B=1, ... Q=16, S=18, T=19, U=20, V=21) */
+        /* Column indices below are 0-based spreadsheet columns (A=0, B=1, ... Q=16, S=18, T=19, U=20, V=21, W=22, X=23) */
         const COL_NAMES = {
-            pos:        "ตำแหน่งสายงาน",
-            dept1:      20, // column U — กลุ่มงานตาม จ.18
-            dept:       19, // column T — กลุ่มงานตามปฏิบัติจริง
+            idCard:     ["เลขบัตรประชาชน", "เลขที่บัตรประชาชน", "เลขประจำตัวประชาชน", "เลขบัตร ประชาชน", "เลขบัตร", "รหัสประจำตัวประชาชน"],
+            prefix:     ["คำนำหน้า", "คำนำหน้าชื่อ", "คำนำหน้านาม", "คำนำหน้า ชื่อ"],
+            name:       ["ชื่อ-สกุล", "ชื่อ - สกุล", "ชื่อ นามสกุล", "ชื่อ-นามสกุล", "ชื่อ สกุล", "ชื่อ-สกุล (ไทย)", "ชื่อ-นามสกุล (ภาษาไทย)", "ชื่อตัว-นามสกุล"],
+            firstName:  ["ชื่อ", "ชื่อตัว", "ชื่อจริง"],
+            lastName:   ["นามสกุล", "สกุล"],
+            pos:        "ตำแหน่ง",
+            dept1:      19, // column T — กลุ่มงานตาม จ.18
+            dept:       21, // column V — กลุ่มงานตามปฏิบัติจริง (ใช้นับ "กลุ่มงานทั้งหมด" ด้วย)
+            ward:       23, // column X — ตึก/ward
             mission:    18, // column S — กลุ่มภารกิจ
             status:     16, // column Q — สถานะไปช่วย/ลาศึกษา/มาช่วย
-            deptTotal:  21, // column V — ใช้นับ "กลุ่มงานทั้งหมด"
             type:       "ประเภทเจ้าหน้าที่",
             religion:   "ศาสนา",
             gender:     "เพศ",
             gen:        "generation",
         };
 
-        const FILTER_KEYS = ["type", "mission", "dept1", "dept", "pos", "religion", "gen"];
+        const FILTER_KEYS = ["type", "mission", "dept1", "dept", "ward", "pos", "religion", "gen"];
 
         const DROPDOWN_CONFIG = [
             { id: "ms-type",     key: "type",     ph: "ประเภทเจ้าหน้าที่" },
             { id: "ms-mission",  key: "mission",  ph: "กลุ่มภารกิจ" },
             { id: "ms-dept1",    key: "dept1",    ph: "กลุ่มงานตาม จ.18" },
             { id: "ms-dept",     key: "dept",     ph: "กลุ่มงานตามปฏิบัติจริง" },
+            { id: "ms-ward",     key: "ward",     ph: "ตึก/ward" },
             { id: "ms-pos",      key: "pos",      ph: "ตำแหน่ง" },
             { id: "ms-religion", key: "religion", ph: "ศาสนา" },
             { id: "ms-gen",      key: "gen",      ph: "Generation" },
         ];
+
+        /* กลุ่มงาน (คอลัมน์ V) ที่ไม่นับรวมใน KPI "กลุ่มงานทั้งหมด" และไม่แยกชีทใน Excel ตามกลุ่มงาน
+           (เป็นตำแหน่งผู้บริหาร ไม่ใช่กลุ่มงานจริง) */
+        const EXCLUDED_DEPT_GROUPS = ["ผู้อำนวยการ", "หัวหน้าภารกิจด้านทันตกรรม", "หัวหน้าภารกิจด้านอำนวยการ"];
 
         let allData = [], filteredData = [], deptView = "top10", posView = "top10", charts = {};
 
@@ -329,23 +381,28 @@
                 let headerIdx = -1, headers = [];
                 for (let i = 0; i < Math.min(5, lines.length); i++) {
                     const h = splitCSV(lines[i]).map(c => clean(c.replace(/^"|"$/g, "")));
-                    if (h.some(x => x === "ตำแหน่งสายงาน" || x === "กลุ่มงาน จ.18")) {
+                    if (h.some(x => x === "ตำแหน่ง" || x === "กลุ่มงาน จ.18")) {
                         headerIdx = i; headers = h; break;
                     }
                 }
                 if (headerIdx === -1) throw new Error("ไม่พบ header row กรุณาตรวจสอบ Google Sheets");
+                console.log("[personnel] หัวตารางที่พบในชีท:", headers);
 
                 /* Map column indices */
                 const idx = {};
+                const norm = s => clean(s).toLowerCase().replace(/[\s\-–—()（）.]/g, "");
                 Object.entries(COL_NAMES).forEach(([key, col]) => {
                     if (typeof col === "number") {
                         idx[key] = col;
                     } else {
-                        const i = headers.findIndex(h => clean(h).toLowerCase() === clean(col).toLowerCase());
+                        const candidates = Array.isArray(col) ? col : [col];
+                        const i = headers.findIndex(h =>
+                            candidates.some(c => norm(h) === norm(c))
+                        );
                         if (i !== -1) idx[key] = i;
                     }
                 });
-
+                console.log("[personnel] คอลัมน์ที่จับคู่ได้:", idx);
                 const GEN_MAP = { x: "Gen X", y: "Gen Y", z: "Gen Z", alpha: "Gen Alpha", silent: "Silent Gen" };
                 const getCol  = (cols, key) => typeof idx[key] === "number"
                     ? (clean(cols[idx[key]]?.replace(/^"|"$/g, "") || "") || "ไม่ระบุ")
@@ -360,11 +417,23 @@
                         gen = GEN_MAP[gen.toLowerCase()]
                             || (/alpha/i.test(gen) ? "Gen Alpha"
                             : (/silent/i.test(gen) ? "Silent Gen" : (gen || "ไม่ระบุ")));
+                        const firstName = getCol(cols, "firstName");
+                        const lastName  = getCol(cols, "lastName");
+                        let name = getCol(cols, "name");
+                        if (name === "ไม่ระบุ") {
+                            const combined = [firstName, lastName].filter(v => v && v !== "ไม่ระบุ").join(" ");
+                            if (combined) name = combined;
+                        }
                         return {
+                            idCard:     getCol(cols, "idCard"),
+                            prefix:     getCol(cols, "prefix"),
+                            firstName:  firstName,
+                            lastName:   lastName,
+                            name:       name,
                             pos:        getCol(cols, "pos"),
                             dept1:      getCol(cols, "dept1"),
                             dept:       getCol(cols, "dept"),
-                            deptTotal:  getCol(cols, "deptTotal"),
+                            ward:       getCol(cols, "ward"),
                             mission:    getCol(cols, "mission"),
                             status:     getCol(cols, "status"),
                             type:       getCol(cols, "type"),
@@ -479,7 +548,8 @@
             if (key === "type") rebuildDependents();
             else if (key === "mission") rebuildDept1Chain();
             else if (key === "dept1") rebuildDeptChain();
-            else if (key === "dept") rebuildPos();
+            else if (key === "dept") rebuildWardChain();
+            else if (key === "ward") rebuildPos();
             applyFilters();
         }
 
@@ -598,7 +668,7 @@
             applyFilters();
         }
 
-        const HIERARCHY = ["type", "mission", "dept1", "dept", "pos", "religion", "gen"];
+        const HIERARCHY = ["type", "mission", "dept1", "dept", "ward", "pos", "religion", "gen"];
 
         function getPoolForKey(stopKey) {
             return HIERARCHY.slice(0, HIERARCHY.indexOf(stopKey)).reduce((pool, k) => {
@@ -629,6 +699,11 @@
 
         function rebuildDeptChain() {
             rebuildDropdown("dept", sortedKeys(countMapOf(getPoolForKey("dept"), "dept")));
+            rebuildWardChain();
+        }
+
+        function rebuildWardChain() {
+            rebuildDropdown("ward", sortedKeys(countMapOf(getPoolForKey("ward"), "ward")));
             rebuildPos();
         }
 
@@ -698,14 +773,16 @@
             const goHelpCount     = filteredData.filter(d => (d.status || "").includes("ไปช่วย")).length;
             const studyLeaveCount = filteredData.filter(d => (d.status || "").includes("ลาศึกษา")).length;
 
-            /* column V: unique count for "กลุ่มงานทั้งหมด" */
+            /* column V (dept): unique count for "กลุ่มงานทั้งหมด" — ไม่นับ EXCLUDED_DEPT_GROUPS */
             const deptTotalCount = new Set(
-                filteredData.map(d => d.deptTotal).filter(v => v && v !== "ไม่ระบุ")
+                filteredData
+                    .map(d => d.dept)
+                    .filter(v => v && v !== "ไม่ระบุ" && !EXCLUDED_DEPT_GROUPS.includes(v))
             ).size;
 
             document.getElementById("kpiRow").innerHTML = [
                 kpi("k-blue",   "บุคลากรทั้งหมด (รวม ตัดมาช่วย ตัดไปช่วยและลาศึกษา)",  total,                                   '<path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>'),
-                kpi("k-blue",   "บุคลากรตามปฏิบัติจริง (รวมตัดมาช่วย) (ไม่รามตัดไปช่วยและลาศึกษา)",  excludeHelpStudy,        '<path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>'),
+                kpi("k-blue",   "บุคลากรตามปฏิบัติจริง (รวมตัดมาช่วย) (ไม่รวมตัดไปช่วยและลาศึกษา)",  excludeHelpStudy,        '<path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>'),
                 kpi("k-blue",   "บุคลากรตาม จ.18",  excludeIncomingHelp,               '<path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>'),
                 kpi("k-purple", "กลุ่มงานทั้งหมด", deptTotalCount,                          '<path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>'),
                 kpi("k-amber",  "มาช่วย / ไปช่วย / ลาศึกษา",
