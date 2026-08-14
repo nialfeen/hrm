@@ -112,14 +112,14 @@
         
 
         <!-- Row 2 — Deputies -->
-        <div class="card" id="c-d1" onclick="goDept('1495693999,1545194419')">
+        <div class="card" id="c-d1" onclick="goDept('1495693999')">
             <div class="card-photo-wrap">
                 <div class="card-logo"><img src="image/logo/logo-โรงพยาบาลปัตตานี.png" alt="logo"></div>
                 <div class="card-photo"><img src="image/department/pachara.png" onerror="phErr(this)" alt="นพ.พัชระ บรรจงละเอียด"></div>
             </div>
             <div class="card-info">
                 <div class="card-name">นพ.พัชระ บรรจงละเอียด</div>
-                <div class="card-pos">รักษาการรองผู้อำนวยการฝ่ายการแพทย์และรองผู้อำนวยการภารกิจดิจิทัลทางการแพทย์และสุขภาพ</div>
+                <div class="card-pos">รักษาการรองผู้อำนวยการฝ่ายการแพทย์</div>
             </div>
         </div>
 
@@ -146,9 +146,18 @@
         </div>
 
         <!-- Row 3 — Mission Deputies -->
+        <div class="card" id="c-e1" onclick="goDept('1545194419')">
+            <div class="card-photo-wrap">
+                <div class="card-logo"><img src="image/logo/logo-โรงพยาบาลปัตตานี.png" alt="logo"></div>
+                <div class="card-photo"><img src="image/department/pachara.png" onerror="phErr(this)" alt="นพ.พัชระ บรรจงละเอียด"></div>
+            </div>
+            <div class="card-info">
+                <div class="card-name">นพ.พัชระ บรรจงละเอียด</div>
+                <div class="card-pos">รองผู้อำนวยการภารกิจดิจิทัลทางการแพทย์และสุขภาพ</div>
+            </div>
+        </div>
 
-
-        <div class="card" id="c-e1" onclick="goDept('745919876')">
+        <div class="card" id="c-e2" onclick="goDept('745919876')">
             <div class="card-photo-wrap">
                 <div class="card-logo"><img src="image/logo/logo-โรงพยาบาลปัตตานี.png" alt="logo"></div>
                 <div class="card-photo"><img src="image/department/abdulraya.png" onerror="phErr(this)" alt="นพ.อับดุลรอยะ หะยีสแลแม"></div>
@@ -159,7 +168,7 @@
             </div>
         </div>
 
-        <div class="card" id="c-e2" onclick="goDept('776956477')">
+        <div class="card" id="c-e3" onclick="goDept('776956477')">
             <div class="card-photo-wrap">
                 <div class="card-logo"><img src="image/logo/logo-โรงพยาบาลปัตตานี.png" alt="logo"></div>
                 <div class="card-photo"><img src="image/department/pongpang.png" onerror="phErr(this)" alt="นพ.พงศ์พันธ์ พันทวีศักดิ์"></div>
@@ -170,7 +179,7 @@
             </div>
         </div>
 
-        <div class="card" id="c-e3" onclick="goDept('102264963')">
+        <div class="card" id="c-e4" onclick="goDept('102264963')">
             <div class="card-photo-wrap">
                 <div class="card-logo"><img src="image/logo/logo-โรงพยาบาลปัตตานี.png" alt="logo"></div>
                 <div class="card-photo"><img src="image/department/saowalak.png" onerror="phErr(this)" alt="พญ.เสาวลักษณ์ ศิลาลาย"></div>
@@ -181,7 +190,7 @@
             </div>
         </div>
 
-        <div class="card" id="c-e4" onclick="goDept('223431880')">
+        <div class="card" id="c-e5" onclick="goDept('223431880')">
             <div class="card-photo-wrap">
                 <div class="card-logo"><img src="image/logo/logo-โรงพยาบาลปัตตานี.png" alt="logo"></div>
                 <div class="card-photo"><img src="image/department/chutiporn.png" onerror="phErr(this)" alt="ทพญ.ชุติพร เกิดทิพย์"></div>
@@ -319,17 +328,9 @@
         setPos('c-d2',  row3L + 160 + (CARD_W + GAP),       row2T);
         setPos('c-d3',  row3L + 2 * (CARD_W + GAP) + 230,   row2T);
 
-        /* e1-e4 as two pairs (e1+e2 left, e3+e4 right) with a narrower
-           empty gap between the pairs, centered on the same axis */
-        const MID_GAP = 140;
-        const pairW   = 2 * CARD_W + GAP;
-        const eRowW   = pairW * 2 + MID_GAP;
-        const eRowL   = cx - eRowW / 2;
-
-        setPos('c-e1', eRowL,                              row3T);
-        setPos('c-e2', eRowL + CARD_W + GAP,                row3T);
-        setPos('c-e3', eRowL + pairW + MID_GAP,             row3T);
-        setPos('c-e4', eRowL + pairW + MID_GAP + CARD_W + GAP, row3T);
+        ['c-e1', 'c-e2', 'c-e3', 'c-e4', 'c-e5'].forEach((id, i) =>
+            setPos(id, row3L + i * (CARD_W + GAP), row3T)
+        );
     }
 
     function drawLines() {
@@ -345,7 +346,7 @@
         const d1   = getPos('c-d1');
         const d2   = getPos('c-d2');
         const d3   = getPos('c-d3');
-        const eAll = ['c-e1', 'c-e2', 'c-e3', 'c-e4'].map(getPos);
+        const eAll = ['c-e1', 'c-e2', 'c-e3', 'c-e4', 'c-e5'].map(getPos);
 
         const mid12 = (dir.botY + d1.topY)    / 2;
         const mid23 = (d1.botY  + eAll[0].topY) / 2;
@@ -356,7 +357,7 @@
 
         /* Director → Row 3 */
         drawLine(svg, dir.cx,    dir.botY, dir.cx,    mid23);
-        drawLine(svg, eAll[0].cx, mid23,   eAll[3].cx, mid23);
+        drawLine(svg, eAll[0].cx, mid23,   eAll[4].cx, mid23);
         eAll.forEach(e => drawLine(svg, e.cx, mid23, e.cx, e.topY));
     }
 
@@ -378,3 +379,4 @@
     <script src="js/page-log.js"></script>
 </body>
 </html>
+
