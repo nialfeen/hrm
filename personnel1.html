@@ -222,7 +222,6 @@
                     <div id="ms-mission"  class="ms-wrap"></div>
                     <div id="ms-dept1"    class="ms-wrap"></div>
                     <div id="ms-dept"     class="ms-wrap"></div>
-                    <div id="ms-ward"     class="ms-wrap"></div>
                     <div id="ms-pos"      class="ms-wrap"></div>
                     <div id="ms-religion" class="ms-wrap"></div>
                     <div id="ms-gen"      class="ms-wrap"></div>
@@ -341,7 +340,6 @@
             pos:        "ตำแหน่ง",
             dept1:      19, // column T — กลุ่มงานตาม จ.18
             dept:       21, // column V — กลุ่มงานตามปฏิบัติจริง (ใช้นับ "กลุ่มงานทั้งหมด" ด้วย)
-            ward:       23, // column X — ตึก/ward
             mission:    18, // column S — กลุ่มภารกิจ
             status:     16, // column Q — สถานะไปช่วย/ลาศึกษา/มาช่วย
             type:       "ประเภทเจ้าหน้าที่",
@@ -350,14 +348,13 @@
             gen:        "generation",
         };
 
-        const FILTER_KEYS = ["type", "mission", "dept1", "dept", "ward", "pos", "religion", "gen"];
+        const FILTER_KEYS = ["type", "mission", "dept1", "dept", "pos", "religion", "gen"];
 
         const DROPDOWN_CONFIG = [
             { id: "ms-type",     key: "type",     ph: "ประเภทเจ้าหน้าที่" },
             { id: "ms-mission",  key: "mission",  ph: "กลุ่มภารกิจ" },
             { id: "ms-dept1",    key: "dept1",    ph: "กลุ่มงานตาม จ.18" },
             { id: "ms-dept",     key: "dept",     ph: "กลุ่มงานตามปฏิบัติจริง" },
-            { id: "ms-ward",     key: "ward",     ph: "ตึก/ward" },
             { id: "ms-pos",      key: "pos",      ph: "ตำแหน่ง" },
             { id: "ms-religion", key: "religion", ph: "ศาสนา" },
             { id: "ms-gen",      key: "gen",      ph: "Generation" },
@@ -531,7 +528,6 @@
                             pos:        getCol(cols, "pos"),
                             dept1:      getCol(cols, "dept1"),
                             dept:       getCol(cols, "dept"),
-                            ward:       getCol(cols, "ward"),
                             mission:    getCol(cols, "mission"),
                             status:     getCol(cols, "status"),
                             type:       getCol(cols, "type"),
@@ -646,8 +642,7 @@
             if (key === "type") rebuildDependents();
             else if (key === "mission") rebuildDept1Chain();
             else if (key === "dept1") rebuildDeptChain();
-            else if (key === "dept") rebuildWardChain();
-            else if (key === "ward") rebuildPos();
+            else if (key === "dept") rebuildPos();
             applyFilters();
         }
 
@@ -766,7 +761,7 @@
             applyFilters();
         }
 
-        const HIERARCHY = ["type", "mission", "dept1", "dept", "ward", "pos", "religion", "gen"];
+        const HIERARCHY = ["type", "mission", "dept1", "dept", "pos", "religion", "gen"];
 
         function getPoolForKey(stopKey) {
             return HIERARCHY.slice(0, HIERARCHY.indexOf(stopKey)).reduce((pool, k) => {
@@ -797,11 +792,6 @@
 
         function rebuildDeptChain() {
             rebuildDropdown("dept", sortedKeys(countMapOf(getPoolForKey("dept"), "dept")));
-            rebuildWardChain();
-        }
-
-        function rebuildWardChain() {
-            rebuildDropdown("ward", sortedKeys(countMapOf(getPoolForKey("ward"), "ward")));
             rebuildPos();
         }
 
@@ -998,7 +988,6 @@
             ["mission",  "กลุ่มภารกิจ"],
             ["dept1",    "กลุ่มงานตาม จ.18"],
             ["dept",     "กลุ่มงานตามปฏิบัติจริง"],
-            ["ward",     "ตึก/ward"],
             ["religion", "ศาสนา"],
             ["gender",   "เพศ"],
             ["gen",      "Generation"],
@@ -1012,7 +1001,6 @@
             { key: "mission",  label: "กลุ่มภารกิจ" },
             { key: "dept1",    label: "กลุ่มงานตาม จ.18" },
             { key: "dept",     label: "กลุ่มงานตามปฏิบัติจริง" },
-            { key: "ward",     label: "ตึก/ward" },
             { key: "religion", label: "ศาสนา" },
             { key: "gender",   label: "เพศ" },
             { key: "gen",      label: "Generation" },
