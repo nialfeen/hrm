@@ -1025,7 +1025,7 @@
                 </label>`).join("");
             document.getElementById("exportSplitOptions").innerHTML = SPLIT_FIELDS.map(f => `
                 <label>
-                    <input type="radio" name="exportSplitMode" value="${f.key}" ${f.key === "dept" ? "checked" : ""}>
+                    <input type="radio" name="exportSplitMode" value="${f.key}" ${f.key === "pos" ? "checked" : ""}>
                     ${f.label}
                 </label>`).join("");
             document.getElementById("exportPasscode").value = "";
