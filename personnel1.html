@@ -1072,7 +1072,10 @@
 
         function buildSheetFromRows(rows, headers) {
             const headerRow = headers.map(([, label]) => label);
-            const dataRows  = rows.map(r => headers.map(([key]) => r[key] || ""));
+            const dataRows  = rows.map(r => headers.map(([key]) => {
+                const v = r[key];
+                return v === undefined || v === null || v === "" ? "ไม่ระบุ" : v;
+            }));
             const ws = XLSX.utils.aoa_to_sheet([headerRow, ...dataRows]);
             ws["!cols"] = headerRow.map(h => ({ wch: Math.max(16, h.length + 4) }));
             return ws;
